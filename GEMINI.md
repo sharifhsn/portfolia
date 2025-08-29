@@ -8,3 +8,6 @@ For running commonly used commands in the terminal, use and maintain a Justfile.
 
 I'm running on Windows and using PowerShell.
 
+---
+**Project Technology Documentation:**
+This project uses several key technologies. A list of these technologies and their corresponding `context7` library IDs are stored in `context/CONTEXT7_LIBRARIES.md`. To get a full understanding of the project stack, please read this file and use the `get_library_docs` tool for each listed ID.

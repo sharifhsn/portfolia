@@ -9,9 +9,18 @@ This file contains the Context7 library IDs for the main technologies and tools 
 - **TOML:** `/toml-lang/toml`
 - **Serde:** `/serde-rs/serde`
 
+## Frontend
+
+- **Tailwind CSS:** `/websites/tailwindcss`
+
 ## Development & Tooling
 
 - **Just:** `/casey/just`
 - **Git:** `/git/git`
 - **Gemini CLI:** `/google-gemini/gemini-cli`
 - **Context7:** `/upstash/context7`
+
+## Deployment & Infrastructure
+
+- **Shuttle:** `/shuttle-hq/shuttle-docs`
+- **Docker:** `/docker/docs`
