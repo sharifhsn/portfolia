@@ -7,6 +7,7 @@ This document provides an extensive analysis of the "rust-askama-htmx-tailwind-t
 The project uses a modern web stack with Rust on the backend and HTMX for dynamic front-end updates, styled with Tailwind CSS.
 
 ### Backend
+
 | Technology | Version | Purpose |
 | :--- | :--- | :--- |
 | **Rust** | 2021 Edition | Core language for the backend. |
@@ -17,6 +18,7 @@ The project uses a modern web stack with Rust on the backend and HTMX for dynami
 | **Serde** | `1.0.197` | A framework for serializing and deserializing Rust data structures. |
 
 ### Frontend
+
 | Technology | Version | Purpose |
 | :--- | :--- | :--- |
 | **HTMX** | `1.9.10` | Enables AJAX requests, CSS transitions, and other dynamic features directly in HTML. |
@@ -97,6 +99,7 @@ The `Makefile` provides a streamlined development experience.
 The Tailwind process is configured in `tailwind.config.js` to scan HTML files for class usage.
 
 *tailwind.config.js*
+
 ```javascript
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -119,6 +122,7 @@ The backend is an Axum server that serves both HTML (for HTMX) and JSON (for tra
 A key feature is the ability to handle both browser (HTMX) and API requests in the same endpoint. This is achieved with an Axum middleware that checks for the `HX-Request` header, which HTMX automatically includes in its requests.
 
 *src/routes/middleware.rs*
+
 ```rust
 pub async fn get_htmx_header(
     mut request: Request<Body>,
@@ -133,6 +137,7 @@ pub async fn get_htmx_header(
 In the route handler, this `htmx` boolean is extracted to decide the response type.
 
 *src/routes/todo.rs*
+
 ```rust
 pub async fn get_todos(
     Extension(htmx): Extension<bool>, // Extracts the boolean
@@ -161,6 +166,7 @@ pub async fn get_todos(
 The `TodoRepository` uses SQLx to perform asynchronous, type-safe queries against the SQLite database. The `sqlx::query_as!` macro checks queries against the database schema at compile time.
 
 *src/repository/todo.rs*
+
 ```rust
 async fn all(&self) -> Result<Vec<Todo>, TodoError> {
     let result = sqlx::query_as!(
@@ -189,6 +195,7 @@ Askama provides the bridge between Rust code and HTML templates. Rust `struct`s 
 A struct is decorated with `#[derive(Template)]` and a path to the corresponding HTML file. The fields of the struct are automatically available as variables within the template.
 
 *src/templates/todo.rs*
+
 ```rust
 use askama::Template;
 use crate::models::todo::Todo;
@@ -205,6 +212,7 @@ pub struct ListTodoResponse {
 The HTML file uses a Jinja2-like syntax to render dynamic data.
 
 *templates/todo/list.html*
+
 ```html
 <div id="todo-list">
   <ul class="space-y-2">
@@ -240,6 +248,7 @@ The frontend is rendered server-side, with HTMX handling partial page updates fo
 The main page (`index.html`) contains a `div` that immediately triggers an HTMX request to fetch the initial list of todos.
 
 *templates/index.html*
+
 ```html
 <div
   id="todo-list"
@@ -257,6 +266,7 @@ The main page (`index.html`) contains a `div` that immediately triggers an HTMX 
 The form uses `hx-post` to send a `POST` request. The `hx-target` and `hx-swap` attributes tell HTMX to replace the content of the `#todo-list` div with the response from the server, which is the newly updated list of todos.
 
 *templates/todo/form.html*
+
 ```html
 <form
   hx-on="htmx:after-request: this.reset()"
@@ -276,6 +286,7 @@ The form uses `hx-post` to send a `POST` request. The `hx-target` and `hx-swap` 
 Each "Delete" button is configured to send a `DELETE` request to its unique URL. It targets its parent `<li>` element (`#todo-{{todo.id}}`) and swaps it with an empty response from the server, effectively removing it from the DOM.
 
 *templates/todo/list.html*
+
 ```html
 <button
     hx-delete="/api/todo/{{todo.id}}"
