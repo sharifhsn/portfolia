@@ -4,14 +4,14 @@
     <section id="hero" class="text-center py-20 bg-gradient-to-r from-slate-700 to-slate-900 text-white rounded-lg shadow-2xl mb-8">
         <h1 class="text-5xl font-bold mb-2">{{ resume.name }}</h1>
         <p class="text-xl text-slate-300">{{ resume.contact.location }}</p>
-        <div class="mt-4 flex justify-center space-x-4">
-            <a href="mailto:{{ resume.contact.email }}" class="text-sky-400 hover:text-sky-300">{{ resume.contact.email }}</a>
-            <span>|</span>
-            <a href="tel:{{ resume.contact.phone }}" class="text-sky-400 hover:text-sky-300">{{ resume.contact.phone }}</a>
-            <span>|</span>
-            <a href="https://{{ resume.contact.linkedin }}" target="_blank" class="text-sky-400 hover:text-sky-300">LinkedIn</a>
-            <span>|</span>
-            <a href="https://{{ resume.contact.github }}" target="_blank" class="text-sky-400 hover:text-sky-300">GitHub</a>
+        <div class="mt-4 flex flex-col md:flex-row items-center justify-center md:space-x-4">
+            <a href="mailto:{{ resume.contact.email }}" class="text-sky-400 hover:text-sky-300 py-1 md:py-0">{{ resume.contact.email }}</a>
+            <span class="hidden md:inline">|</span>
+            <a href="tel:{{ resume.contact.phone }}" class="text-sky-400 hover:text-sky-300 py-1 md:py-0">{{ resume.contact.phone }}</a>
+            <span class="hidden md:inline">|</span>
+            <a href="https://{{ resume.contact.linkedin }}" target="_blank" class="text-sky-400 hover:text-sky-300 py-1 md:py-0">LinkedIn</a>
+            <span class="hidden md:inline">|</span>
+            <a href="https://{{ resume.contact.github }}" target="_blank" class="text-sky-400 hover:text-sky-300 py-1 md:py-0">GitHub</a>
         </div>
     </section>
 
