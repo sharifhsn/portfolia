@@ -1,3 +1,4 @@
 /target
 /static/css/output.css
 .env
+.shuttle/
