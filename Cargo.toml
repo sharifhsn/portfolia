@@ -11,6 +11,6 @@ shuttle-axum = "0.56.0"
 shuttle-runtime = { version = "0.56.0", features = ["tracing-subscriber"] }
 tokio = "1.47.1"
 tower-http = { version = "0.6.6", features = ["fs"] }
-toml = "0.8.13"
+toml = "0.9"
 serde = { version = "1.0.204", features = ["derive"] }
 

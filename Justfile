@@ -5,3 +5,12 @@ build-css:
 
 run:
     cargo shuttle run
+
+login:
+    shuttle login
+
+deploy: build-css
+    shuttle deploy
+
+start:
+    shuttle project start
