@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section id="hero" class="text-center py-20 bg-gradient-to-r from-slate-700 to-slate-900 text-white rounded-lg shadow-2xl mb-8">
+        <h1 class="text-5xl font-bold mb-2">{{ resume.name }}</h1>
+        <p class="text-xl text-slate-300">{{ resume.contact.location }}</p>
+        <div class="mt-4 flex justify-center space-x-4">
+            <a href="mailto:{{ resume.contact.email }}" class="text-sky-400 hover:text-sky-300">{{ resume.contact.email }}</a>
+            <span>|</span>
+            <a href="tel:{{ resume.contact.phone }}" class="text-sky-400 hover:text-sky-300">{{ resume.contact.phone }}</a>
+            <span>|</span>
+            <a href="https://{{ resume.contact.linkedin }}" target="_blank" class="text-sky-400 hover:text-sky-300">LinkedIn</a>
+            <span>|</span>
+            <a href="https://{{ resume.contact.github }}" target="_blank" class="text-sky-400 hover:text-sky-300">GitHub</a>
+        </div>
+    </section>
+
+    <section class="bg-white p-6 rounded-lg shadow-lg mb-4">
+        <h2 class="text-3xl font-bold mb-4 border-b-4 border-slate-500 pb-2">Welcome to my Portfolio</h2>
+        <p class="text-lg text-slate-700">
+            This is the portfolio of {{ resume.name }}. Please use the navigation bar to explore the different sections of my resume.
+        </p>
+    </section>
+{% endblock %}

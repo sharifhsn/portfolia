@@ -1,0 +1,14 @@
+[package]
+name = "portfolia"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+askama = "0.14.0"
+askama-derive-axum = "0.1.2"
+axum = { version = "0.8.4", features = ["macros"] }
+shuttle-axum = "0.56.0"
+shuttle-runtime = { version = "0.56.0", features = ["tracing-subscriber"] }
+tokio = "1.47.1"
+tower-http = { version = "0.6.6", features = ["fs"] }
+
