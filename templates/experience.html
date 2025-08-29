@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section id="experience" class="mb-8 scroll-mt-16">
+    <h2 class="text-3xl font-bold mb-4 border-b-4 border-slate-500 pb-2">Professional Experience</h2>
+    {% for exp in resume.experience %}
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-4 transition-colors duration-500 hover:bg-slate-200">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-2xl font-bold text-slate-700">{{ exp.company }}</h3>
+                <p class="text-slate-600">{{ exp.location }}</p>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+                <p class="text-xl italic">{{ exp.position }}</p>
+                <p class="text-slate-600">{{ exp.date }}</p>
+            </div>
+            <ul class="list-disc list-inside text-slate-700">
+                {% for item in exp.description %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</section>
+{% endblock %}
