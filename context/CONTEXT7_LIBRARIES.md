@@ -8,6 +8,7 @@ This file contains the Context7 library IDs for the main technologies and tools 
 - **Askama:** `/websites/askama_readthedocs_io-en-stable`
 - **TOML:** `/toml-lang/toml`
 - **Serde:** `/serde-rs/serde`
+- **Thiserror:** `/dtolnay/thiserror`
 
 ## Frontend
 

@@ -1,49 +1,78 @@
 use axum::{
     routing::get,
     Router,
-    response::Html,
+    response::{Html, IntoResponse, Response},
+    http::StatusCode,
 };
 use askama::Template;
 use tower_http::services::ServeDir;
 use serde::Deserialize;
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+enum AppError {
+    #[error("Failed to read resume file: {0}")]
+    ResumeRead(#[from] std::io::Error),
+
+    #[error("Failed to parse resume TOML: {0}")]
+    ResumeParse(#[from] toml::de::Error),
+
+    #[error("Failed to render template: {0}")]
+    Template(#[from] askama::Error),
+}
+
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        let (status, error_message) = match self {
+            AppError::ResumeRead(_) | AppError::ResumeParse(_) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, "There was a problem loading server data.")
+            }
+            AppError::Template(_) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, "There was a problem rendering the page.")
+            }
+        };
+
+        (status, error_message).into_response()
+    }
+}
 
 #[derive(Template)]
 #[template(path = "index.html")]
-struct IndexTemplate<'a> {
-    resume: &'a Resume,
+struct IndexTemplate {
+    resume: Resume,
 }
 
 #[derive(Template)]
 #[template(path = "education.html")]
-struct EducationTemplate<'a> {
-    resume: &'a Resume,
+struct EducationTemplate {
+    resume: Resume,
 }
 
 #[derive(Template)]
 #[template(path = "projects.html")]
-struct ProjectsTemplate<'a> {
-    resume: &'a Resume,
+struct ProjectsTemplate {
+    resume: Resume,
 }
 
 #[derive(Template)]
 #[template(path = "experience.html")]
-struct ExperienceTemplate<'a> {
-    resume: &'a Resume,
+struct ExperienceTemplate {
+    resume: Resume,
 }
 
 #[derive(Template)]
 #[template(path = "leadership.html")]
-struct LeadershipTemplate<'a> {
-    resume: &'a Resume,
+struct LeadershipTemplate {
+    resume: Resume,
 }
 
 #[derive(Template)]
 #[template(path = "skills.html")]
-struct SkillsTemplate<'a> {
-    resume: &'a Resume,
+struct SkillsTemplate {
+    resume: Resume,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct Resume {
     name: String,
     contact: ContactInfo,
@@ -54,7 +83,7 @@ struct Resume {
     skills: Skills,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct ContactInfo {
     phone: String,
     email: String,
@@ -63,7 +92,7 @@ struct ContactInfo {
     location: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct Education {
     institution: String,
     location: String,
@@ -74,7 +103,7 @@ struct Education {
     coursework: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct Project {
     name: String,
     technologies: String,
@@ -82,7 +111,7 @@ struct Project {
     description: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct Experience {
     company: String,
     location: String,
@@ -91,7 +120,7 @@ struct Experience {
     description: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct Leadership {
     organization: String,
     location: String,
@@ -100,57 +129,58 @@ struct Leadership {
     description: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct Skill {
     name: String,
     description: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct Certification {
     name: String,
     description: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct Skills {
     skills: Vec<Skill>,
     certifications: Vec<Certification>,
 }
 
-fn get_resume_data() -> Resume {
-    let toml_str = std::fs::read_to_string("resume.toml").expect("Failed to read resume.toml");
-    toml::from_str(&toml_str).expect("Failed to parse resume.toml")
+fn get_resume_data() -> Result<Resume, AppError> {
+    let toml_str = std::fs::read_to_string("resume.toml")?;
+    let resume = toml::from_str(&toml_str)?;
+    Ok(resume)
 }
 
-async fn index() -> Html<String> {
-    let resume = get_resume_data();
-    Html(IndexTemplate { resume: &resume }.render().unwrap())
+async fn index() -> Result<Html<String>, AppError> {
+    let resume = get_resume_data()?;
+    Ok(Html(IndexTemplate { resume }.render()?))
 }
 
-async fn education() -> Html<String> {
-    let resume = get_resume_data();
-    Html(EducationTemplate { resume: &resume }.render().unwrap())
+async fn education() -> Result<Html<String>, AppError> {
+    let resume = get_resume_data()?;
+    Ok(Html(EducationTemplate { resume }.render()?))
 }
 
-async fn projects() -> Html<String> {
-    let resume = get_resume_data();
-    Html(ProjectsTemplate { resume: &resume }.render().unwrap())
+async fn projects() -> Result<Html<String>, AppError> {
+    let resume = get_resume_data()?;
+    Ok(Html(ProjectsTemplate { resume }.render()?))
 }
 
-async fn experience() -> Html<String> {
-    let resume = get_resume_data();
-    Html(ExperienceTemplate { resume: &resume }.render().unwrap())
+async fn experience() -> Result<Html<String>, AppError> {
+    let resume = get_resume_data()?;
+    Ok(Html(ExperienceTemplate { resume }.render()?))
 }
 
-async fn leadership() -> Html<String> {
-    let resume = get_resume_data();
-    Html(LeadershipTemplate { resume: &resume }.render().unwrap())
+async fn leadership() -> Result<Html<String>, AppError> {
+    let resume = get_resume_data()?;
+    Ok(Html(LeadershipTemplate { resume }.render()?))
 }
 
-async fn skills() -> Html<String> {
-    let resume = get_resume_data();
-    Html(SkillsTemplate { resume: &resume }.render().unwrap())
+async fn skills() -> Result<Html<String>, AppError> {
+    let resume = get_resume_data()?;
+    Ok(Html(SkillsTemplate { resume }.render()?))
 }
 
 #[shuttle_runtime::main]
