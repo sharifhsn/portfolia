@@ -12,9 +12,11 @@ This file contains the Context7 library IDs for the main technologies and tools 
 ## Frontend
 
 - **Tailwind CSS:** `/websites/tailwindcss`
+- **HTMX:** `/websites/htmx`
 
 ## Development & Tooling
 
+- **PowerShell:** `/powershell/powershell`
 - **Just:** `/casey/just`
 - **Git:** `/git/git`
 - **Gemini CLI:** `/google-gemini/gemini-cli`
