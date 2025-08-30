@@ -1074,7 +1074,7 @@ dependencies = [
  "serde",
  "shuttle-axum",
  "shuttle-runtime",
- "thiserror 1.0.69",
+ "thiserror 2.0.16",
  "tokio",
  "toml",
  "tower-http",
