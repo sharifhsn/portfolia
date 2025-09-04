@@ -7,11 +7,12 @@
     <link rel="icon" type="image/png" href="/static/img/favicon.png">
     <link href="/static/css/output.css" rel="stylesheet">
 </head>
-<body class="bg-slate-200 text-slate-800 font-sans">
+<body class="bg-slate-200 text-slate-800 font-sans dark:bg-slate-900 dark:text-slate-300">
     <header class="bg-slate-800 shadow-md sticky top-0 z-50 text-white">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="/" class="text-2xl font-bold">{{ resume.name }}</a>
             <div class="flex flex-col md:flex-row md:space-x-4">
+                <a href="/resume" class="hover:text-slate-300 py-1 md:py-0">Full Resume</a>
                 <a href="/education" class="hover:text-slate-300 py-1 md:py-0">Education</a>
                 <a href="/projects" class="hover:text-slate-300 py-1 md:py-0">Projects</a>
                 <a href="/experience" class="hover:text-slate-300 py-1 md:py-0">Experience</a>
