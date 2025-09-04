@@ -35,6 +35,17 @@ The website uses a single-page layout with a sticky navigation bar that allows u
 - **Cards:** The content for education, projects, experience, and leadership is presented in cards with a white background and a subtle shadow. The cards have a hover effect that slowly fades their background to match the page's background color (`slate-200`), creating a soft 'sinking' visual effect.
 - **Skills:** The skills and certifications are displayed as tags with a rounded shape and a light background color to make them easily scannable.
 
+## Dark Mode
+
+The dark mode uses a darker color palette to reduce eye strain in low-light environments. It is enabled automatically based on the user's system preferences.
+
+- **Background:** The main background is `slate-900`.
+- **Text:** Body text is `slate-300`, with headings being a lighter `slate-100`.
+- **Header & Footer:** The header and footer remain `slate-800` but with slightly adjusted text colors for consistency.
+- **Cards:** Cards use a `slate-800` background with `slate-300` text, and a hover effect to `slate-700`.
+- **Hero Section:** The hero section gradient is adjusted to be from `slate-800` to `black`.
+- **Skills & Certifications:** The tags use darker backgrounds (`sky-900` and `emerald-900`) with lighter text (`sky-200` and `emerald-200`).
+
 ## CSS Architecture and Workflow
 
 The project utilizes the **Tailwind CSS** framework to build its visual design. This is a utility-first CSS framework that allows for rapid development by composing designs directly within the HTML files.
@@ -46,12 +57,11 @@ The workflow is as follows:
 2.  **Configuration**: The `tailwind.config.js` file configures the framework. It specifies which files to scan for class names in its `content` array (`./templates/**/*.html`, `./src/**/*.rs`). This allows Tailwind to remove unused styles and keep the final CSS file small.
 
 3.  **Build Process**: The styling is not applied directly from the source files. A build step is required. The `Justfile` contains a `build-css` recipe which runs the command:
-    ```bash
+    '''bash
     tailwindcss -i ./static/css/input.css -o ./static/css/output.css
-    ```
+    '''
     This command takes the `input.css` file (which contains the core Tailwind directives `@tailwind base;`, `@tailwind components;`, `@tailwind utilities;`), scans the project files for classes, and generates a single, optimized stylesheet at `static/css/output.css`.
 
 4.  **Serving CSS**: The final `output.css` file is the only stylesheet referenced by the application. It is linked in the `<head>` of the `templates/base.html` file and served as a static asset by the Axum web server.
 
 **In summary, for any styling changes in the HTML templates to take effect, the `just build-css` command must be run before starting the server.** This ensures the `output.css` file is up-to-date with all the necessary styles.
-
