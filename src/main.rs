@@ -72,6 +72,12 @@ struct SkillsTemplate {
     resume: Resume,
 }
 
+#[derive(Template)]
+#[template(path = "resume.html")]
+struct ResumeTemplate {
+    resume: Resume,
+}
+
 #[derive(Deserialize, Clone)]
 struct Resume {
     name: String,
@@ -183,6 +189,11 @@ async fn skills() -> Result<Html<String>, AppError> {
     Ok(Html(SkillsTemplate { resume }.render()?))
 }
 
+async fn resume() -> Result<Html<String>, AppError> {
+    let resume = get_resume_data()?;
+    Ok(Html(ResumeTemplate { resume }.render()?))
+}
+
 #[shuttle_runtime::main]
 async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
@@ -192,6 +203,7 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .route("/experience", get(experience))
         .route("/leadership", get(leadership))
         .route("/skills", get(skills))
+        .route("/resume", get(resume))
         .nest_service("/static", ServeDir::new("static"));
 
     Ok(router.into())
