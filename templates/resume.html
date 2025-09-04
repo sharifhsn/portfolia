@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section id="education" class="mb-8 scroll-mt-16">
+    <h2 class="text-3xl font-bold mb-4 border-b-4 border-slate-500 pb-2 dark:text-slate-100">Education</h2>
+    {% for edu in resume.education %}
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-4 transition-colors duration-500 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-100">{{ edu.institution }}</h3>
+                <p class="text-slate-600 dark:text-slate-400">{{ edu.location }}</p>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+                <p class="text-xl italic">{{ edu.degree }}</p>
+                <p class="text-slate-600 dark:text-slate-400">{{ edu.date }}</p>
+            </div>
+            <p class="text-slate-600 dark:text-slate-400 mb-2">{{ edu.gpa }}</p>
+            <div class="mb-2">
+                <h4 class="font-bold dark:text-slate-100">Awards & Honors:</h4>
+                <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
+                    {% for award in edu.awards %}
+                        <li>{{ award }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold dark:text-slate-100">Relevant Coursework:</h4>
+                <p class="text-slate-700 dark:text-slate-300">
+                    {{ edu.coursework.join(", ") }}
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+</section>
+
+<section id="experience" class="mb-8 scroll-mt-16">
+    <h2 class="text-3xl font-bold mb-4 border-b-4 border-slate-500 pb-2 dark:text-slate-100">Professional Experience</h2>
+    {% for exp in resume.experience %}
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-4 transition-colors duration-500 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-100">{{ exp.company }}</h3>
+                <p class="text-slate-600 dark:text-slate-400">{{ exp.location }}</p>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+                <p class="text-xl italic">{{ exp.position }}</p>
+                <p class="text-slate-600 dark:text-slate-400">{{ exp.date }}</p>
+            </div>
+            <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
+                {% for item in exp.description %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</section>
+
+<section id="projects" class="mb-8 scroll-mt-16">
+    <h2 class="text-3xl font-bold mb-4 border-b-4 border-slate-500 pb-2 dark:text-slate-100">Projects</h2>
+    {% for project in resume.projects %}
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-4 transition-colors duration-500 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-100">{{ project.name }}</h3>
+                <p class="text-slate-600 dark:text-slate-400">{{ project.date }}</p>
+            </div>
+            <p class="text-lg italic text-slate-700 mb-2 dark:text-slate-300">{{ project.technologies }}</p>
+            <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
+                {% for item in project.description %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</section>
+
+<section id="leadership" class="mb-8 scroll-mt-16">
+    <h2 class="text-3xl font-bold mb-4 border-b-4 border-slate-500 pb-2 dark:text-slate-100">Leadership & Extracurricular Experience</h2>
+    {% for item in resume.leadership %}
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-4 transition-colors duration-500 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-100">{{ item.organization }}</h3>
+                <p class="text-slate-600 dark:text-slate-400">{{ item.location }}</p>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+                <p class="text-xl italic">{{ item.position }}</p>
+                <p class="text-slate-600 dark:text-slate-400">{{ item.date }}</p>
+            </div>
+            <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
+                {% for desc_item in item.description %}
+                    <li>{{ desc_item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</section>
+
+<section id="skills" class="mb-8 scroll-mt-16">
+    <h2 class="text-3xl font-bold mb-4 border-b-4 border-slate-500 pb-2 dark:text-slate-100">Skills</h2>
+    <div class="bg-white p-6 rounded-lg shadow-lg dark:bg-slate-800">
+        <h3 class="text-2xl font-bold text-slate-700 mb-2 dark:text-slate-100">Technical Skills</h3>
+        <div class="flex flex-wrap">
+            {% for skill in resume.skills.skills %}
+                <span class="bg-sky-200 text-sky-800 text-sm font-medium mr-2 mb-2 px-2.5 py-0.5 rounded-full dark:bg-sky-900 dark:text-sky-200" title="{{ skill.description }}">{{ skill.name }}</span>
+            {% endfor %}
+        </div>
+        <h3 class="text-2xl font-bold text-slate-700 mt-4 mb-2 dark:text-slate-100">Certifications</h3>
+        <div class="flex flex-wrap">
+            {% for cert in resume.skills.certifications %}
+                <span class="bg-emerald-200 text-emerald-800 text-sm font-medium mr-2 mb-2 px-2.5 py-0.5 rounded-full dark:bg-emerald-900 dark:text-emerald-200" title="{{ cert.description }}">{{ cert.name }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
