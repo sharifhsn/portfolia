@@ -30,7 +30,7 @@ The application uses a set of nested structs to represent the resume data. The m
 - `Leadership`: Represents a leadership or extracurricular experience.
 - `Skills`: Contains lists of technical skills and certifications.
 
-All the data is hardcoded in the `get_resume_data()` function, which returns a fully populated `Resume` struct.
+All the data is stored in a single `resume.md` file in the `content` directory. The `get_resume_data()` function parses this file to populate the `Resume` struct.
 
 ### Routing
 
@@ -47,6 +47,7 @@ The application has the following routes:
 ### Rendering
 
 Each route has a corresponding handler function that is responsible for rendering the page. For example, the `education` handler function does the following:
+
 1. Calls `get_resume_data()` to get the resume data.
 2. Creates an instance of `EducationTemplate`, which is an Askama template pointing to `education.html`.
 3. Renders the template with the resume data.
@@ -61,6 +62,7 @@ The frontend is composed of HTML templates powered by the Askama engine.
 ### `base.html`
 
 This is the base layout for all pages. It includes:
+
 - The basic HTML structure (`<head>`, `<body>`).
 - A link to the Tailwind CSS stylesheet (`/static/css/output.css`).
 - A header with navigation links to the different pages of the site.
@@ -84,7 +86,7 @@ Each of these page templates extends `base.html` and provides the content for th
 
 1. A user navigates to a URL, for example `/projects`.
 2. The Axum router matches the `GET /projects` route and calls the `projects` handler.
-3. The `projects` handler calls `get_resume_data()` to get the hardcoded resume information.
+3. The `projects` handler calls `get_resume_data()` to get the resume information, which is parsed from `content/resume.md`.
 4. The handler then renders the `projects.html` template, passing the resume data to it.
 5. `projects.html` extends `base.html` and renders the list of projects.
 6. The final, fully rendered HTML is sent back to the user's browser.

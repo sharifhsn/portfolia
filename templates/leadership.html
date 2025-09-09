@@ -13,11 +13,7 @@
                 <p class="text-xl italic">{{ item.position }}</p>
                 <p class="text-slate-600 dark:text-slate-400">{{ item.date }}</p>
             </div>
-            <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
-                {% for desc_item in item.description %}
-                    <li>{{ desc_item }}</li>
-                {% endfor %}
-            </ul>
+            {{ item.description | safe }}
         </div>
     {% endfor %}
 </section>

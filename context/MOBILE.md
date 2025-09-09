@@ -10,8 +10,8 @@ The most critical first step is to include the viewport meta tag in the `<head>`
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 ```
 
-*   `width=device-width`: Sets the width of the page to follow the screen-width of the device.
-*   `initial-scale=1.0`: Sets the initial zoom level when the page is first loaded by the browser.
+* `width=device-width`: Sets the width of the page to follow the screen-width of the device.
+* `initial-scale=1.0`: Sets the initial zoom level when the page is first loaded by the browser.
 
 Without this, mobile browsers will render the page at a desktop screen width and then scale it down, leading to unreadably small text.
 
@@ -21,14 +21,15 @@ Tailwind CSS is a mobile-first framework. This means that utility classes withou
 
 You then add prefixed utilities to apply different styles at larger screen sizes (breakpoints).
 
-*   `sm:`: Applies from 640px and up.
-*   `md:`: Applies from 768px and up.
-*   `lg:`: Applies from 1024px and up.
-*   `xl:`: Applies from 1280px and up.
+* `sm:`: Applies from 640px and up.
+* `md:`: Applies from 768px and up.
+* `lg:`: Applies from 1024px and up.
+* `xl:`: Applies from 1280px and up.
 
 The general strategy is:
-1.  Style the element for mobile screens using unprefixed utilities.
-2.  Use prefixed utilities (`md:`, `lg:`, etc.) to add or change styles for larger screens.
+
+1. Style the element for mobile screens using unprefixed utilities.
+2. Use prefixed utilities (`md:`, `lg:`, etc.) to add or change styles for larger screens.
 
 ## 3. Fluid Layouts (Flexbox and Grid)
 
@@ -36,8 +37,9 @@ Instead of fixed-width layouts, use flexible containers like Flexbox and Grid. T
 
 **Common Pattern:** A horizontal layout on desktop should often stack vertically on mobile.
 
-*   **HTML Structure:** A `div` containing several items.
-*   **Tailwind Implementation:**
+* **HTML Structure:** A `div` containing several items.
+* **Tailwind Implementation:**
+
     ```html
     <div class="flex flex-col md:flex-row">
       <!-- Items will be in a column on mobile -->
@@ -46,12 +48,13 @@ Instead of fixed-width layouts, use flexible containers like Flexbox and Grid. T
       <div>Item 2</div>
     </div>
     ```
+
     In this example, `flex-col` (flex-direction: column) is the default for mobile, and `md:flex-row` overrides it to `flex-direction: row` on medium screens and larger.
 
 ## 4. Handling Text and Content Overflow
 
-*   **Text Wrapping:** Ensure text can wrap naturally. Use classes like `break-words` if you have long, unbreakable strings.
-*   **Padding and Margins:** Use responsive padding and margin utilities (`p-4`, `md:p-8`) to give content more space on larger screens and less on smaller ones to maximize readable area.
+* **Text Wrapping:** Ensure text can wrap naturally. Use classes like `break-words` if you have long, unbreakable strings.
+* **Padding and Margins:** Use responsive padding and margin utilities (`p-4`, `md:p-8`) to give content more space on larger screens and less on smaller ones to maximize readable area.
 
 ## 5. Flexible Images
 

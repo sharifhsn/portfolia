@@ -16,17 +16,11 @@
             <p class="text-slate-600 dark:text-slate-400 mb-2">{{ edu.gpa }}</p>
             <div class="mb-2">
                 <h4 class="font-bold dark:text-slate-100">Awards & Honors:</h4>
-                <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
-                    {% for award in edu.awards %}
-                        <li>{{ award }}</li>
-                    {% endfor %}
-                </ul>
+                {{ edu.awards | safe }}
             </div>
             <div>
                 <h4 class="font-bold dark:text-slate-100">Relevant Coursework:</h4>
-                <p class="text-slate-700 dark:text-slate-300">
-                    {{ edu.coursework.join(", ") }}
-                </p>
+                {{ edu.coursework | safe }}
             </div>
         </div>
     {% endfor %}

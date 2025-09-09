@@ -11,7 +11,9 @@ shuttle-axum = "0.56"
 shuttle-runtime = { version = "0.56", features = ["tracing-subscriber"] }
 tokio = "1.47"
 tower-http = { version = "0.6", features = ["fs"] }
-toml = "0.9"
 serde = { version = "1.0", features = ["derive"] }
 thiserror = "2.0"
+markdown = "1.0.0"
+glob = "0.3.1"
+lazy_static = "1.4.0"
 

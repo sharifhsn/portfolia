@@ -16,17 +16,11 @@
             <p class="text-slate-600 dark:text-slate-400 mb-2">{{ edu.gpa }}</p>
             <div class="mb-2">
                 <h4 class="font-bold dark:text-slate-100">Awards & Honors:</h4>
-                <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
-                    {% for award in edu.awards %}
-                        <li>{{ award }}</li>
-                    {% endfor %}
-                </ul>
+                {{ edu.awards | safe }}
             </div>
             <div>
                 <h4 class="font-bold dark:text-slate-100">Relevant Coursework:</h4>
-                <p class="text-slate-700 dark:text-slate-300">
-                    {{ edu.coursework.join(", ") }}
-                </p>
+                {{ edu.coursework | safe }}
             </div>
         </div>
     {% endfor %}
@@ -44,11 +38,15 @@
                 <p class="text-xl italic">{{ exp.position }}</p>
                 <p class="text-slate-600 dark:text-slate-400">{{ exp.date }}</p>
             </div>
-            <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
-                {% for item in exp.description %}
-                    <li>{{ item }}</li>
-                {% endfor %}
-            </ul>
+            {{ exp.description | safe }}
+            {% if let Some(details) = &exp.details %}
+            <details class="mt-4">
+                <summary class="cursor-pointer text-sky-500 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300">More Info</summary>
+                <div class="mt-2 border-t border-slate-300 dark:border-slate-700 pt-2">
+                    {{ details | safe }}
+                </div>
+            </details>
+            {% endif %}
         </div>
     {% endfor %}
 </section>
@@ -62,11 +60,7 @@
                 <p class="text-slate-600 dark:text-slate-400">{{ project.date }}</p>
             </div>
             <p class="text-lg italic text-slate-700 mb-2 dark:text-slate-300">{{ project.technologies }}</p>
-            <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
-                {% for item in project.description %}
-                    <li>{{ item }}</li>
-                {% endfor %}
-            </ul>
+            {{ project.description | safe }}
         </div>
     {% endfor %}
 </section>
@@ -83,11 +77,7 @@
                 <p class="text-xl italic">{{ item.position }}</p>
                 <p class="text-slate-600 dark:text-slate-400">{{ item.date }}</p>
             </div>
-            <ul class="list-disc list-inside text-slate-700 dark:text-slate-300">
-                {% for desc_item in item.description %}
-                    <li>{{ desc_item }}</li>
-                {% endfor %}
-            </ul>
+            {{ item.description | safe }}
         </div>
     {% endfor %}
 </section>
