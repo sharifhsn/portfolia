@@ -36,7 +36,6 @@ For each library ID, get tokens for each of the topics I list. So for each top-l
 
 ## Deployment & Infrastructure
 
-- **Shuttle:** `/shuttle-hq/shuttle-docs`
 - **Docker:** `/docker/docs`
 - **GitHub Actions:** `/websites/github_en/`
   - `actions`

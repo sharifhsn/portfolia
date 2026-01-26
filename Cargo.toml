@@ -7,9 +7,7 @@ edition = "2024"
 askama = "0.14"
 askama-derive-axum = "0.1"
 axum = { version = "0.8", features = ["macros"] }
-shuttle-axum = "0.56"
-shuttle-runtime = { version = "0.56", features = ["tracing-subscriber"] }
-tokio = "1.47"
+tokio = { version = "1.47", features = ["macros", "net", "rt-multi-thread"] }
 tower-http = { version = "0.6", features = ["fs"] }
 serde = { version = "1.0", features = ["derive"] }
 thiserror = "2.0"

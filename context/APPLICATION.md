@@ -16,7 +16,6 @@ The backend is a single Rust file that defines the web server and data structure
 - **Askama**: A type-safe, compiled templating engine for Rust, used to render the HTML pages.
 - **Tokio**: An asynchronous runtime for Rust.
 - **Tower-http**: Provides HTTP-specific middleware, used here to serve static files.
-- **Shuttle**: A serverless platform for deploying Rust applications.
 
 ### Data Structures
 

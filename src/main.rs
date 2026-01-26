@@ -437,9 +437,9 @@ async fn resume() -> Result<Html<String>, AppError> {
     Ok(Html(ResumeTemplate { resume: &RESUME }.render()?))
 }
 
-#[shuttle_runtime::main]
-async fn main() -> shuttle_axum::ShuttleAxum {
-    let router = Router::new()
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
         .route("/", get(index))
         .route("/education", get(education))
         .route("/projects", get(projects))
@@ -448,6 +448,10 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .route("/skills", get(skills))
         .route("/resume", get(resume))
         .nest_service("/static", ServeDir::new("static"));
-
-    Ok(router.into())
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:8080")
+        .await
+        .expect("Couldn't bind to 8080");
+    axum::serve(listener, app)
+        .await
+        .expect("Couldn't serve application");
 }
