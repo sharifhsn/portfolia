@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sharif Haason — product engineer, writing, and projects.">
+  <title>{% if page == "blog" %}Blog{% else if page == "projects" %}Projects{% else if page == "resume" %}Resume{% else %}Sharif Haason{% endif %}</title>
+  <link rel="stylesheet" href="/static/css/variant6.css?v=20260916-4">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="site-name" href="/v/6" {% if page == "home" %}aria-current="page"{% endif %}>Sharif Haason</a>
+      <nav aria-label="Main navigation">
+        <a href="/v/6/blog" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
+        <a href="/v/6/projects" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>
+        <a href="/v/6/resume" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
+      </nav>
+    </header>
+    <main id="main" class="content">
+      {% if page == "home" %}
+      <section class="introduction" aria-labelledby="page-title">
+        <div class="intro-copy">
+          <h1 id="page-title">Sharif Haason</h1>
+          <p class="role">Product engineer at Monark Markets.</p>
+          <p>I’m interested in Rust, compiler systems, mathematical research, and practical tools. This is where I write about what I build and learn.</p>
+          <nav class="quick-links" aria-label="Quick links">
+            <a href="https://www.linkedin.com/in/sharif-haason/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://github.com/sharifhsn/" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </nav>
+        </div>
+        {% if photo_available %}
+        <img class="portrait" src="/static/img/profile.jpg" alt="Sharif Haason" width="112" height="112">
+        {% endif %}
+      </section>
+      {% else if page == "blog" %}
+      <section class="page-intro" aria-labelledby="page-title">
+        <h1 id="page-title">Blog</h1>
+        <p>Long-form writing, course notes, and technical explanations.</p>
+      </section>
+      <p class="empty-state"><a href="/v/6/blog">Browse all writing</a>.</p>
+      {% else if page == "projects" %}
+      <section class="page-intro" aria-labelledby="page-title">
+        <h1 id="page-title">Projects</h1>
+        <p>Selected work, with the problems, trade-offs, and implementation details behind it.</p>
+      </section>
+      <p class="empty-state">Project write-ups are being prepared.</p>
+      {% else if page == "resume" %}
+      <section class="page-intro resume-heading" aria-labelledby="page-title">
+        <h1 id="page-title">Resume</h1>
+        <div class="download-links">
+          {% if pdf_available %}<a href="/static/resume/sharif-haason.pdf" download>Download PDF</a>{% endif %}
+          {% if docx_available %}<a href="/static/resume/sharif-haason.docx" download>Download DOCX</a>{% endif %}
+        </div>
+      </section>
+      <article class="resume-content">{{ resume_html|safe }}</article>
+      {% endif %}
+    </main>
+    <footer class="site-footer">
+      <span>Sharif Haason</span>
+      <a href="/designs">Design studies</a>
+    </footer>
+  </div>
+</body>
+</html>

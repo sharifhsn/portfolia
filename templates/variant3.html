@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e5def8">
+  <meta name="description" content="Sharif Haason. Software engineering, Rust, mathematical research, and practical tools.">
+  <title>{% if page == "blog" %}Blog{% else if page == "projects" %}Projects{% else if page == "resume" %}Resume{% else %}Hello{% endif %} — Sharif Haason</title>
+  <link rel="stylesheet" href="/static/css/variant3.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="site">
+<header class="masthead">
+  <a class="name" href="/v/3" {% if page == "home" %}aria-current="page"{% endif %}>Sharif Haason<span class="name-dot" aria-hidden="true"></span></a>
+  <nav aria-label="Main navigation">
+    <a href="/v/3/blog" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
+    <a href="/v/3/projects" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>
+    <a href="/v/3/resume" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
+  </nav>
+</header>
+<main id="main">
+{% if page == "home" %}
+  <section class="hello" aria-labelledby="intro">
+    <div class="hello-copy">
+      <h1 id="intro">Hi, I'm<br>Sharif.</h1>
+      <p class="intro">I write software and like to understand how things work.</p>
+      <p>I'm a software engineer at Monark Markets. I spend time with Rust and compiler systems, mathematical research, and practical tools that make everyday things a little easier.</p>
+      <p>This is where I'm bringing those interests together: things I've written, things I've built, and the work behind them.</p>
+    </div>
+    <figure class="portrait">
+      <div class="portrait-frame">
+      {% if photo_available %}<img src="/static/img/profile.jpg" alt="Sharif Haason" width="560" height="700" fetchpriority="high">
+      {% else %}<div class="portrait-initials" role="img" aria-label="Sharif Haason initials; profile photo to come"><span>S<span class="initial-h">h</span></span><small>Profile photo to come</small></div>{% endif %}
+      </div>
+      <figcaption>A place for the things I keep thinking about.</figcaption>
+    </figure>
+  </section>
+  <section class="folds" aria-label="Explore my site">
+    <a class="fold fold-blog" href="/v/3/blog"><span class="fold-title">Writing</span><span class="fold-description">Notes, explanations, and longer thoughts.<small>Articles coming soon</small></span><span class="fold-sign" aria-hidden="true">↗</span></a>
+    <a class="fold fold-projects" href="/v/3/projects"><span class="fold-title">Making</span><span class="fold-description">Projects, experiments, and useful little tools.<small>Project pages coming soon</small></span><span class="fold-sign" aria-hidden="true">↗</span></a>
+    <a class="fold fold-resume" href="/v/3/resume"><span class="fold-title">Working</span><span class="fold-description">A more conventional account of what I do.<small>Read my resume</small></span><span class="fold-sign" aria-hidden="true">↗</span></a>
+  </section>
+{% else if page == "blog" %}
+  <section class="directory-head"><h1>Writing.</h1><p class="intro">Some things take a little more space to explain.</p><p>I'm gathering my writing here. The articles still need to be selected and reformatted; these are the areas they'll sit in.</p></section>
+  <div class="directory-status">Articles coming soon</div>
+  <section class="directory" aria-label="Planned writing categories">
+    <article><h2>Software, up close</h2><p>Rust, compilers, and the details that make systems work.</p><span>Planned collection</span></article>
+    <article><h2>Working through the math</h2><p>Research notes and explanations, with room for the assumptions.</p><span>Planned collection</span></article>
+    <article><h2>Other things on my mind</h2><p>Longer thoughts that don't fit neatly into a technical category.</p><span>Planned collection</span></article>
+  </section>
+{% else if page == "projects" %}
+  <section class="directory-head"><h1>Making.</h1><p class="intro">An idea is more interesting when you can try it.</p><p>This will be a home for my projects, with room for each one to have its own explanation or experience. I'm still gathering the details.</p></section>
+  <div class="directory-status">Project pages coming soon</div>
+  <section class="directory" aria-label="Planned project categories">
+    <article><h2>Systems &amp; languages</h2><p>Work around Rust, compilers, and how software fits together.</p><span>Details to come</span></article>
+    <article><h2>Research &amp; experiments</h2><p>Mathematical questions explored through code.</p><span>Details to come</span></article>
+    <article><h2>Tools for everyday life</h2><p>Practical software made for a particular need.</p><span>Details to come</span></article>
+  </section>
+{% else if page == "resume" %}
+  <section class="resume-head"><div><h1>Working.</h1><p class="intro">The resume version of me.</p></div><div class="downloads" aria-label="Resume downloads">{% if pdf_available %}<a href="/static/resume/sharif-haason.pdf" download>Download PDF</a>{% endif %}{% if docx_available %}<a href="/static/resume/sharif-haason.docx" download>Download DOCX</a>{% endif %}{% if !pdf_available && !docx_available %}<p>Updated downloads are being prepared.</p>{% endif %}</div></section>
+  <article class="resume-paper" aria-label="Resume">{{ resume_html|safe }}</article>
+{% endif %}
+</main>
+<footer><span>Sharif Haason</span><span>Still figuring things out. Still building.</span><a href="/designs">Compare designs</a></footer>
+</div>
+</body>
+</html>

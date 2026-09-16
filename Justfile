@@ -1,4 +1,14 @@
-set shell := ["powershell.exe", "-c"]
+build:
+    cargo build
 
-build-css:
-    tailwindcss -i ./static/css/input.css -o ./static/css/output.css
+test:
+    cargo test
+
+preview:
+    cargo run
+
+static:
+    cargo run --release -- --export-static
+
+pages-preview: static
+    npx --yes wrangler@4 pages dev dist --ip 127.0.0.1 --port 8097

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e6e2fa">
+  <title>{% if page == "blog" %}Blog{% else if page == "projects" %}Projects{% else if page == "resume" %}Resume{% else %}Hello{% endif %} — Sharif Haason</title>
+  <link rel="stylesheet" href="/static/css/variant5.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="site">
+    <header class="header">
+      <a class="name" href="/v/5" {% if page == "home" %}aria-current="page"{% endif %}>Sharif Haason<span aria-hidden="true">✳</span></a>
+      <nav aria-label="Main navigation">
+        <a href="/v/5/blog" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
+        <a href="/v/5/projects" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>
+        <a href="/v/5/resume" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
+      </nav>
+    </header>
+    <main id="main">
+    {% if page == "home" %}
+      <section class="intro" aria-labelledby="hello">
+        <div class="hello">
+          <h1 id="hello">Hi, I’m<br>Sharif.</h1>
+          <p class="lead">I build software, follow interesting questions, and like getting into the details.</p>
+          <p>I’m a product engineer at Monark Markets. Away from that, I spend time with Rust and compiler systems, mathematical research, and practical tools that make everyday things a little easier.</p>
+          <p>This is where I’m bringing that work together, along with some writing about what I’m learning.</p>
+        </div>
+        <div class="orbit" aria-label="A little about my interests">
+          <div class="orbit-line orbit-line-one" aria-hidden="true"></div>
+          <div class="orbit-line orbit-line-two" aria-hidden="true"></div>
+          <div class="portrait">{% if photo_available %}<img src="/static/img/profile.jpg" alt="Sharif Haason" width="360" height="360">{% else %}<span aria-label="Sharif Haason">sh.</span>{% endif %}</div>
+          <span class="satellite satellite-one">Systems</span>
+          <span class="satellite satellite-two">Mathematics</span>
+          <span class="satellite satellite-three">Useful things</span>
+          <span class="orbit-dot" aria-hidden="true"></span>
+        </div>
+      </section>
+      <section class="destinations" aria-label="Explore my work">
+        <a href="/v/5/blog"><h2>Things I write</h2><p>Notes, questions, and longer thoughts.<br>Articles are on the way.</p><span>Visit the blog</span></a>
+        <a href="/v/5/projects"><h2>Things I make</h2><p>A home for experiments and useful tools.<br>Project pages are on the way.</p><span>Explore projects</span></a>
+      </section>
+    {% else if page == "blog" %}
+      <section class="page-heading"><p class="section-name">Writing</p><h1>Thinking<br>out loud.</h1><p class="lead">A place for ideas that need more room than a conversation.</p></section>
+      <section class="directory" aria-labelledby="articles"><h2 id="articles">Articles</h2><div class="empty"><span class="empty-symbol" aria-hidden="true">…</span><div><h3>Still getting the words together.</h3><p>I’m gathering and reformatting writing from my existing collection. Articles will appear here as they’re ready.</p><p class="status">TODO: select, edit, and upload articles.</p></div></div></section>
+    {% else if page == "projects" %}
+      <section class="page-heading"><p class="section-name">Projects</p><h1>From a question<br>to a thing.</h1><p class="lead">A home for the software, research, and practical experiments I work on.</p></section>
+      <section class="directory" aria-labelledby="project-list"><h2 id="project-list">Project directory</h2><div class="empty"><span class="empty-symbol" aria-hidden="true">+</span><div><h3>Making room for the work.</h3><p>I’m putting together individual pages for my projects. Each one will have the room it needs, whether that’s a short explanation or something you can try.</p><p class="status">TODO: choose projects and build their pages.</p></div></div></section>
+    {% else if page == "resume" %}
+      <section class="page-heading resume-heading"><div><p class="section-name">Resume</p><h1>The work<br>so far.</h1></div><div class="download"><p>Take a copy with you.</p>{% if pdf_available %}<a href="/static/resume/sharif-haason.pdf" download>Download PDF</a>{% endif %}{% if docx_available %}<a href="/static/resume/sharif-haason.docx" download>Download DOCX</a>{% endif %}{% if !pdf_available && !docx_available %}<p class="status">Downloads are being prepared.</p>{% endif %}</div></section>
+      <article class="resume-paper" aria-label="Sharif Haason’s resume">{{ resume_html|safe }}</article>
+    {% endif %}
+    </main>
+    <footer><p>Sharif Haason</p><a href="/designs">Compare designs</a></footer>
+  </div>
+</body>
+</html>
