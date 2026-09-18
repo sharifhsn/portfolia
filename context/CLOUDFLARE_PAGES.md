@@ -22,7 +22,18 @@ No Wrangler configuration file is checked in because there are no Pages Function
 
 ## Custom domain
 
-Cloudflare Pages serves the project at `portfolia.pages.dev` without DNS changes. A custom apex domain such as `sharifhsn.dev` requires Cloudflare to host its DNS zone and nameservers. A custom subdomain can instead use a CNAME while the registrar remains the DNS provider. Review existing DNS records before moving nameservers.
+Cloudflare Pages serves this project at `portfolia-8xn.pages.dev` without DNS
+changes. A custom apex domain such as `sharifhsn.dev` requires Cloudflare to
+host its DNS zone and nameservers. A custom subdomain can instead use a CNAME
+while the registrar remains the DNS provider. Review existing DNS records
+before moving nameservers.
+
+For this project, the live Pages hostname is `portfolia-8xn.pages.dev` and both
+`sharifhsn.dev` and `www.sharifhsn.dev` are active custom domains with SSL
+enabled. The `www` hostname must remain a proxied CNAME to
+`portfolia-8xn.pages.dev`; the 2026-09-18 TLS incident was caused by a stale
+DNS-only CNAME to Porkbun parking. See [`context/HOSTING.md`](HOSTING.md) for
+the incident evidence and verification commands.
 
 ## Future server-backed projects
 

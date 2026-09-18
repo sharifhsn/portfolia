@@ -46,3 +46,28 @@ stored as `CLOUDFLARE_API_TOKEN`; the confirmed account ID was stored as
 `CLOUDFLARE_ACCOUNT_ID`. The rerun of [workflow run 35368167563](https://github.com/sharifhsn/portfolia/actions/runs/35368167563)
 completed successfully. The token value is intentionally not recorded in the
 repository or this document.
+
+## `www` TLS/DNS incident resolved 2026-09-18
+
+The remaining hostname issue was a real DNS and Pages custom-domain mismatch,
+not an application or certificate setting. `www.sharifhsn.dev` was a DNS-only
+CNAME to Porkbun parking (`pixie.porkbun.com`), so the hostname failed its TLS
+handshake even though the apex site was healthy. Cloudflare DNS is authoritative
+for the zone (`dell.ns.cloudflare.com` and `rob.ns.cloudflare.com`).
+
+Cloudflare Pages project `portfolia` now has both `sharifhsn.dev` and
+`www.sharifhsn.dev` configured as active custom domains with SSL enabled. The
+`www` record is a proxied CNAME to the Pages hostname `portfolia-8xn.pages.dev`;
+the existing wildcard parking record was intentionally left unchanged. The
+authoritative Cloudflare response is now proxied A records, as expected for an
+orange-cloud CNAME. Verified after the change:
+
+- `curl -L https://www.sharifhsn.dev/` returned HTTP 200 with TLS verification
+  result `0`.
+- The certificate presented for `www.sharifhsn.dev` has SAN `www.sharifhsn.dev`
+  and is valid from 2026-09-18 through 2026-12-17.
+- The apex `https://sharifhsn.dev/` continued to return HTTP 200.
+
+If this hostname is ever changed again, update the Pages custom-domain entry
+and its exact `www` DNS record together; do not point it back at registrar
+parking or edit only the certificate settings.
