@@ -3,19 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sharif Haason — product engineer, writing, and projects.">
-  <title>{% if page == "blog" %}Blog{% else if page == "projects" %}Projects{% else if page == "resume" %}Resume{% else %}Sharif Haason{% endif %}</title>
-  <link rel="stylesheet" href="/static/css/variant6.css?v=20260916-4">
+  <meta name="author" content="Sharif Haason">
+  <meta name="description" content="{{ description }}">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="alternate" type="application/atom+xml" title="Sharif Haason — Writing" href="/feed.xml">
+  <meta property="og:type" content="{% if page == "home" %}profile{% else %}website{% endif %}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:site_name" content="Sharif Haason">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/static/css/site.css?v=20260918-1">
+  <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="site-shell">
     <header class="site-header">
-      <a class="site-name" href="/v/6" {% if page == "home" %}aria-current="page"{% endif %}>Sharif Haason</a>
+      <a class="site-name" href="/" {% if page == "home" %}aria-current="page"{% endif %}>Sharif Haason</a>
       <nav aria-label="Main navigation">
-        <a href="/v/6/blog" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
-        <a href="/v/6/projects" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>
-        <a href="/v/6/resume" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
+        <a href="/blog" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
+        <a href="/projects" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>
+        <a href="/resume" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
       </nav>
     </header>
     <main id="main" class="content">
@@ -26,8 +36,8 @@
           <p class="role">Product engineer at Monark Markets.</p>
           <p>I’m interested in Rust, compiler systems, mathematical research, and practical tools. This is where I write about what I build and learn.</p>
           <nav class="quick-links" aria-label="Quick links">
-            <a href="https://www.linkedin.com/in/sharif-haason/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            <a href="https://github.com/sharifhsn/" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/sharif-haason/" target="_blank" rel="me noopener noreferrer">LinkedIn</a>
+            <a href="https://github.com/sharifhsn/" target="_blank" rel="me noopener noreferrer">GitHub</a>
           </nav>
         </div>
         {% if photo_available %}
@@ -39,7 +49,7 @@
         <h1 id="page-title">Blog</h1>
         <p>Long-form writing, course notes, and technical explanations.</p>
       </section>
-      <p class="empty-state"><a href="/v/6/blog">Browse all writing</a>.</p>
+      <p class="empty-state"><a href="/blog">Browse all writing</a>.</p>
       {% else if page == "projects" %}
       <section class="page-intro" aria-labelledby="page-title">
         <h1 id="page-title">Projects</h1>
@@ -59,7 +69,7 @@
     </main>
     <footer class="site-footer">
       <span>Sharif Haason</span>
-      <a href="/designs">Design studies</a>
+      <a href="/feed.xml">RSS</a>
     </footer>
   </div>
 </body>

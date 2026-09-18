@@ -860,6 +860,7 @@ dependencies = [
  "lazy_static",
  "markdown",
  "serde",
+ "serde_json",
  "thiserror",
  "tokio",
  "toml",

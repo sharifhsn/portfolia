@@ -4,8 +4,8 @@ use askama::Template;
 use axum::{
     Router,
     extract::{Path, State},
-    http::StatusCode,
-    response::{Html, Redirect},
+    http::{StatusCode, header},
+    response::{Html, IntoResponse, Redirect, Response},
     routing::get,
 };
 use std::{
@@ -17,6 +17,8 @@ use std::{
 use toml::Value as TomlValue;
 use tower_http::services::ServeDir;
 
+const SITE_ORIGIN: &str = "https://sharifhsn.dev";
+const SITE_NAME: &str = "Sharif Haason";
 const MIN_VISIBLE_TAG_COUNT: usize = 5;
 const REQUESTED_VISIBLE_TAGS: &[&str] = &[
     "Computational Methods",
@@ -28,29 +30,19 @@ const REQUESTED_VISIBLE_TAGS: &[&str] = &[
     "Risk Management",
 ];
 
-macro_rules! design {
-    ($name:ident, $file:literal) => {
-        #[derive(Template)]
-        #[template(path = $file)]
-        struct $name<'a> {
-            page: &'a str,
-            resume_html: &'a str,
-            pdf_available: bool,
-            docx_available: bool,
-            photo_available: bool,
-        }
-    };
-}
-design!(Variant1, "variant1.html");
-design!(Variant2, "variant2.html");
-design!(Variant3, "variant3.html");
-design!(Variant4, "variant4.html");
-design!(Variant5, "variant5.html");
-design!(Variant6, "variant6.html");
-
 #[derive(Template)]
-#[template(path = "designs.html")]
-struct Designs;
+#[template(path = "site.html")]
+struct Site<'a> {
+    page: &'a str,
+    title: &'a str,
+    description: &'a str,
+    canonical_url: &'a str,
+    structured_data: &'a str,
+    resume_html: &'a str,
+    pdf_available: bool,
+    docx_available: bool,
+    photo_available: bool,
+}
 
 #[derive(Clone)]
 struct BlogPost {
@@ -87,12 +79,299 @@ struct BlogIndex<'a> {
     posts: &'a [BlogPost],
     total: usize,
     tag_groups: &'a [BlogTagGroup],
+    canonical_url: &'a str,
+    structured_data: &'a str,
 }
 
 #[derive(Template)]
 #[template(path = "article.html")]
 struct BlogArticle<'a> {
     post: &'a BlogPost,
+    canonical_url: &'a str,
+    structured_data: &'a str,
+}
+
+fn site_url(path: &str) -> String {
+    format!("{SITE_ORIGIN}{path}")
+}
+
+fn site_path(page: &str) -> &'static str {
+    match page {
+        "home" => "/",
+        "blog" => "/blog",
+        "projects" => "/projects",
+        "resume" => "/resume",
+        _ => "/",
+    }
+}
+
+fn page_title(page: &str) -> &'static str {
+    match page {
+        "blog" => "Writing | Sharif Haason",
+        "projects" => "Projects | Sharif Haason",
+        "resume" => "Resume | Sharif Haason",
+        _ => SITE_NAME,
+    }
+}
+
+fn page_description(page: &str) -> &'static str {
+    match page {
+        "blog" => "Long-form writing, course notes, and technical explanations by Sharif Haason.",
+        "projects" => "Selected software, research, and practical tools by Sharif Haason.",
+        "resume" => {
+            "The professional resume of Sharif Haason, a product engineer at Monark Markets."
+        }
+        _ => {
+            "Sharif Haason is a product engineer at Monark Markets writing about Rust, compiler systems, mathematical research, and practical tools."
+        }
+    }
+}
+
+fn safe_json(value: &serde_json::Value) -> String {
+    serde_json::to_string(value)
+        .expect("structured data should serialize")
+        .replace('<', "\\u003c")
+        .replace('>', "\\u003e")
+        .replace('&', "\\u0026")
+}
+
+fn person_json_ld() -> serde_json::Value {
+    serde_json::json!({
+        "@type": "Person",
+        "@id": format!("{SITE_ORIGIN}/#person"),
+        "name": SITE_NAME,
+        "url": SITE_ORIGIN,
+        "jobTitle": "Product Engineer",
+        "worksFor": {"@type": "Organization", "name": "Monark Markets"},
+        "sameAs": [
+            "https://www.linkedin.com/in/sharif-haason/",
+            "https://github.com/sharifhsn/"
+        ],
+        "knowsAbout": [
+            "Rust", "compiler systems", "mathematical research",
+            "quantitative finance", "practical software tools"
+        ]
+    })
+}
+
+fn page_json_ld(canonical_url: &str, page: &str) -> String {
+    let page_type = if page == "home" {
+        "ProfilePage"
+    } else {
+        "WebPage"
+    };
+    safe_json(&serde_json::json!({
+        "@context": "https://schema.org",
+        "@graph": [
+            person_json_ld(),
+            {
+                "@type": "WebSite",
+                "@id": format!("{SITE_ORIGIN}/#website"),
+                "url": SITE_ORIGIN,
+                "name": SITE_NAME,
+                "publisher": {"@id": format!("{SITE_ORIGIN}/#person")}
+            },
+            {
+                "@type": page_type,
+                "@id": format!("{canonical_url}#webpage"),
+                "url": canonical_url,
+                "name": page_title(page),
+                "description": page_description(page),
+                "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
+                "about": {"@id": format!("{SITE_ORIGIN}/#person")},
+                "inLanguage": "en-US"
+            }
+        ]
+    }))
+}
+
+fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
+    let mut article = serde_json::json!({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "@id": format!("{canonical_url}#article"),
+        "url": canonical_url,
+        "headline": post.title,
+        "description": post.description,
+        "datePublished": post.date,
+        "dateModified": post.date,
+        "author": {"@id": format!("{SITE_ORIGIN}/#person")},
+        "publisher": {"@id": format!("{SITE_ORIGIN}/#person")},
+        "keywords": post.tags,
+        "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
+        "inLanguage": "en-US",
+        "isAccessibleForFree": true
+    });
+    if !post.source_url.is_empty() {
+        article["citation"] = serde_json::Value::String(post.source_url.clone());
+    }
+    safe_json(&article)
+}
+
+fn clean_inline_text(source: &str) -> String {
+    source
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .replace('|', "\\|")
+}
+
+fn summarize_markdown(source: &str, title: &str) -> String {
+    let paragraph = source
+        .split("\n\n")
+        .map(str::trim)
+        .find(|block| {
+            !block.is_empty()
+                && !block.starts_with('#')
+                && !block.starts_with("```")
+                && !block.starts_with("~~~")
+        })
+        .unwrap_or(title);
+    let summary = paragraph
+        .replace("**", "")
+        .replace("__", "")
+        .replace('*', "")
+        .replace('`', "")
+        .replace('>', "")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    let summary = if summary.is_empty() { title } else { &summary };
+    let mut truncated = summary.chars().take(180).collect::<String>();
+    if summary.chars().count() > 180 {
+        truncated.push('…');
+    }
+    truncated
+}
+
+fn xml_escape(source: &str) -> String {
+    source
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+        .replace('\'', "&apos;")
+}
+
+fn text_response(content_type: &'static str, body: String) -> Response {
+    ([(header::CONTENT_TYPE, content_type)], body).into_response()
+}
+
+fn robots_txt_content() -> String {
+    format!(
+        "# Public portfolio; crawlers may access the site.\nUser-agent: *\nAllow: /\nSitemap: {SITE_ORIGIN}/sitemap.xml\n"
+    )
+}
+
+fn sitemap_xml(posts: &[BlogPost]) -> String {
+    let mut xml = String::from(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n",
+    );
+    for path in ["/", "/blog", "/projects", "/resume"] {
+        xml.push_str("  <url><loc>");
+        xml.push_str(&xml_escape(&site_url(path)));
+        xml.push_str("</loc>");
+        xml.push_str("</url>\n");
+    }
+    for post in posts {
+        xml.push_str("  <url><loc>");
+        xml.push_str(&xml_escape(&site_url(&format!("/blog/{}", post.slug))));
+        xml.push_str("</loc><lastmod>");
+        xml.push_str(&xml_escape(&post.date));
+        xml.push_str("</lastmod></url>\n");
+    }
+    xml.push_str("</urlset>\n");
+    xml
+}
+
+fn llms_txt(posts: &[BlogPost]) -> String {
+    let mut text = String::from(
+        "# Sharif Haason\n\n> Product engineer at Monark Markets writing about Rust, compiler systems, mathematical research, quantitative finance, and practical tools. This is the canonical public site; each article carries its date, topics, and source attribution.\n\n## Start here\n\n",
+    );
+    for (label, path, description) in [
+        ("Home", "/", page_description("home")),
+        ("Writing index", "/blog", page_description("blog")),
+        ("Projects", "/projects", page_description("projects")),
+        ("Resume", "/resume", page_description("resume")),
+        (
+            "RSS feed",
+            "/feed.xml",
+            "Atom feed for the writing archive.",
+        ),
+        (
+            "Sitemap",
+            "/sitemap.xml",
+            "Machine-readable list of canonical pages.",
+        ),
+    ] {
+        text.push_str(&format!(
+            "- [{}]({}): {}\n",
+            label,
+            site_url(path),
+            description
+        ));
+    }
+    text.push_str("\n## Writing\n\n");
+    for post in posts {
+        let description = if post.description.is_empty() {
+            "Article with date and topic metadata on its page."
+        } else {
+            &post.description
+        };
+        let tags = if post.tags.is_empty() {
+            String::new()
+        } else {
+            format!(" Topics: {}.", post.tags.join(", "))
+        };
+        text.push_str(&format!(
+            "- [{}]({}): {}{}\n",
+            clean_inline_text(&post.title),
+            site_url(&format!("/blog/{}", post.slug)),
+            clean_inline_text(description),
+            tags
+        ));
+    }
+    text
+}
+
+fn feed_xml(posts: &[BlogPost]) -> String {
+    let mut xml = String::from(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\">\n",
+    );
+    xml.push_str(&format!(
+        "  <title>{}</title>\n  <link href=\"{}\" rel=\"alternate\"/>\n  <link href=\"{}\" rel=\"self\"/>\n  <id>{}/blog</id>\n",
+        xml_escape("Sharif Haason — Writing"),
+        xml_escape(&site_url("/blog")),
+        xml_escape(&site_url("/feed.xml")),
+        xml_escape(SITE_ORIGIN)
+    ));
+    if let Some(post) = posts.first() {
+        xml.push_str(&format!(
+            "  <updated>{}</updated>\n",
+            xml_escape(&atom_timestamp(&post.date))
+        ));
+    }
+    for post in posts {
+        let url = site_url(&format!("/blog/{}", post.slug));
+        xml.push_str(&format!(
+            "  <entry><title>{}</title><link href=\"{}\"/><id>{}</id><updated>{}</updated><summary>{}</summary></entry>\n",
+            xml_escape(&post.title),
+            xml_escape(&url),
+            xml_escape(&url),
+            xml_escape(&atom_timestamp(&post.date)),
+            xml_escape(&post.description)
+        ));
+    }
+    xml.push_str("</feed>\n");
+    xml
+}
+
+fn atom_timestamp(date: &str) -> String {
+    if date.len() == 10 {
+        format!("{}T00:00:00Z", date)
+    } else {
+        date.to_owned()
+    }
 }
 
 fn toml_string(value: &TomlValue) -> Option<String> {
@@ -344,7 +623,7 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             .and_then(TomlValue::as_str)
             .unwrap_or_default()
             .to_owned();
-        let description = metadata
+        let metadata_description = metadata
             .get("description")
             .and_then(TomlValue::as_str)
             .unwrap_or_default()
@@ -355,6 +634,11 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?
             .to_owned();
         let body = markdown_body.replace("<!-- more -->", "").trim().to_owned();
+        let description = if metadata_description.trim().is_empty() {
+            summarize_markdown(&body, &title)
+        } else {
+            metadata_description
+        };
         let body_html = render_markdown(&body);
         let has_math = body.contains("$$") || body.contains("\\(") || body.contains("\\[");
         let sort_key = metadata
@@ -477,11 +761,26 @@ fn popular_tag_groups(posts: &[BlogPost]) -> Vec<BlogTagGroup> {
 
 fn render_blog_index(posts: &[BlogPost]) -> Result<Html<String>, StatusCode> {
     let tag_groups = popular_tag_groups(posts);
+    let canonical_url = site_url("/blog");
+    let structured_data = safe_json(&serde_json::json!({
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "@id": format!("{canonical_url}#webpage"),
+        "url": canonical_url,
+        "name": page_title("blog"),
+        "description": page_description("blog"),
+        "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
+        "about": {"@id": format!("{SITE_ORIGIN}/#person")},
+        "numberOfItems": posts.len(),
+        "inLanguage": "en-US"
+    }));
 
     BlogIndex {
         posts,
         total: posts.len(),
         tag_groups: &tag_groups,
+        canonical_url: &canonical_url,
+        structured_data: &structured_data,
     }
     .render()
     .map(Html)
@@ -493,65 +792,105 @@ fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, S
         .iter()
         .find(|post| post.slug == slug)
         .ok_or(StatusCode::NOT_FOUND)?;
-    BlogArticle { post }
-        .render()
-        .map(Html)
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
+    let canonical_url = site_url(&format!("/blog/{}", post.slug));
+    let structured_data = article_json_ld(post, &canonical_url);
+    BlogArticle {
+        post,
+        canonical_url: &canonical_url,
+        structured_data: &structured_data,
+    }
+    .render()
+    .map(Html)
+    .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
 }
 
-fn render_design(id: u8, page: &str) -> Result<Html<String>, StatusCode> {
-    if !(1..=6).contains(&id) || !["home", "blog", "projects", "resume"].contains(&page) {
+fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
+    if !["home", "projects", "resume"].contains(&page) {
         return Err(StatusCode::NOT_FOUND);
     }
     let resume_html = markdown::to_html(include_str!("../content/resume-current.md"));
-    macro_rules! render {
-        ($name:ident) => {
-            $name {
-                page,
-                resume_html: &resume_html,
-                pdf_available: FilePath::new("static/resume/sharif-haason.pdf").is_file(),
-                docx_available: FilePath::new("static/resume/sharif-haason.docx").is_file(),
-                photo_available: FilePath::new("static/img/profile.jpg").is_file(),
-            }
-            .render()
-        };
+    let title = page_title(page);
+    let description = page_description(page);
+    let canonical_url = site_url(site_path(page));
+    let structured_data = page_json_ld(&canonical_url, page);
+    Site {
+        page,
+        title,
+        description,
+        canonical_url: &canonical_url,
+        structured_data: &structured_data,
+        resume_html: &resume_html,
+        pdf_available: FilePath::new("static/resume/sharif-haason.pdf").is_file(),
+        docx_available: FilePath::new("static/resume/sharif-haason.docx").is_file(),
+        photo_available: FilePath::new("static/img/profile.jpg").is_file(),
     }
-    let html = match id {
-        1 => render!(Variant1),
-        2 => render!(Variant2),
-        3 => render!(Variant3),
-        4 => render!(Variant4),
-        5 => render!(Variant5),
-        6 => render!(Variant6),
-        _ => unreachable!(),
-    }
-    .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-    Ok(Html(html))
+    .render()
+    .map(Html)
+    .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
 }
 
-async fn home(Path(id): Path<u8>) -> Result<Html<String>, StatusCode> {
-    render_design(id, "home")
+async fn home() -> Result<Html<String>, StatusCode> {
+    render_site("home")
 }
-async fn page(
-    State(posts): State<Arc<Vec<BlogPost>>>,
-    Path((id, page)): Path<(u8, String)>,
-) -> Result<Html<String>, StatusCode> {
-    if id == 6 && page == "blog" {
-        return render_blog_index(posts.as_slice());
-    }
-    render_design(id, &page)
+
+async fn projects() -> Result<Html<String>, StatusCode> {
+    render_site("projects")
 }
+
+async fn resume() -> Result<Html<String>, StatusCode> {
+    render_site("resume")
+}
+
+async fn blog_index(State(posts): State<Arc<Vec<BlogPost>>>) -> Result<Html<String>, StatusCode> {
+    render_blog_index(posts.as_slice())
+}
+
 async fn blog_article(
     State(posts): State<Arc<Vec<BlogPost>>>,
     Path(slug): Path<String>,
 ) -> Result<Html<String>, StatusCode> {
     render_blog_article(posts.as_slice(), &slug)
 }
-async fn designs() -> Result<Html<String>, StatusCode> {
-    Designs
-        .render()
-        .map(Html)
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
+
+async fn robots() -> Response {
+    text_response("text/plain; charset=utf-8", robots_txt_content())
+}
+
+async fn sitemap(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
+    text_response(
+        "application/xml; charset=utf-8",
+        sitemap_xml(posts.as_slice()),
+    )
+}
+
+async fn llms(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
+    text_response("text/plain; charset=utf-8", llms_txt(posts.as_slice()))
+}
+
+async fn feed(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
+    text_response(
+        "application/atom+xml; charset=utf-8",
+        feed_xml(posts.as_slice()),
+    )
+}
+
+async fn legacy_home(Path(_id): Path<u8>) -> Redirect {
+    Redirect::permanent("/")
+}
+
+async fn legacy_page(Path((_id, page)): Path<(u8, String)>) -> Redirect {
+    let target = match page.as_str() {
+        "blog" => "/blog",
+        "projects" => "/projects",
+        "resume" => "/resume",
+        _ => "/",
+    };
+    Redirect::permanent(target)
+}
+
+async fn legacy_blog_article(Path(slug): Path<String>) -> Redirect {
+    let target = format!("/blog/{slug}");
+    Redirect::permanent(&target)
 }
 
 #[tokio::main]
@@ -577,27 +916,26 @@ async fn main() {
 
     let posts = Arc::new(load_blog_posts().expect("Could not load blog content"));
     let app = Router::new()
-        .route("/", get(|| async { Redirect::temporary("/v/6") }))
-        .route("/designs", get(designs))
-        .route("/v/{id}", get(home))
-        .route("/v/6/blog/{slug}", get(blog_article))
-        .route("/v/{id}/{page}", get(page))
-        .route("/blog", get(|| async { Redirect::temporary("/v/6/blog") }))
-        .route(
-            "/projects",
-            get(|| async { Redirect::temporary("/v/6/projects") }),
-        )
-        .route(
-            "/resume",
-            get(|| async { Redirect::temporary("/v/6/resume") }),
-        )
+        .route("/", get(home))
+        .route("/blog", get(blog_index))
+        .route("/blog/{slug}", get(blog_article))
+        .route("/projects", get(projects))
+        .route("/resume", get(resume))
+        .route("/robots.txt", get(robots))
+        .route("/sitemap.xml", get(sitemap))
+        .route("/llms.txt", get(llms))
+        .route("/feed.xml", get(feed))
+        .route("/v/6/blog/{slug}", get(legacy_blog_article))
+        .route("/v/{id}/{page}", get(legacy_page))
+        .route("/v/{id}", get(legacy_home))
+        .route("/designs", get(|| async { Redirect::permanent("/") }))
         .nest_service("/static", ServeDir::new("static"))
         .with_state(posts);
     let address = std::env::var("PORTFOLIA_BIND").unwrap_or_else(|_| "127.0.0.1:8095".into());
     let listener = tokio::net::TcpListener::bind(&address)
         .await
         .expect("Could not bind preview address");
-    println!("Portfolia design studies: http://{address}/designs");
+    println!("Portfolia: http://{address}/");
     axum::serve(listener, app)
         .await
         .expect("Could not serve application");
@@ -629,30 +967,48 @@ mod tests {
     }
 
     #[test]
-    fn all_design_pages_render_with_real_assets() {
-        for id in 1..=6 {
-            for page in ["home", "blog", "projects", "resume"] {
-                let Html(html) = render_design(id, page).unwrap();
-                assert!(html.contains("Sharif"), "design {id}/{page}");
-                assert!(html.contains(&format!("/v/{id}/blog")));
-                assert!(html.contains(&format!("/v/{id}/projects")));
-                assert!(html.contains(&format!("/v/{id}/resume")));
-                if page == "resume" {
-                    assert!(html.contains("Monark Markets"));
-                    assert!(html.contains("/static/resume/sharif-haason.pdf"));
-                    assert!(html.contains("/static/resume/sharif-haason.docx"));
-                }
+    fn canonical_pages_render_with_metadata_and_real_assets() {
+        for page in ["home", "projects", "resume"] {
+            let Html(html) = render_site(page).unwrap();
+            assert!(html.contains("Sharif Haason"), "page {page}");
+            assert!(html.contains("https://schema.org"));
+            assert!(html.contains("<link rel=\"canonical\""));
+            assert!(!html.contains("/v/6"));
+            assert!(!html.contains("/designs"));
+            assert!(html.contains("/blog"));
+            assert!(html.contains("/projects"));
+            assert!(html.contains("/resume"));
+            if page == "resume" {
+                assert!(html.contains("Monark Markets"));
+                assert!(html.contains("/static/resume/sharif-haason.pdf"));
+                assert!(html.contains("/static/resume/sharif-haason.docx"));
             }
         }
+        assert_eq!(render_site("blog").unwrap_err(), StatusCode::NOT_FOUND);
+        assert_eq!(render_site("missing").unwrap_err(), StatusCode::NOT_FOUND);
     }
+
     #[test]
-    fn unknown_variants_and_pages_are_not_found() {
-        assert_eq!(render_design(0, "home").unwrap_err(), StatusCode::NOT_FOUND);
-        assert_eq!(render_design(7, "home").unwrap_err(), StatusCode::NOT_FOUND);
-        assert_eq!(
-            render_design(1, "missing").unwrap_err(),
-            StatusCode::NOT_FOUND
-        );
+    fn machine_readable_endpoints_cover_the_canonical_site() {
+        let posts = load_blog_posts().unwrap();
+        assert!(posts.iter().all(|post| !post.description.trim().is_empty()));
+        let sitemap = sitemap_xml(&posts);
+        assert_eq!(sitemap.matches("<url>").count(), posts.len() + 4);
+        assert!(sitemap.contains("https://sharifhsn.dev/blog/circuits"));
+
+        let llms = llms_txt(&posts);
+        assert!(llms.starts_with("# Sharif Haason"));
+        assert!(llms.contains("[Writing index](https://sharifhsn.dev/blog):"));
+        assert!(llms.contains("[Circuits](https://sharifhsn.dev/blog/circuits):"));
+
+        let feed = feed_xml(&posts);
+        assert!(feed.contains("<feed xmlns=\"http://www.w3.org/2005/Atom\">"));
+        assert_eq!(feed.matches("<entry>").count(), posts.len());
+        assert!(feed.contains(&format!(
+            "<updated>{}</updated>",
+            atom_timestamp(&posts[0].date)
+        )));
+        assert!(robots_txt_content().contains("Allow: /"));
     }
 
     #[test]
@@ -906,7 +1262,7 @@ mod tests {
         let posts = load_blog_posts().unwrap();
         let Html(index) = render_blog_index(&posts).unwrap();
         assert!(!index.contains("110 pieces, newest first"));
-        assert!(index.contains("/v/6/blog/circuits"));
+        assert!(index.contains("/blog/circuits"));
         assert!(index.contains("Default Fields in Rust Structs"));
         assert!(index.contains("Minneapolis Housing and Zoning"));
         assert!(index.contains("Bond Pricing, Duration, and DV01"));
@@ -937,6 +1293,8 @@ mod tests {
         let Html(article) = render_blog_article(&posts, "circuits").unwrap();
         assert!(article.contains("Electromotive Force"));
         assert!(article.contains("/static/js/auto-render.min.js"));
+        assert!(article.contains("https://sharifhsn.dev/blog/circuits"));
+        assert!(article.contains("application/ld+json"));
 
         let Html(course_article) =
             render_blog_article(&posts, "computational-methods-week-02").unwrap();

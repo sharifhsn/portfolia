@@ -6,7 +6,9 @@ Portfolia can be built as static HTML and served without the Axum server. The Ru
 
 Run `just static` to replace `dist/` with the static site. Run `just pages-preview` to preview it with Wrangler on `127.0.0.1:8097`.
 
-The root page uses Variant 6. `/designs` remains available for the design studies. The blog index and every article are exported as their own routes. `/blog`, `/projects`, and `/resume` redirect to their Variant 6 routes. A root `404.html` prevents Pages from treating unknown routes as a single-page app.
+The settled design is the canonical site at `/`. The exporter writes the root page, `/blog`, `/projects`, `/resume`, every `/blog/{slug}` article, and the machine-readable `/robots.txt`, `/sitemap.xml`, `/llms.txt`, and `/feed.xml` endpoints. Older `/v/*` and `/designs` URLs are compatibility redirects only; new links and canonical tags never point to those paths. A root `404.html` prevents Pages from treating unknown routes as a single-page app.
+
+The source-grounded hosting record, including the Cloudflare domain and DNS findings from the Hosting session, is in [`context/HOSTING.md`](HOSTING.md).
 
 ## First deployment
 

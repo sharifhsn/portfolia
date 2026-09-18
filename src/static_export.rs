@@ -1,8 +1,7 @@
-use askama::Template;
 use axum::http::StatusCode;
 use std::{fs, io, path::Path};
 
-use super::{BlogPost, Designs, render_blog_article, render_blog_index, render_design};
+use super::{BlogPost, render_blog_article, render_blog_index, render_site};
 
 pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()> {
     if output_dir.exists() {
@@ -10,32 +9,25 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     }
     fs::create_dir_all(output_dir)?;
 
-    let home = render_design(6, "home").map_err(render_status_error)?;
+    let home = render_site("home").map_err(render_status_error)?;
     write_route(output_dir, "", &home.0)?;
 
-    let designs = Designs
-        .render()
-        .map_err(|error| io::Error::other(error.to_string()))?;
-    write_route(output_dir, "designs", &designs)?;
-
-    for id in 1..=6 {
-        let home = render_design(id, "home").map_err(render_status_error)?;
-        write_route(output_dir, &format!("v/{id}"), &home.0)?;
-
-        for page in ["blog", "projects", "resume"] {
-            let html = if id == 6 && page == "blog" {
-                render_blog_index(posts).map_err(render_status_error)?
-            } else {
-                render_design(id, page).map_err(render_status_error)?
-            };
-            write_route(output_dir, &format!("v/{id}/{page}"), &html.0)?;
-        }
-    }
+    let blog = render_blog_index(posts).map_err(render_status_error)?;
+    write_route(output_dir, "blog", &blog.0)?;
+    let projects = render_site("projects").map_err(render_status_error)?;
+    write_route(output_dir, "projects", &projects.0)?;
+    let resume = render_site("resume").map_err(render_status_error)?;
+    write_route(output_dir, "resume", &resume.0)?;
 
     for post in posts {
         let html = render_blog_article(posts, &post.slug).map_err(render_status_error)?;
-        write_route(output_dir, &format!("v/6/blog/{}", post.slug), &html.0)?;
+        write_route(output_dir, &format!("blog/{}", post.slug), &html.0)?;
     }
+
+    fs::write(output_dir.join("robots.txt"), super::robots_txt_content())?;
+    fs::write(output_dir.join("sitemap.xml"), super::sitemap_xml(posts))?;
+    fs::write(output_dir.join("llms.txt"), super::llms_txt(posts))?;
+    fs::write(output_dir.join("feed.xml"), super::feed_xml(posts))?;
 
     copy_directory(
         Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -44,26 +36,27 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
         output_dir.join("static").as_path(),
     )?;
 
-    let mut redirects =
-        String::from("/blog /v/6/blog 302\n/projects /v/6/projects 302\n/resume /v/6/resume 302\n");
+    let mut redirects = String::from(
+        "/v/6 / 301\n/designs / 301\n/v/:id / 301\n/v/:id/blog /blog 301\n/v/:id/projects /projects 301\n/v/:id/resume /resume 301\n/v/6/blog/:slug /blog/:slug 301\n",
+    );
     for week in 1..=14 {
         if week == 8 {
             continue;
         }
         redirects.push_str(&format!(
-            "/v/6/blog/fe621-week-{week:02} /v/6/blog/computational-methods-week-{week:02} 301\n"
+            "/v/6/blog/fe621-week-{week:02} /blog/computational-methods-week-{week:02} 301\n"
         ));
     }
     for week in 1..=13 {
         redirects.push_str(&format!(
-            "/v/6/blog/fe680-week-{week:02} /v/6/blog/advanced-derivatives-week-{week:02} 301\n"
+            "/v/6/blog/fe680-week-{week:02} /blog/advanced-derivatives-week-{week:02} 301\n"
         ));
     }
     redirects.push_str(
-        "/v/6/blog/fe621-finite-difference-sketches /v/6/blog/computational-methods-finite-difference-sketches 301\n",
+        "/v/6/blog/fe621-finite-difference-sketches /blog/computational-methods-finite-difference-sketches 301\n",
     );
     redirects.push_str(
-        "/v/6/blog/fe621-midterm-cheat-sheet /v/6/blog/computational-methods-midterm-cheat-sheet 301\n",
+        "/v/6/blog/fe621-midterm-cheat-sheet /blog/computational-methods-midterm-cheat-sheet 301\n",
     );
     fs::write(output_dir.join("_redirects"), redirects)?;
     fs::write(
@@ -74,13 +67,13 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Page not found | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/variant6.css">
+  <link rel="stylesheet" href="/static/css/site.css">
 </head>
 <body>
   <main class="content">
     <h1>Page not found</h1>
     <p>This page may have moved or no longer exists.</p>
-    <p><a href="/">Go to the home page</a> or <a href="/v/6/blog">browse the writing</a>.</p>
+    <p><a href="/">Go to the home page</a> or <a href="/blog">browse the writing</a>.</p>
   </main>
 </body>
 </html>
@@ -147,27 +140,30 @@ mod tests {
 
         let home = fs::read_to_string(output.join("index.html")).expect("root page exists");
         assert!(home.contains("Sharif Haason"));
-        assert!(output.join("designs/index.html").is_file());
-        assert!(output.join("v/6/blog/index.html").is_file());
+        assert!(output.join("blog/index.html").is_file());
+        assert!(output.join("projects/index.html").is_file());
+        assert!(output.join("resume/index.html").is_file());
+        assert!(output.join("robots.txt").is_file());
+        assert!(output.join("sitemap.xml").is_file());
+        assert!(output.join("llms.txt").is_file());
+        assert!(output.join("feed.xml").is_file());
         assert!(output.join("404.html").is_file());
         let redirects = fs::read_to_string(output.join("_redirects")).expect("redirects exist");
         assert!(
-            redirects
-                .contains("/v/6/blog/fe621-week-02 /v/6/blog/computational-methods-week-02 301")
+            redirects.contains("/v/6/blog/fe621-week-02 /blog/computational-methods-week-02 301")
         );
         assert!(
-            redirects
-                .contains("/v/6/blog/fe680-week-01 /v/6/blog/advanced-derivatives-week-01 301")
+            redirects.contains("/v/6/blog/fe680-week-01 /blog/advanced-derivatives-week-01 301")
         );
-        assert!(output.join("static/css/variant6.css").is_file());
+        assert!(output.join("static/css/site.css").is_file());
 
         let blog_index =
-            fs::read_to_string(output.join("v/6/blog/index.html")).expect("blog index exists");
+            fs::read_to_string(output.join("blog/index.html")).expect("blog index exists");
         assert!(blog_index.contains(&format!("{} pieces", posts.len())));
         for post in &posts {
             assert!(
                 output
-                    .join("v/6/blog")
+                    .join("blog")
                     .join(&post.slug)
                     .join("index.html")
                     .is_file(),

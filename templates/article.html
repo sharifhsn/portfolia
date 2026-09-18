@@ -3,24 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Sharif Haason">
   <meta name="description" content="{{ post.description }}">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="alternate" type="application/atom+xml" title="Sharif Haason — Writing" href="/feed.xml">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ post.title }} | Sharif Haason">
+  <meta property="og:description" content="{{ post.description }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:site_name" content="Sharif Haason">
   <title>{{ post.title }} | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/variant6.css?v=20260916-5">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260918-1">
+  <script type="application/ld+json">{{ structured_data|safe }}</script>
   {% if post.has_math %}<link rel="stylesheet" href="/static/css/katex.min.css">{% endif %}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="site-shell">
     <header class="site-header">
-      <a class="site-name" href="/v/6">Sharif Haason</a>
+      <a class="site-name" href="/">Sharif Haason</a>
       <nav aria-label="Main navigation">
-        <a href="/v/6/blog" aria-current="page">Blog</a>
-        <a href="/v/6/projects">Projects</a>
-        <a href="/v/6/resume">Resume</a>
+        <a href="/blog" aria-current="page">Blog</a>
+        <a href="/projects">Projects</a>
+        <a href="/resume">Resume</a>
       </nav>
     </header>
     <main id="main" class="content article-content">
-      <p class="back-link"><a href="/v/6/blog">All writing</a></p>
+      <p class="back-link"><a href="/blog">All writing</a></p>
       <article>
         <header class="article-header">
           <h1>{{ post.title }}</h1>
@@ -39,11 +49,11 @@
         <p class="original-source"><a href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer">View the original LinkedIn post</a></p>
         {% endif %}
       </article>
-      <p class="back-link bottom-back-link"><a href="/v/6/blog">Back to all writing</a></p>
+      <p class="back-link bottom-back-link"><a href="/blog">Back to all writing</a></p>
     </main>
     <footer class="site-footer">
       <span>Sharif Haason</span>
-      <a href="/designs">Design studies</a>
+      <a href="/feed.xml">RSS</a>
     </footer>
   </div>
   {% if post.has_math %}
