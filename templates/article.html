@@ -13,10 +13,26 @@
   <meta property="og:description" content="{{ post.description }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Sharif Haason">
+  {% if let Some(published_at) = post.published_at %}<meta property="article:published_time" content="{{ published_at }}">
+  {% else %}<meta property="article:published_time" content="{{ post.date }}">
+  {% endif %}
+  {% if let Some(updated_at) = post.updated_at %}<meta property="article:modified_time" content="{{ updated_at }}">
+  {% endif %}
+  {% for tag in post.tags %}<meta property="article:tag" content="{{ tag }}">
+  {% endfor %}
   <title>{{ post.title }} | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260918-1">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260918-3">
+  <link rel="author" href="/resume/">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
-  {% if post.has_math %}<link rel="stylesheet" href="/static/css/katex.min.css">{% endif %}
+  <link rel="alternate" type="application/feed+json" title="Sharif Haason — JSON Feed" href="/feed.json">
+  <link rel="alternate" type="application/json" title="Structured article data" href="/api/posts/{{ post.slug }}.json">
+  <link rel="alternate" type="application/json" title="Sharif Haason — structured projects" href="/api/projects.json">
+  <link rel="alternate" type="application/json" title="Sharif Haason — structured profile" href="/api/profile.json">
+  <link rel="service-desc" type="application/vnd.oai.openapi+json" title="Structured API" href="/api/openapi.json">
+  <link rel="alternate" type="application/json" title="Agent discovery manifest" href="/.well-known/agent.json">
+  <link rel="alternate" type="text/plain" title="Sharif Haason — full writing corpus" href="/llms-full.txt">
+  {% if post.has_math %}<link rel="stylesheet" href="/static/css/katex.min.css?v=20260918-1">{% endif %}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -24,19 +40,20 @@
     <header class="site-header">
       <a class="site-name" href="/">Sharif Haason</a>
       <nav aria-label="Main navigation">
-        <a href="/blog" aria-current="page">Blog</a>
-        <a href="/projects">Projects</a>
-        <a href="/resume">Resume</a>
+        <a href="/blog/" aria-current="page">Blog</a>
+        <a href="/projects/">Projects</a>
+        <a href="/resume/">Resume</a>
       </nav>
     </header>
     <main id="main" class="content article-content">
-      <p class="back-link"><a href="/blog">All writing</a></p>
+      <p class="back-link"><a href="/blog/">All writing</a></p>
       <article>
         <header class="article-header">
           <h1>{{ post.title }}</h1>
           <div class="article-meta">
             <time datetime="{{ post.date }}">{{ post.date_display }}</time>
-            {% if post.source == "LinkedIn" %}<span>Originally posted on LinkedIn</span>{% endif %}
+            <span>Article {{ position }} of {{ total }}</span>
+            {% if post.source != "" %}<span>Source: {{ post.source }}</span>{% endif %}
           </div>
           {% if post.display_tags.len() > 0 %}
           <ul class="article-labels">
@@ -46,19 +63,30 @@
         </header>
         <div class="post-body">{{ post.body_html|safe }}</div>
         {% if post.source_url != "" %}
-        <p class="original-source"><a href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer">View the original LinkedIn post</a></p>
+        <p class="original-source"><a href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer">View the original {{ post.source }} source</a></p>
         {% endif %}
       </article>
-      <p class="back-link bottom-back-link"><a href="/blog">Back to all writing</a></p>
+      <nav class="article-nav" aria-label="Article navigation">
+        {% if let Some(previous) = previous %}<a rel="prev" href="/blog/{{ previous.slug }}/"><span>Older</span>{{ previous.title }}</a>{% endif %}
+        {% if let Some(next) = next %}<a rel="next" href="/blog/{{ next.slug }}/"><span>Newer</span>{{ next.title }}</a>{% endif %}
+      </nav>
+      <p class="back-link bottom-back-link"><a href="/blog/">Back to all writing</a></p>
     </main>
     <footer class="site-footer">
       <span>Sharif Haason</span>
-      <a href="/feed.xml">RSS</a>
+      <nav aria-label="Machine-readable resources">
+        <a href="/feed.xml">RSS</a>
+        <a href="/feed.json">JSON feed</a>
+        <a href="/llms.txt">LLM guide</a>
+        <a href="/api/openapi.json">API</a>
+        <a href="/.well-known/agent.json">Agent manifest</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
     </footer>
   </div>
   {% if post.has_math %}
-  <script defer src="/static/js/katex.min.js"></script>
-  <script defer src="/static/js/auto-render.min.js"></script>
+  <script defer src="/static/js/katex.min.js?v=20260918-1"></script>
+  <script defer src="/static/js/auto-render.min.js?v=20260918-1"></script>
   <script>
     window.addEventListener("DOMContentLoaded", () => {
       renderMathInElement(document.querySelector(".post-body"), {

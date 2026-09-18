@@ -1,0 +1,59 @@
+[[projects]]
+slug = "implied-willow-tree"
+name = "Implied Willow Tree for Derivatives"
+kind = "Quantitative research capstone"
+dates = "September 2025 – December 2025"
+technologies = "Python, numerical optimization, Treasury futures options"
+summary = "A study of risk-neutral densities from 10Y Treasury futures options, with martingale and no-arbitrage constraints for a new objective function."
+details = [
+  "Extends the willow-tree idea from equity options toward a liquid interest-rate derivatives market.",
+  "Uses capital-markets information and discretized risk-neutral nodes to study path-dependent pricing."
+]
+
+[[projects]]
+slug = "high-frequency-trading-competition"
+name = "High Frequency Trading Competition"
+kind = "University competition"
+dates = "March 2025 – May 2025"
+technologies = "Python, VWAP, SHIFT, FIX protocol, GitHub"
+summary = "A second-place market-making strategy that used VWAP to predict trends and adapt order size."
+details = [
+  "Led the team, delegated backtesting and research, and kept the group aligned through meeting notes.",
+  "Built backtesting and algorithm components and acted as the point of contact for SHIFT and FIX issues."
+]
+
+[[projects]]
+slug = "hornet-trading-contest"
+name = "Hornet Trading Contest"
+kind = "Class project"
+dates = "February 2025 – May 2025"
+technologies = "VBA, Bloomberg, bond and FX derivatives"
+summary = "A risk-engineering trading contest covering zero-coupon bonds, forwards, calls, and puts on USDMXN."
+details = [
+  "Wrote VBA to calculate Delta, Gamma, USD and MXN Rho, and Vega for traded instruments.",
+  "Used current-events information from Bloomberg to anticipate a falling dollar and adjust delta exposure."
+]
+
+[[projects]]
+slug = "nba-defensive-impact-analysis"
+name = "NBA Defensive Impact Analysis"
+kind = "Personal project"
+dates = "July 2024 – August 2024"
+technologies = "Python, APIs, Pandas, SQL, MSSQL, Azure SQL, Power BI"
+summary = "A data pipeline that cleaned gigabytes of API data, cached rate-limited requests, and moved analysis into SQL for Power BI."
+details = [
+  "Removed unnecessary columns and changed data types to improve memory use.",
+  "Added backoff and caching for repeated API collection, then synchronized SQL tables to Azure SQL."
+]
+
+[[projects]]
+slug = "nba-reddit-ai-chatbot"
+name = "NBA Reddit AI Chatbot"
+kind = "Personal project"
+dates = "December 2023 – January 2024"
+technologies = "Python, LangChain, retrieval-augmented generation"
+summary = "A chatbot over daily NBA subreddit posts and comments, tuned to understand community slang and nested discussion structure."
+details = [
+  "Built a LangChain retrieval pipeline over the collected post and comment corpus.",
+  "Used prompt engineering to make answers preserve the source community's terminology and context."
+]

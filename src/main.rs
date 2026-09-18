@@ -8,6 +8,7 @@ use axum::{
     response::{Html, IntoResponse, Redirect, Response},
     routing::get,
 };
+use serde::Deserialize;
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
@@ -38,6 +39,7 @@ struct Site<'a> {
     description: &'a str,
     canonical_url: &'a str,
     structured_data: &'a str,
+    projects: &'a [Project],
     resume_html: &'a str,
     pdf_available: bool,
     docx_available: bool,
@@ -50,14 +52,19 @@ struct BlogPost {
     title: String,
     date: String,
     date_display: String,
+    published_at: Option<String>,
+    updated_at: Option<String>,
     description: String,
     tags: Vec<String>,
+    categories: Vec<String>,
     display_tags: Vec<String>,
     tag_keys: String,
     search_text: String,
     source: String,
     source_url: String,
+    body_markdown: String,
     body_html: String,
+    word_count: usize,
     has_math: bool,
     sort_key: String,
 }
@@ -71,6 +78,22 @@ struct BlogTag {
 struct BlogTagGroup {
     name: String,
     tags: Vec<BlogTag>,
+}
+
+#[derive(Clone, Deserialize)]
+struct Project {
+    slug: String,
+    name: String,
+    kind: String,
+    dates: String,
+    technologies: String,
+    summary: String,
+    details: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct ProjectDocument {
+    projects: Vec<Project>,
 }
 
 #[derive(Template)]
@@ -89,18 +112,37 @@ struct BlogArticle<'a> {
     post: &'a BlogPost,
     canonical_url: &'a str,
     structured_data: &'a str,
+    previous: Option<&'a BlogPost>,
+    next: Option<&'a BlogPost>,
+    position: usize,
+    total: usize,
 }
 
 fn site_url(path: &str) -> String {
-    format!("{SITE_ORIGIN}{path}")
+    format!("{SITE_ORIGIN}{}", canonical_path(path))
+}
+
+fn canonical_path(path: &str) -> String {
+    if path == "/"
+        || path.ends_with('/')
+        || path.rsplit('/').next().is_some_and(|part| {
+            [".json", ".xml", ".txt", ".pdf", ".docx"]
+                .iter()
+                .any(|suffix| part.ends_with(suffix))
+        })
+    {
+        path.to_owned()
+    } else {
+        format!("{path}/")
+    }
 }
 
 fn site_path(page: &str) -> &'static str {
     match page {
         "home" => "/",
-        "blog" => "/blog",
-        "projects" => "/projects",
-        "resume" => "/resume",
+        "blog" => "/blog/",
+        "projects" => "/projects/",
+        "resume" => "/resume/",
         _ => "/",
     }
 }
@@ -185,6 +227,56 @@ fn page_json_ld(canonical_url: &str, page: &str) -> String {
     }))
 }
 
+fn projects_json_ld(canonical_url: &str, projects: &[Project]) -> String {
+    let items = projects
+        .iter()
+        .enumerate()
+        .map(|(index, project)| {
+            serde_json::json!({
+                "@type": "ListItem",
+                "position": index + 1,
+                "url": format!("{canonical_url}#project-{}", project.slug),
+                "item": {
+                    "@type": "CreativeWork",
+                    "@id": format!("{canonical_url}#project-{}", project.slug),
+                    "name": project.name,
+                    "description": project.summary,
+                    "keywords": project.technologies,
+                    "author": {"@id": format!("{SITE_ORIGIN}/#person")}
+                }
+            })
+        })
+        .collect::<Vec<_>>();
+    safe_json(&serde_json::json!({
+        "@context": "https://schema.org",
+        "@graph": [
+            person_json_ld(),
+            {
+                "@type": "WebSite",
+                "@id": format!("{SITE_ORIGIN}/#website"),
+                "url": SITE_ORIGIN,
+                "name": SITE_NAME,
+                "publisher": {"@id": format!("{SITE_ORIGIN}/#person")}
+            },
+            {
+                "@type": "CollectionPage",
+                "@id": format!("{canonical_url}#webpage"),
+                "url": canonical_url,
+                "name": page_title("projects"),
+                "description": page_description("projects"),
+                "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
+                "about": {"@id": format!("{SITE_ORIGIN}/#person")},
+                "mainEntity": {
+                    "@type": "ItemList",
+                    "numberOfItems": projects.len(),
+                    "itemListElement": items
+                },
+                "inLanguage": "en-US"
+            }
+        ]
+    }))
+}
+
 fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
     let mut article = serde_json::json!({
         "@context": "https://schema.org",
@@ -193,15 +285,21 @@ fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
         "url": canonical_url,
         "headline": post.title,
         "description": post.description,
-        "datePublished": post.date,
-        "dateModified": post.date,
+        "datePublished": post.published_at.as_deref().unwrap_or(&post.date),
         "author": {"@id": format!("{SITE_ORIGIN}/#person")},
         "publisher": {"@id": format!("{SITE_ORIGIN}/#person")},
+        "mainEntityOfPage": {"@id": canonical_url},
+        "articleSection": post.tags,
+        "genre": post.categories,
         "keywords": post.tags,
+        "wordCount": post.word_count,
         "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
         "inLanguage": "en-US",
         "isAccessibleForFree": true
     });
+    if let Some(updated_at) = &post.updated_at {
+        article["dateModified"] = serde_json::Value::String(updated_at.clone());
+    }
     if !post.source_url.is_empty() {
         article["citation"] = serde_json::Value::String(post.source_url.clone());
     }
@@ -230,9 +328,7 @@ fn summarize_markdown(source: &str, title: &str) -> String {
     let summary = paragraph
         .replace("**", "")
         .replace("__", "")
-        .replace('*', "")
-        .replace('`', "")
-        .replace('>', "")
+        .replace(['*', '`', '>'], "")
         .split_whitespace()
         .collect::<Vec<_>>()
         .join(" ");
@@ -255,6 +351,11 @@ fn xml_escape(source: &str) -> String {
 
 fn text_response(content_type: &'static str, body: String) -> Response {
     ([(header::CONTENT_TYPE, content_type)], body).into_response()
+}
+
+fn json_response(value: &serde_json::Value) -> Response {
+    let body = serde_json::to_string(value).expect("JSON endpoint should serialize");
+    text_response("application/json; charset=utf-8", body)
 }
 
 fn robots_txt_content() -> String {
@@ -299,6 +400,41 @@ fn llms_txt(posts: &[BlogPost]) -> String {
             "Atom feed for the writing archive.",
         ),
         (
+            "JSON feed",
+            "/feed.json",
+            "JSON Feed 1.1 representation of the writing archive.",
+        ),
+        (
+            "Structured writing index",
+            "/api/posts.json",
+            "JSON metadata for every article, with stable article-data URLs.",
+        ),
+        (
+            "Structured projects",
+            "/api/projects.json",
+            "JSON metadata for the selected projects shown on the projects page.",
+        ),
+        (
+            "Structured profile",
+            "/api/profile.json",
+            "Public profile, social links, resume downloads, and discovery URLs.",
+        ),
+        (
+            "Agent manifest",
+            "/.well-known/agent.json",
+            "Read-only discovery manifest for machine clients.",
+        ),
+        (
+            "OpenAPI description",
+            "/api/openapi.json",
+            "OpenAPI 3.1 description of the structured read endpoints.",
+        ),
+        (
+            "Full writing corpus",
+            "/llms-full.txt",
+            "The complete public writing corpus as Markdown with article metadata.",
+        ),
+        (
             "Sitemap",
             "/sitemap.xml",
             "Machine-readable list of canonical pages.",
@@ -318,20 +454,360 @@ fn llms_txt(posts: &[BlogPost]) -> String {
         } else {
             &post.description
         };
+        let published = post.published_at.as_deref().unwrap_or(&post.date);
+        let source = if post.source.is_empty() {
+            "unspecified"
+        } else {
+            &post.source
+        };
         let tags = if post.tags.is_empty() {
             String::new()
         } else {
             format!(" Topics: {}.", post.tags.join(", "))
         };
         text.push_str(&format!(
-            "- [{}]({}): {}{}\n",
+            "- [{}]({}): {} Date: {}. Source: {}.{}\n",
             clean_inline_text(&post.title),
             site_url(&format!("/blog/{}", post.slug)),
             clean_inline_text(description),
+            clean_inline_text(published),
+            clean_inline_text(source),
             tags
         ));
     }
     text
+}
+
+fn llms_full_txt(posts: &[BlogPost]) -> String {
+    let mut text = String::from(
+        "# Sharif Haason — full writing corpus\n\nThis is the complete public writing archive in Markdown. The canonical page for each article and its structured JSON representation are included in the metadata block.\n\n",
+    );
+    for post in posts {
+        let published = post.published_at.as_deref().unwrap_or(&post.date);
+        let categories = if post.categories.is_empty() {
+            "None".to_owned()
+        } else {
+            clean_inline_text(&post.categories.join(", "))
+        };
+        let source_url = if post.source_url.is_empty() {
+            "None".to_owned()
+        } else {
+            post.source_url.clone()
+        };
+        text.push_str(&format!(
+            "## {}\n\n- URL: {}\n- Structured data: {}\n- Description: {}\n- Date: {}\n- Exact published timestamp: {}\n- Topics: {}\n- Categories: {}\n- Source: {}\n- Source URL: {}\n\n{}\n\n",
+            clean_inline_text(&post.title),
+            site_url(&format!("/blog/{}", post.slug)),
+            site_url(&format!("/api/posts/{}.json", post.slug)),
+            clean_inline_text(&post.description),
+            clean_inline_text(&post.date),
+            clean_inline_text(published),
+            if post.tags.is_empty() {
+                "None".to_owned()
+            } else {
+                clean_inline_text(&post.tags.join(", "))
+            },
+            categories,
+            clean_inline_text(&post.source),
+            source_url,
+            post.body_markdown.trim()
+        ));
+    }
+    text
+}
+
+fn post_summary_json(post: &BlogPost) -> serde_json::Value {
+    let mut value = serde_json::json!({
+        "slug": post.slug,
+        "url": site_url(&format!("/blog/{}", post.slug)),
+        "dataUrl": site_url(&format!("/api/posts/{}.json", post.slug)),
+        "title": post.title,
+        "description": post.description,
+        "date": post.date,
+        "datePublished": post.published_at.as_deref().unwrap_or(&post.date),
+        "tags": post.tags,
+        "categories": post.categories,
+        "source": post.source,
+        "sourceUrl": if post.source_url.is_empty() { serde_json::Value::Null } else { serde_json::Value::String(post.source_url.clone()) },
+        "wordCount": post.word_count,
+    });
+    if let Some(published_at) = &post.published_at {
+        value["publishedAt"] = serde_json::Value::String(published_at.clone());
+    }
+    if let Some(updated_at) = &post.updated_at {
+        value["updatedAt"] = serde_json::Value::String(updated_at.clone());
+        value["dateModified"] = serde_json::Value::String(updated_at.clone());
+    }
+    value
+}
+
+fn post_json(post: &BlogPost) -> serde_json::Value {
+    let mut value = post_summary_json(post);
+    value["contentMarkdown"] = serde_json::Value::String(post.body_markdown.clone());
+    value["contentHtml"] = serde_json::Value::String(post.body_html.clone());
+    value
+}
+
+fn api_posts_json(posts: &[BlogPost]) -> serde_json::Value {
+    serde_json::json!({
+        "version": "1",
+        "site": SITE_ORIGIN,
+        "indexUrl": site_url("/api/posts.json"),
+        "count": posts.len(),
+        "items": posts.iter().map(post_summary_json).collect::<Vec<_>>()
+    })
+}
+
+fn project_json(project: &Project, canonical_url: &str) -> serde_json::Value {
+    serde_json::json!({
+        "slug": project.slug,
+        "url": format!("{canonical_url}#project-{}", project.slug),
+        "name": project.name,
+        "kind": project.kind,
+        "dates": project.dates,
+        "technologies": project.technologies,
+        "summary": project.summary,
+        "details": project.details
+    })
+}
+
+fn api_projects_json(projects: &[Project]) -> serde_json::Value {
+    let canonical_url = site_url("/projects");
+    serde_json::json!({
+        "version": "1",
+        "site": SITE_ORIGIN,
+        "pageUrl": canonical_url,
+        "count": projects.len(),
+        "items": projects.iter().map(|project| project_json(project, &canonical_url)).collect::<Vec<_>>()
+    })
+}
+
+fn api_profile_json() -> serde_json::Value {
+    serde_json::json!({
+        "version": "1",
+        "site": SITE_ORIGIN,
+        "agentManifestUrl": site_url("/.well-known/agent.json"),
+        "openApiUrl": site_url("/api/openapi.json"),
+        "profileUrl": site_url("/"),
+        "person": person_json_ld(),
+        "pages": [
+            {"name": "Home", "url": site_url("/")},
+            {"name": "Writing", "url": site_url("/blog")},
+            {"name": "Projects", "url": site_url("/projects")},
+            {"name": "Resume", "url": site_url("/resume")}
+        ],
+        "resume": {
+            "htmlUrl": site_url("/resume"),
+            "pdfUrl": site_url("/static/resume/sharif-haason.pdf"),
+            "docxUrl": site_url("/static/resume/sharif-haason.docx")
+        },
+        "writingIndexUrl": site_url("/api/posts.json"),
+        "projectsIndexUrl": site_url("/api/projects.json")
+    })
+}
+
+fn agent_manifest_json() -> serde_json::Value {
+    serde_json::json!({
+        "version": "1",
+        "name": "Sharif Haason public portfolio",
+        "description": page_description("home"),
+        "site": site_url("/"),
+        "access": "public-read-only",
+        "authentication": "none",
+        "mutations": false,
+        "discovery": [
+            {"rel": "llms", "url": site_url("/llms.txt"), "description": "Concise site map and article descriptions."},
+            {"rel": "llms-full", "url": site_url("/llms-full.txt"), "description": "Complete public writing corpus in Markdown."},
+            {"rel": "openapi", "url": site_url("/api/openapi.json"), "description": "OpenAPI 3.1 description of structured read endpoints."},
+            {"rel": "posts", "url": site_url("/api/posts.json"), "description": "Stable article metadata index."},
+            {"rel": "projects", "url": site_url("/api/projects.json"), "description": "Structured project summaries."},
+            {"rel": "profile", "url": site_url("/api/profile.json"), "description": "Public profile and resume links."},
+            {"rel": "sitemap", "url": site_url("/sitemap.xml"), "description": "Canonical URL inventory."},
+            {"rel": "feed", "url": site_url("/feed.json"), "description": "JSON Feed 1.1 article feed."}
+        ]
+    })
+}
+
+fn openapi_json() -> serde_json::Value {
+    serde_json::json!({
+        "openapi": "3.1.0",
+        "info": {
+            "title": "Sharif Haason public portfolio",
+            "version": "1",
+            "description": "Read-only machine-readable access to Sharif Haason's public writing, projects, and profile. HTML pages remain the canonical human presentation."
+        },
+        "servers": [{"url": SITE_ORIGIN}],
+        "paths": {
+            "/api/posts.json": {
+                "get": {
+                    "operationId": "listPosts",
+                    "summary": "List all writing",
+                    "responses": {"200": {"description": "Article metadata index", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PostIndex"}}}}}
+                }
+            },
+            "/api/posts/{slug}.json": {
+                "get": {
+                    "operationId": "getPost",
+                    "summary": "Get one article and its full public content",
+                    "parameters": [{"name": "slug", "in": "path", "required": true, "schema": {"type": "string"}}],
+                    "responses": {
+                        "200": {"description": "Article data", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Post"}}}},
+                        "404": {"description": "Unknown article slug"}
+                    }
+                }
+            },
+            "/api/projects.json": {
+                "get": {
+                    "operationId": "listProjects",
+                    "summary": "List selected projects",
+                    "responses": {"200": {"description": "Project index", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ProjectIndex"}}}}}
+                }
+            },
+            "/api/profile.json": {
+                "get": {
+                    "operationId": "getProfile",
+                    "summary": "Get the public profile and discovery links",
+                    "responses": {"200": {"description": "Public profile", "content": {"application/json": {"schema": {"type": "object"}}}}}
+                }
+            },
+            "/feed.json": {
+                "get": {
+                    "operationId": "getJsonFeed",
+                    "summary": "Get the JSON Feed 1.1 writing feed",
+                    "responses": {"200": {"description": "JSON Feed 1.1", "content": {"application/feed+json": {"schema": {"type": "object"}}}}}
+                }
+            },
+            "/feed.xml": {
+                "get": {
+                    "operationId": "getAtomFeed",
+                    "summary": "Get the Atom writing feed",
+                    "responses": {"200": {"description": "Atom feed", "content": {"application/atom+xml": {"schema": {"type": "string"}}}}}
+                }
+            },
+            "/llms.txt": {
+                "get": {
+                    "operationId": "getLlmGuide",
+                    "summary": "Get the concise LLM discovery guide",
+                    "responses": {"200": {"description": "Plain-text discovery guide", "content": {"text/plain": {"schema": {"type": "string"}}}}}
+                }
+            },
+            "/llms-full.txt": {
+                "get": {
+                    "operationId": "getFullCorpus",
+                    "summary": "Get the complete public writing corpus",
+                    "responses": {"200": {"description": "Plain-text Markdown corpus", "content": {"text/plain": {"schema": {"type": "string"}}}}}
+                }
+            }
+        },
+        "components": {
+            "schemas": {
+                "PostSummary": {
+                    "type": "object",
+                    "required": ["slug", "url", "dataUrl", "title", "description", "date", "datePublished", "tags", "categories", "source", "wordCount"],
+                    "properties": {
+                        "slug": {"type": "string"},
+                        "url": {"type": "string", "format": "uri"},
+                        "dataUrl": {"type": "string", "format": "uri"},
+                        "title": {"type": "string"},
+                        "description": {"type": "string"},
+                        "date": {"type": "string", "format": "date"},
+                        "datePublished": {"type": "string"},
+                        "dateModified": {"type": "string"},
+                        "tags": {"type": "array", "items": {"type": "string"}},
+                        "categories": {"type": "array", "items": {"type": "string"}},
+                        "source": {"type": "string"},
+                        "sourceUrl": {"type": ["string", "null"], "format": "uri"},
+                        "wordCount": {"type": "integer", "minimum": 0}
+                    }
+                },
+                "Post": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/PostSummary"},
+                        {"type": "object", "required": ["contentMarkdown", "contentHtml"], "properties": {"contentMarkdown": {"type": "string"}, "contentHtml": {"type": "string"}}}
+                    ]
+                },
+                "PostIndex": {
+                    "type": "object",
+                    "required": ["version", "site", "indexUrl", "count", "items"],
+                    "properties": {
+                        "version": {"type": "string"},
+                        "site": {"type": "string", "format": "uri"},
+                        "indexUrl": {"type": "string", "format": "uri"},
+                        "count": {"type": "integer", "minimum": 0},
+                        "items": {"type": "array", "items": {"$ref": "#/components/schemas/PostSummary"}}
+                    }
+                },
+                "Project": {
+                    "type": "object",
+                    "required": ["slug", "url", "name", "kind", "dates", "technologies", "summary", "details"],
+                    "properties": {
+                        "slug": {"type": "string"},
+                        "url": {"type": "string", "format": "uri"},
+                        "name": {"type": "string"},
+                        "kind": {"type": "string"},
+                        "dates": {"type": "string"},
+                        "technologies": {"type": "string"},
+                        "summary": {"type": "string"},
+                        "details": {"type": "array", "items": {"type": "string"}}
+                    }
+                },
+                "ProjectIndex": {
+                    "type": "object",
+                    "required": ["version", "site", "pageUrl", "count", "items"],
+                    "properties": {
+                        "version": {"type": "string"},
+                        "site": {"type": "string", "format": "uri"},
+                        "pageUrl": {"type": "string", "format": "uri"},
+                        "count": {"type": "integer", "minimum": 0},
+                        "items": {"type": "array", "items": {"$ref": "#/components/schemas/Project"}}
+                    }
+                }
+            }
+        }
+    })
+}
+
+fn api_post_json(post: &BlogPost) -> serde_json::Value {
+    let mut value = post_json(post);
+    value["version"] = serde_json::Value::String("1".to_owned());
+    value["site"] = serde_json::Value::String(SITE_ORIGIN.to_owned());
+    value
+}
+
+fn feed_json(posts: &[BlogPost]) -> serde_json::Value {
+    serde_json::json!({
+        "version": "https://jsonfeed.org/version/1.1",
+        "title": "Sharif Haason — Writing",
+        "home_page_url": site_url("/blog"),
+        "feed_url": site_url("/feed.json"),
+        "description": page_description("blog"),
+        "authors": [{"name": SITE_NAME, "url": SITE_ORIGIN}],
+        "items": posts.iter().map(|post| {
+            let mut item = serde_json::json!({
+                "id": site_url(&format!("/blog/{}", post.slug)),
+                "url": site_url(&format!("/blog/{}", post.slug)),
+                "title": post.title,
+                "summary": post.description,
+                "content_html": post.body_html,
+                "date_published": atom_timestamp(post.published_at.as_deref().unwrap_or(&post.date)),
+                "author": {"name": SITE_NAME, "url": SITE_ORIGIN},
+                "tags": post.tags,
+                "_portfolia": {
+                    "date": post.date,
+                    "categories": post.categories,
+                    "source": post.source,
+                    "source_url": if post.source_url.is_empty() { serde_json::Value::Null } else { serde_json::Value::String(post.source_url.clone()) }
+                }
+            });
+            if let Some(updated_at) = &post.updated_at {
+                item["date_modified"] = serde_json::Value::String(atom_timestamp(updated_at));
+            }
+            if !post.source_url.is_empty() {
+                item["external_url"] = serde_json::Value::String(post.source_url.clone());
+            }
+            item
+        }).collect::<Vec<_>>()
+    })
 }
 
 fn feed_xml(posts: &[BlogPost]) -> String {
@@ -339,28 +815,54 @@ fn feed_xml(posts: &[BlogPost]) -> String {
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\">\n",
     );
     xml.push_str(&format!(
-        "  <title>{}</title>\n  <link href=\"{}\" rel=\"alternate\"/>\n  <link href=\"{}\" rel=\"self\"/>\n  <id>{}/blog</id>\n",
+        "  <title>{}</title>\n  <link href=\"{}\" rel=\"alternate\"/>\n  <link href=\"{}\" rel=\"self\"/>\n  <id>{}</id>\n",
         xml_escape("Sharif Haason — Writing"),
         xml_escape(&site_url("/blog")),
         xml_escape(&site_url("/feed.xml")),
+        xml_escape(&site_url("/blog"))
+    ));
+    xml.push_str(&format!(
+        "  <author><name>{}</name><uri>{}</uri></author>\n",
+        xml_escape(SITE_NAME),
         xml_escape(SITE_ORIGIN)
     ));
     if let Some(post) = posts.first() {
         xml.push_str(&format!(
             "  <updated>{}</updated>\n",
-            xml_escape(&atom_timestamp(&post.date))
+            xml_escape(&atom_timestamp(
+                post.published_at.as_deref().unwrap_or(&post.date),
+            ))
         ));
     }
     for post in posts {
         let url = site_url(&format!("/blog/{}", post.slug));
+        let published = atom_timestamp(post.published_at.as_deref().unwrap_or(&post.date));
+        let updated = post
+            .updated_at
+            .as_deref()
+            .map(atom_timestamp)
+            .unwrap_or_else(|| published.clone());
         xml.push_str(&format!(
-            "  <entry><title>{}</title><link href=\"{}\"/><id>{}</id><updated>{}</updated><summary>{}</summary></entry>\n",
+            "  <entry><title>{}</title><link href=\"{}\"/><id>{}</id><published>{}</published><updated>{}</updated><author><name>{}</name><uri>{}</uri></author><summary>{}</summary>",
             xml_escape(&post.title),
             xml_escape(&url),
             xml_escape(&url),
-            xml_escape(&atom_timestamp(&post.date)),
+            xml_escape(&published),
+            xml_escape(&updated),
+            xml_escape(SITE_NAME),
+            xml_escape(SITE_ORIGIN),
             xml_escape(&post.description)
         ));
+        for tag in &post.tags {
+            xml.push_str(&format!("<category term=\"{}\"/>", xml_escape(tag)));
+        }
+        if !post.source_url.is_empty() {
+            xml.push_str(&format!(
+                "<link href=\"{}\" rel=\"via\"/>",
+                xml_escape(&post.source_url)
+            ));
+        }
+        xml.push_str("</entry>\n");
     }
     xml.push_str("</feed>\n");
     xml
@@ -389,6 +891,13 @@ fn toml_strings(value: Option<&TomlValue>) -> Vec<String> {
         .filter_map(TomlValue::as_str)
         .map(str::to_owned)
         .collect()
+}
+
+fn toml_optional_string(metadata: &TomlValue, key: &str) -> Option<String> {
+    metadata
+        .get(key)
+        .and_then(toml_string)
+        .filter(|value| !value.trim().is_empty())
 }
 
 fn render_markdown(source: &str) -> String {
@@ -538,12 +1047,12 @@ fn normalize_tex_math(source: &str) -> String {
     let mut characters = source.chars().peekable();
     while let Some(character) = characters.next() {
         if character == '\\' {
-            let mut run = 1;
+            let mut run: usize = 1;
             while characters.peek() == Some(&'\\') {
                 characters.next();
                 run += 1;
             }
-            normalized.push_str(&"\\".repeat((run + 1) / 2));
+            normalized.push_str(&"\\".repeat(run.div_ceil(2)));
         } else {
             normalized.push(character);
         }
@@ -597,6 +1106,8 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             .get("date")
             .and_then(toml_string)
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
+        let published_at = toml_optional_string(&metadata, "published_at");
+        let updated_at = toml_optional_string(&metadata, "updated_at");
         let taxonomies = metadata.get("taxonomies");
         let categories = toml_strings(
             taxonomies
@@ -640,12 +1151,9 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             metadata_description
         };
         let body_html = render_markdown(&body);
+        let word_count = body.split_whitespace().count();
         let has_math = body.contains("$$") || body.contains("\\(") || body.contains("\\[");
-        let sort_key = metadata
-            .get("published_at")
-            .and_then(TomlValue::as_str)
-            .unwrap_or(&date)
-            .to_owned();
+        let sort_key = published_at.clone().unwrap_or_else(|| date.clone());
         let date_display = date.chars().take(10).collect();
         let tag_keys = tags.join("|");
         let search_text = format!("{} {} {}", title, description, tags.join(" "));
@@ -654,14 +1162,19 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             title,
             date,
             date_display,
+            published_at,
+            updated_at,
             description,
             tags,
+            categories,
             display_tags: Vec::new(),
             tag_keys,
             search_text,
             source: source_name,
             source_url,
+            body_markdown: body,
             body_html,
+            word_count,
             has_math,
             sort_key,
         });
@@ -689,6 +1202,12 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
     }
 
     Ok(posts)
+}
+
+fn load_projects() -> Vec<Project> {
+    toml::from_str::<ProjectDocument>(include_str!("../content/projects.toml"))
+        .expect("project content should load")
+        .projects
 }
 
 fn tag_is_visible(name: &str, count: usize) -> bool {
@@ -788,16 +1307,21 @@ fn render_blog_index(posts: &[BlogPost]) -> Result<Html<String>, StatusCode> {
 }
 
 fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, StatusCode> {
-    let post = posts
+    let position = posts
         .iter()
-        .find(|post| post.slug == slug)
+        .position(|post| post.slug == slug)
         .ok_or(StatusCode::NOT_FOUND)?;
+    let post = &posts[position];
     let canonical_url = site_url(&format!("/blog/{}", post.slug));
     let structured_data = article_json_ld(post, &canonical_url);
     BlogArticle {
         post,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
+        previous: posts.get(position + 1),
+        next: position.checked_sub(1).and_then(|index| posts.get(index)),
+        position: position + 1,
+        total: posts.len(),
     }
     .render()
     .map(Html)
@@ -808,17 +1332,23 @@ fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
     if !["home", "projects", "resume"].contains(&page) {
         return Err(StatusCode::NOT_FOUND);
     }
-    let resume_html = markdown::to_html(include_str!("../content/resume-current.md"));
+    let resume_html = render_markdown(include_str!("../content/resume-current.md"));
+    let projects = load_projects();
     let title = page_title(page);
     let description = page_description(page);
     let canonical_url = site_url(site_path(page));
-    let structured_data = page_json_ld(&canonical_url, page);
+    let structured_data = if page == "projects" {
+        projects_json_ld(&canonical_url, &projects)
+    } else {
+        page_json_ld(&canonical_url, page)
+    };
     Site {
         page,
         title,
         description,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
+        projects: &projects,
         resume_html: &resume_html,
         pdf_available: FilePath::new("static/resume/sharif-haason.pdf").is_file(),
         docx_available: FilePath::new("static/resume/sharif-haason.docx").is_file(),
@@ -867,11 +1397,52 @@ async fn llms(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
     text_response("text/plain; charset=utf-8", llms_txt(posts.as_slice()))
 }
 
+async fn llms_full(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
+    text_response("text/plain; charset=utf-8", llms_full_txt(posts.as_slice()))
+}
+
 async fn feed(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
     text_response(
         "application/atom+xml; charset=utf-8",
         feed_xml(posts.as_slice()),
     )
+}
+
+async fn feed_json_endpoint(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
+    json_response(&feed_json(posts.as_slice()))
+}
+
+async fn api_posts(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
+    json_response(&api_posts_json(posts.as_slice()))
+}
+
+async fn api_projects() -> Response {
+    let projects = load_projects();
+    json_response(&api_projects_json(&projects))
+}
+
+async fn api_profile() -> Response {
+    json_response(&api_profile_json())
+}
+
+async fn agent_manifest() -> Response {
+    json_response(&agent_manifest_json())
+}
+
+async fn openapi() -> Response {
+    json_response(&openapi_json())
+}
+
+async fn api_post(
+    State(posts): State<Arc<Vec<BlogPost>>>,
+    Path(path): Path<String>,
+) -> Result<Response, StatusCode> {
+    let slug = path.strip_suffix(".json").unwrap_or(&path);
+    let post = posts
+        .iter()
+        .find(|post| post.slug == slug)
+        .ok_or(StatusCode::NOT_FOUND)?;
+    Ok(json_response(&api_post_json(post)))
 }
 
 async fn legacy_home(Path(_id): Path<u8>) -> Redirect {
@@ -880,16 +1451,44 @@ async fn legacy_home(Path(_id): Path<u8>) -> Redirect {
 
 async fn legacy_page(Path((_id, page)): Path<(u8, String)>) -> Redirect {
     let target = match page.as_str() {
-        "blog" => "/blog",
-        "projects" => "/projects",
-        "resume" => "/resume",
+        "blog" => "/blog/",
+        "projects" => "/projects/",
+        "resume" => "/resume/",
         _ => "/",
     };
     Redirect::permanent(target)
 }
 
+fn legacy_blog_target(slug: &str) -> String {
+    match slug {
+        "fe621-finite-difference-sketches" => {
+            "/blog/computational-methods-finite-difference-sketches/".to_owned()
+        }
+        "fe621-midterm-cheat-sheet" => {
+            "/blog/computational-methods-midterm-cheat-sheet/".to_owned()
+        }
+        _ => {
+            if let Some(week) = slug
+                .strip_prefix("fe621-week-")
+                .and_then(|week| week.parse::<u8>().ok())
+                .filter(|week| (1..=14).contains(week) && *week != 8)
+            {
+                return format!("/blog/computational-methods-week-{week:02}/");
+            }
+            if let Some(week) = slug
+                .strip_prefix("fe680-week-")
+                .and_then(|week| week.parse::<u8>().ok())
+                .filter(|week| (1..=13).contains(week))
+            {
+                return format!("/blog/advanced-derivatives-week-{week:02}/");
+            }
+            format!("/blog/{slug}/")
+        }
+    }
+}
+
 async fn legacy_blog_article(Path(slug): Path<String>) -> Redirect {
-    let target = format!("/blog/{slug}");
+    let target = legacy_blog_target(&slug);
     Redirect::permanent(&target)
 }
 
@@ -918,13 +1517,25 @@ async fn main() {
     let app = Router::new()
         .route("/", get(home))
         .route("/blog", get(blog_index))
+        .route("/blog/", get(blog_index))
         .route("/blog/{slug}", get(blog_article))
+        .route("/blog/{slug}/", get(blog_article))
         .route("/projects", get(projects))
+        .route("/projects/", get(projects))
         .route("/resume", get(resume))
+        .route("/resume/", get(resume))
         .route("/robots.txt", get(robots))
         .route("/sitemap.xml", get(sitemap))
         .route("/llms.txt", get(llms))
+        .route("/llms-full.txt", get(llms_full))
         .route("/feed.xml", get(feed))
+        .route("/feed.json", get(feed_json_endpoint))
+        .route("/api/posts.json", get(api_posts))
+        .route("/api/posts/{*path}", get(api_post))
+        .route("/api/projects.json", get(api_projects))
+        .route("/api/profile.json", get(api_profile))
+        .route("/api/openapi.json", get(openapi))
+        .route("/.well-known/agent.json", get(agent_manifest))
         .route("/v/6/blog/{slug}", get(legacy_blog_article))
         .route("/v/{id}/{page}", get(legacy_page))
         .route("/v/{id}", get(legacy_home))
@@ -967,6 +1578,29 @@ mod tests {
     }
 
     #[test]
+    fn canonical_urls_and_legacy_article_aliases_are_stable() {
+        assert_eq!(site_url("/"), "https://sharifhsn.dev/");
+        assert_eq!(site_url("/blog"), "https://sharifhsn.dev/blog/");
+        assert_eq!(
+            site_url("/blog/circuits"),
+            "https://sharifhsn.dev/blog/circuits/"
+        );
+        assert_eq!(
+            site_url("/api/posts/circuits.json"),
+            "https://sharifhsn.dev/api/posts/circuits.json"
+        );
+        assert_eq!(
+            legacy_blog_target("fe621-week-02"),
+            "/blog/computational-methods-week-02/"
+        );
+        assert_eq!(
+            legacy_blog_target("fe680-week-01"),
+            "/blog/advanced-derivatives-week-01/"
+        );
+        assert_eq!(legacy_blog_target("fe621-week-08"), "/blog/fe621-week-08/");
+    }
+
+    #[test]
     fn canonical_pages_render_with_metadata_and_real_assets() {
         for page in ["home", "projects", "resume"] {
             let Html(html) = render_site(page).unwrap();
@@ -984,6 +1618,10 @@ mod tests {
                 assert!(html.contains("/static/resume/sharif-haason.docx"));
             }
         }
+        let Html(projects) = render_site("projects").unwrap();
+        assert!(projects.contains("Implied Willow Tree for Derivatives"));
+        assert!(projects.contains("application/ld+json"));
+        assert!(projects.contains("project-nba-reddit-ai-chatbot"));
         assert_eq!(render_site("blog").unwrap_err(), StatusCode::NOT_FOUND);
         assert_eq!(render_site("missing").unwrap_err(), StatusCode::NOT_FOUND);
     }
@@ -994,21 +1632,111 @@ mod tests {
         assert!(posts.iter().all(|post| !post.description.trim().is_empty()));
         let sitemap = sitemap_xml(&posts);
         assert_eq!(sitemap.matches("<url>").count(), posts.len() + 4);
-        assert!(sitemap.contains("https://sharifhsn.dev/blog/circuits"));
+        assert!(sitemap.contains("https://sharifhsn.dev/blog/circuits/"));
 
         let llms = llms_txt(&posts);
         assert!(llms.starts_with("# Sharif Haason"));
-        assert!(llms.contains("[Writing index](https://sharifhsn.dev/blog):"));
-        assert!(llms.contains("[Circuits](https://sharifhsn.dev/blog/circuits):"));
+        assert!(llms.contains("[Writing index](https://sharifhsn.dev/blog/):"));
+        assert!(llms.contains("[Structured writing index](https://sharifhsn.dev/api/posts.json):"));
+        assert!(llms.contains("[Structured projects](https://sharifhsn.dev/api/projects.json):"));
+        assert!(llms.contains("[Structured profile](https://sharifhsn.dev/api/profile.json):"));
+        assert!(llms.contains("[Agent manifest](https://sharifhsn.dev/.well-known/agent.json):"));
+        assert!(llms.contains("[OpenAPI description](https://sharifhsn.dev/api/openapi.json):"));
+        assert!(llms.contains("[Full writing corpus](https://sharifhsn.dev/llms-full.txt):"));
+        assert!(llms.contains("[Circuits](https://sharifhsn.dev/blog/circuits/):"));
+
+        let full = llms_full_txt(&posts);
+        assert!(full.starts_with("# Sharif Haason — full writing corpus"));
+        assert!(full.contains("## Circuits"));
+        assert!(full.contains("https://sharifhsn.dev/api/posts/circuits.json"));
+        assert!(full.contains("Ohm's Law"));
 
         let feed = feed_xml(&posts);
         assert!(feed.contains("<feed xmlns=\"http://www.w3.org/2005/Atom\">"));
         assert_eq!(feed.matches("<entry>").count(), posts.len());
         assert!(feed.contains(&format!(
             "<updated>{}</updated>",
-            atom_timestamp(&posts[0].date)
+            atom_timestamp(posts[0].published_at.as_deref().unwrap_or(&posts[0].date))
         )));
         assert!(robots_txt_content().contains("Allow: /"));
+
+        let feed_json = feed_json(&posts);
+        assert_eq!(feed_json["version"], "https://jsonfeed.org/version/1.1");
+        assert_eq!(feed_json["items"].as_array().unwrap().len(), posts.len());
+
+        let index_json = api_posts_json(&posts);
+        assert_eq!(index_json["version"], "1");
+        assert_eq!(index_json["count"], posts.len());
+        assert_eq!(index_json["items"].as_array().unwrap().len(), posts.len());
+        let urls = index_json["items"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|item| item["url"].as_str().unwrap())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(urls.len(), posts.len());
+        for post in &posts {
+            let url = site_url(&format!("/blog/{}", post.slug));
+            assert!(llms.contains(&format!("({url}):")));
+            assert!(full.contains(&format!("- URL: {url}")));
+            assert!(feed.contains(&format!("<id>{url}</id>")));
+        }
+        assert!(!full.contains("Academics calendar"));
+
+        let circuits = posts.iter().find(|post| post.slug == "circuits").unwrap();
+        let article_json = api_post_json(circuits);
+        assert_eq!(article_json["slug"], "circuits");
+        assert!(
+            article_json["contentMarkdown"]
+                .as_str()
+                .unwrap()
+                .contains("Ohm's Law")
+        );
+        assert!(
+            article_json["contentHtml"]
+                .as_str()
+                .unwrap()
+                .contains("Electromotive Force")
+        );
+
+        let projects = load_projects();
+        assert_eq!(projects.len(), 5);
+        assert!(
+            projects
+                .iter()
+                .any(|project| project.slug == "nba-reddit-ai-chatbot")
+        );
+        let projects_json = api_projects_json(&projects);
+        assert_eq!(projects_json["count"], projects.len());
+        assert!(
+            projects_json["items"][0]["url"]
+                .as_str()
+                .unwrap()
+                .starts_with("https://sharifhsn.dev/projects/#project-")
+        );
+        let profile_json = api_profile_json();
+        assert_eq!(profile_json["person"]["name"], SITE_NAME);
+        assert_eq!(
+            profile_json["resume"]["pdfUrl"],
+            "https://sharifhsn.dev/static/resume/sharif-haason.pdf"
+        );
+        let manifest = agent_manifest_json();
+        assert_eq!(manifest["access"], "public-read-only");
+        assert_eq!(manifest["mutations"], false);
+        assert!(
+            manifest["discovery"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|item| {
+                    item["rel"] == "openapi"
+                        && item["url"] == "https://sharifhsn.dev/api/openapi.json"
+                })
+        );
+        let openapi = openapi_json();
+        assert_eq!(openapi["openapi"], "3.1.0");
+        assert!(openapi["paths"]["/api/posts/{slug}.json"].is_object());
+        assert!(openapi["components"]["schemas"]["Post"].is_object());
     }
 
     #[test]
@@ -1272,6 +2000,8 @@ mod tests {
         assert!(index.contains("data-tag-filter"));
         assert!(index.contains("id=\"writing-search\""));
         assert!(index.contains("data-search=\""));
+        assert!(index.contains("class=\"post-description\""));
+        assert!(index.contains("href=\"/api/posts.json\""));
         assert!(index.contains("type=\"radio\""));
         assert!(index.contains("name=\"writing-topic\""));
         assert!(!index.contains("<select"));
@@ -1293,7 +2023,9 @@ mod tests {
         let Html(article) = render_blog_article(&posts, "circuits").unwrap();
         assert!(article.contains("Electromotive Force"));
         assert!(article.contains("/static/js/auto-render.min.js"));
-        assert!(article.contains("https://sharifhsn.dev/blog/circuits"));
+        assert!(article.contains("https://sharifhsn.dev/blog/circuits/"));
+        assert!(article.contains("Source: Archive"));
+        assert!(article.contains("/api/posts/circuits.json"));
         assert!(article.contains("application/ld+json"));
 
         let Html(course_article) =

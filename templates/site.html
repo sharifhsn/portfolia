@@ -7,14 +7,23 @@
   <meta name="description" content="{{ description }}">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="author" href="/resume/">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="alternate" type="application/atom+xml" title="Sharif Haason — Writing" href="/feed.xml">
+  <link rel="alternate" type="application/feed+json" title="Sharif Haason — JSON Feed" href="/feed.json">
+  <link rel="alternate" type="text/plain" title="Sharif Haason — LLM guide" href="/llms.txt">
+  <link rel="alternate" type="application/json" title="Sharif Haason — structured writing index" href="/api/posts.json">
+  <link rel="alternate" type="application/json" title="Sharif Haason — structured projects" href="/api/projects.json">
+  <link rel="alternate" type="application/json" title="Sharif Haason — structured profile" href="/api/profile.json">
+  <link rel="service-desc" type="application/vnd.oai.openapi+json" title="Structured API" href="/api/openapi.json">
+  <link rel="alternate" type="application/json" title="Agent discovery manifest" href="/.well-known/agent.json">
   <meta property="og:type" content="{% if page == "home" %}profile{% else %}website{% endif %}">
   <meta property="og:title" content="{{ title }}">
   <meta property="og:description" content="{{ description }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Sharif Haason">
   <title>{{ title }}</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260918-1">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260918-3">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -23,9 +32,9 @@
     <header class="site-header">
       <a class="site-name" href="/" {% if page == "home" %}aria-current="page"{% endif %}>Sharif Haason</a>
       <nav aria-label="Main navigation">
-        <a href="/blog" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
-        <a href="/projects" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>
-        <a href="/resume" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
+        <a href="/blog/" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
+        <a href="/projects/" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>
+        <a href="/resume/" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
       </nav>
     </header>
     <main id="main" class="content">
@@ -49,13 +58,27 @@
         <h1 id="page-title">Blog</h1>
         <p>Long-form writing, course notes, and technical explanations.</p>
       </section>
-      <p class="empty-state"><a href="/blog">Browse all writing</a>.</p>
+      <p class="empty-state"><a href="/blog/">Browse all writing</a>.</p>
       {% else if page == "projects" %}
       <section class="page-intro" aria-labelledby="page-title">
         <h1 id="page-title">Projects</h1>
         <p>Selected work, with the problems, trade-offs, and implementation details behind it.</p>
       </section>
-      <p class="empty-state">Project write-ups are being prepared.</p>
+      <section class="project-list" aria-label="Selected projects">
+        {% for project in projects %}
+        <article class="project-card" id="project-{{ project.slug }}" aria-labelledby="project-title-{{ project.slug }}">
+          <header>
+            <h2 id="project-title-{{ project.slug }}">{{ project.name }}</h2>
+            <p class="project-meta"><span>{{ project.kind }}</span><span>{{ project.dates }}</span></p>
+          </header>
+          <p class="project-technologies">{{ project.technologies }}</p>
+          <p>{{ project.summary }}</p>
+          <ul>
+            {% for detail in project.details %}<li>{{ detail }}</li>{% endfor %}
+          </ul>
+        </article>
+        {% endfor %}
+      </section>
       {% else if page == "resume" %}
       <section class="page-intro resume-heading" aria-labelledby="page-title">
         <h1 id="page-title">Resume</h1>
@@ -69,7 +92,14 @@
     </main>
     <footer class="site-footer">
       <span>Sharif Haason</span>
-      <a href="/feed.xml">RSS</a>
+      <nav aria-label="Machine-readable resources">
+        <a href="/feed.xml">RSS</a>
+        <a href="/feed.json">JSON feed</a>
+        <a href="/llms.txt">LLM guide</a>
+        <a href="/api/openapi.json">API</a>
+        <a href="/.well-known/agent.json">Agent manifest</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
     </footer>
   </div>
 </body>

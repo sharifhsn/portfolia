@@ -32,7 +32,17 @@ For this text-first portfolio, the session recommended Cloudflare Pages Free: st
 ## Operational checklist
 
 1. Keep `main` as the only development/deployment branch.
-2. Set `CLOUDFLARE_API_TOKEN` (Pages Write) and `CLOUDFLARE_ACCOUNT_ID` as repository secrets for the workflow.
+2. Set `CLOUDFLARE_API_TOKEN` (account-scoped `Cloudflare Pages: Edit`) and `CLOUDFLARE_ACCOUNT_ID` as repository secrets for the workflow.
 3. Run `just static` locally when checking the generated tree; run `just pages-preview` for a Pages-like preview.
 4. Before DNS or production changes, re-check the Cloudflare account, Pages project, custom-domain status, nameservers, and current DNS records. Do not reuse the old EC2 address.
 
+## Deployment incident resolved 2026-09-18
+
+The first post-consolidation GitHub Actions deployment built successfully but
+Wrangler stopped in its non-interactive environment because the repository had
+neither required Cloudflare secret. An account-scoped token with only
+`Cloudflare Pages: Edit` access was created in the Cloudflare dashboard and
+stored as `CLOUDFLARE_API_TOKEN`; the confirmed account ID was stored as
+`CLOUDFLARE_ACCOUNT_ID`. The rerun of [workflow run 35368167563](https://github.com/sharifhsn/portfolia/actions/runs/35368167563)
+completed successfully. The token value is intentionally not recorded in the
+repository or this document.

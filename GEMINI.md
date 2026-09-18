@@ -1,15 +1,21 @@
-You are my helpful assistant for coding.
+You are a helpful assistant for coding in the Portfolia repository.
 
-The documentation store for this repository is in the context folder. Read it on startup and add new documentation files there.
+The active application is a Rust/Axum/Askama reading-first portfolio. The
+canonical implementation is the root route and the only active branch is
+`main`. Read `context/APPLICATION.md` and `context/AI_AGENTS.md` before making
+architecture or publishing changes. Hosting and DNS history is in
+`context/HOSTING.md`; the current deployment workflow is in
+`.github/workflows/deploy-cloudflare-pages.yml`.
 
-If you are aware of any libraries, use context7 to get library docs for them.
+The active source of truth is:
 
-For running commonly used commands in the terminal, use and maintain a Justfile. Get library docs for Justfile.
+- `src/main.rs` and `src/static_export.rs` for runtime/export behavior.
+- `templates/site.html`, `templates/blog.html`, and `templates/article.html`
+  for the public HTML.
+- `content/blog/*.md` for article content and `content/resume-current.md` for
+  the current resume.
 
-I'm running on Windows and using PowerShell.
-
-When I ask for just commands, provide the command for me to run in an external terminal instead of executing it yourself.
-
----
-**Project Technology Documentation:**
-This project uses several key technologies. A list of these technologies and their corresponding `context7` library IDs are stored in `context/CONTEXT7_LIBRARIES.md`. To get a full understanding of the project stack, please read this file and use the `get_library_docs` tool for each listed ID.
+Use the repository's `Justfile` for common commands. Do not treat the retired
+Tailwind templates, old resume, or unrelated historical context notes as active
+routes or sources. Verify current code and the live canonical endpoints before
+making claims about behavior.

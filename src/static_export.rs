@@ -27,7 +27,48 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     fs::write(output_dir.join("robots.txt"), super::robots_txt_content())?;
     fs::write(output_dir.join("sitemap.xml"), super::sitemap_xml(posts))?;
     fs::write(output_dir.join("llms.txt"), super::llms_txt(posts))?;
+    fs::write(
+        output_dir.join("llms-full.txt"),
+        super::llms_full_txt(posts),
+    )?;
     fs::write(output_dir.join("feed.xml"), super::feed_xml(posts))?;
+    fs::write(
+        output_dir.join("feed.json"),
+        serde_json::to_string(&super::feed_json(posts)).expect("JSON feed should serialize"),
+    )?;
+    let api_posts_dir = output_dir.join("api/posts");
+    fs::create_dir_all(&api_posts_dir)?;
+    fs::write(
+        output_dir.join("api/posts.json"),
+        serde_json::to_string(&super::api_posts_json(posts)).expect("post index should serialize"),
+    )?;
+    let projects = super::load_projects();
+    fs::write(
+        output_dir.join("api/projects.json"),
+        serde_json::to_string(&super::api_projects_json(&projects))
+            .expect("project index should serialize"),
+    )?;
+    fs::write(
+        output_dir.join("api/profile.json"),
+        serde_json::to_string(&super::api_profile_json()).expect("profile data should serialize"),
+    )?;
+    fs::write(
+        output_dir.join("api/openapi.json"),
+        serde_json::to_string(&super::openapi_json()).expect("OpenAPI data should serialize"),
+    )?;
+    let well_known_dir = output_dir.join(".well-known");
+    fs::create_dir_all(&well_known_dir)?;
+    fs::write(
+        well_known_dir.join("agent.json"),
+        serde_json::to_string(&super::agent_manifest_json())
+            .expect("agent manifest should serialize"),
+    )?;
+    for post in posts {
+        fs::write(
+            api_posts_dir.join(format!("{}.json", post.slug)),
+            serde_json::to_string(&super::api_post_json(post)).expect("post data should serialize"),
+        )?;
+    }
 
     copy_directory(
         Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -36,27 +77,28 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
         output_dir.join("static").as_path(),
     )?;
 
-    let mut redirects = String::from(
-        "/v/6 / 301\n/designs / 301\n/v/:id / 301\n/v/:id/blog /blog 301\n/v/:id/projects /projects 301\n/v/:id/resume /resume 301\n/v/6/blog/:slug /blog/:slug 301\n",
-    );
+    let mut redirects = String::new();
     for week in 1..=14 {
         if week == 8 {
             continue;
         }
         redirects.push_str(&format!(
-            "/v/6/blog/fe621-week-{week:02} /blog/computational-methods-week-{week:02} 301\n"
+            "/v/6/blog/fe621-week-{week:02} /blog/computational-methods-week-{week:02}/ 301\n"
         ));
     }
     for week in 1..=13 {
         redirects.push_str(&format!(
-            "/v/6/blog/fe680-week-{week:02} /blog/advanced-derivatives-week-{week:02} 301\n"
+            "/v/6/blog/fe680-week-{week:02} /blog/advanced-derivatives-week-{week:02}/ 301\n"
         ));
     }
     redirects.push_str(
-        "/v/6/blog/fe621-finite-difference-sketches /blog/computational-methods-finite-difference-sketches 301\n",
+        "/v/6/blog/fe621-finite-difference-sketches /blog/computational-methods-finite-difference-sketches/ 301\n",
     );
     redirects.push_str(
-        "/v/6/blog/fe621-midterm-cheat-sheet /blog/computational-methods-midterm-cheat-sheet 301\n",
+        "/v/6/blog/fe621-midterm-cheat-sheet /blog/computational-methods-midterm-cheat-sheet/ 301\n",
+    );
+    redirects.push_str(
+        "/v/6 / 301\n/designs / 301\n/v/:id / 301\n/v/:id/blog /blog/ 301\n/v/:id/projects /projects/ 301\n/v/:id/resume /resume/ 301\n/v/6/blog/:slug /blog/:slug/ 301\n",
     );
     fs::write(output_dir.join("_redirects"), redirects)?;
     fs::write(
@@ -73,10 +115,40 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
   <main class="content">
     <h1>Page not found</h1>
     <p>This page may have moved or no longer exists.</p>
-    <p><a href="/">Go to the home page</a> or <a href="/blog">browse the writing</a>.</p>
+    <p><a href="/">Go to the home page</a> or <a href="/blog/">browse the writing</a>.</p>
   </main>
 </body>
 </html>
+"#,
+    )?;
+    fs::write(
+        output_dir.join("_headers"),
+        r#"/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/static/css/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/static/*
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/api/*
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
+/.well-known/*
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
+/feed.*
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
+/llms*.txt
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
 "#,
     )?;
 
@@ -140,25 +212,40 @@ mod tests {
 
         let home = fs::read_to_string(output.join("index.html")).expect("root page exists");
         assert!(home.contains("Sharif Haason"));
+        assert!(!home.contains("/v/6") && !home.contains("/designs"));
         assert!(output.join("blog/index.html").is_file());
         assert!(output.join("projects/index.html").is_file());
         assert!(output.join("resume/index.html").is_file());
         assert!(output.join("robots.txt").is_file());
         assert!(output.join("sitemap.xml").is_file());
         assert!(output.join("llms.txt").is_file());
+        assert!(output.join("llms-full.txt").is_file());
         assert!(output.join("feed.xml").is_file());
+        assert!(output.join("feed.json").is_file());
+        assert!(output.join("api/posts.json").is_file());
+        assert!(output.join("api/posts/circuits.json").is_file());
+        assert!(output.join("api/projects.json").is_file());
+        assert!(output.join("api/profile.json").is_file());
+        assert!(output.join("api/openapi.json").is_file());
+        assert!(output.join(".well-known/agent.json").is_file());
         assert!(output.join("404.html").is_file());
+        assert!(output.join("_headers").is_file());
         let redirects = fs::read_to_string(output.join("_redirects")).expect("redirects exist");
         assert!(
-            redirects.contains("/v/6/blog/fe621-week-02 /blog/computational-methods-week-02 301")
+            redirects.contains("/v/6/blog/fe621-week-02 /blog/computational-methods-week-02/ 301")
         );
         assert!(
-            redirects.contains("/v/6/blog/fe680-week-01 /blog/advanced-derivatives-week-01 301")
+            redirects.contains("/v/6/blog/fe680-week-01 /blog/advanced-derivatives-week-01/ 301")
+        );
+        assert!(
+            redirects.find("/v/6/blog/fe621-week-02").unwrap()
+                < redirects.find("/v/6/blog/:slug").unwrap()
         );
         assert!(output.join("static/css/site.css").is_file());
 
         let blog_index =
             fs::read_to_string(output.join("blog/index.html")).expect("blog index exists");
+        assert!(!blog_index.contains("/v/6") && !blog_index.contains("/designs"));
         assert!(blog_index.contains(&format!("{} pieces", posts.len())));
         for post in &posts {
             assert!(
@@ -168,6 +255,14 @@ mod tests {
                     .join("index.html")
                     .is_file(),
                 "missing exported article {}",
+                post.slug
+            );
+            assert!(
+                output
+                    .join("api/posts")
+                    .join(format!("{}.json", post.slug))
+                    .is_file(),
+                "missing exported article data {}",
                 post.slug
             );
         }

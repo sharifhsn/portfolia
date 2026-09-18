@@ -7,14 +7,23 @@
   <meta name="description" content="Long-form writing and technical explanations by Sharif Haason.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="author" href="/resume/">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="alternate" type="application/atom+xml" title="Sharif Haason — Writing" href="/feed.xml">
+  <link rel="alternate" type="application/feed+json" title="Sharif Haason — JSON Feed" href="/feed.json">
+  <link rel="alternate" type="text/plain" title="Sharif Haason — LLM guide" href="/llms.txt">
+  <link rel="alternate" type="application/json" title="Sharif Haason — structured writing index" href="/api/posts.json">
+  <link rel="alternate" type="application/json" title="Sharif Haason — structured projects" href="/api/projects.json">
+  <link rel="alternate" type="application/json" title="Sharif Haason — structured profile" href="/api/profile.json">
+  <link rel="service-desc" type="application/vnd.oai.openapi+json" title="Structured API" href="/api/openapi.json">
+  <link rel="alternate" type="application/json" title="Agent discovery manifest" href="/.well-known/agent.json">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Writing | Sharif Haason">
   <meta property="og:description" content="Long-form writing and technical explanations by Sharif Haason.">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Sharif Haason">
   <title>Writing | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260918-1">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260918-3">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -23,9 +32,9 @@
     <header class="site-header">
       <a class="site-name" href="/">Sharif Haason</a>
       <nav aria-label="Main navigation">
-        <a href="/blog" aria-current="page">Blog</a>
-        <a href="/projects">Projects</a>
-        <a href="/resume">Resume</a>
+        <a href="/blog/" aria-current="page">Blog</a>
+        <a href="/projects/">Projects</a>
+        <a href="/resume/">Resume</a>
       </nav>
     </header>
     <main id="main" class="content blog-content">
@@ -67,24 +76,34 @@
       </section>
       <ol id="writing-results" class="post-list">
         {% for post in posts %}
-        <li class="post-row" data-tags="{{ post.tag_keys }}" data-search="{{ post.search_text }}">
-          <time class="post-date" datetime="{{ post.date }}">{{ post.date_display }}</time>
-          <div class="post-summary">
-            <h2><a class="post-title" href="/blog/{{ post.slug }}">{{ post.title }}</a></h2>
-            {% if post.source_url != "" || post.display_tags.len() > 0 %}
-            <ul class="post-labels" aria-label="Post type and topics">
-              {% if post.source_url != "" %}<li class="post-source"><a class="post-source-link" href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer" aria-label="View original LinkedIn post"><span class="linkedin-mark" aria-hidden="true">in</span><span class="sr-only">LinkedIn</span></a></li>{% endif %}
-              {% for tag in post.display_tags %}<li><button class="post-tag" type="button" data-tag-select="{{ tag }}">{{ tag }}</button></li>{% endfor %}
-            </ul>
-            {% endif %}
-          </div>
+        <li class="post-item">
+          <article class="post-row" data-tags="{{ post.tag_keys }}" data-search="{{ post.search_text }}" aria-labelledby="post-title-{{ post.slug }}">
+            <time class="post-date" datetime="{{ post.date }}">{{ post.date_display }}</time>
+            <div class="post-summary">
+              <h2 id="post-title-{{ post.slug }}"><a class="post-title" href="/blog/{{ post.slug }}/">{{ post.title }}</a></h2>
+              <p class="post-description">{{ post.description }}</p>
+              {% if post.source_url != "" || post.display_tags.len() > 0 %}
+              <ul class="post-labels" aria-label="Post type and topics">
+                {% if post.source_url != "" %}<li class="post-source"><a class="post-source-link" href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer" aria-label="View original {{ post.source }} source">{% if post.source == "LinkedIn" %}<span class="linkedin-mark" aria-hidden="true">in</span>{% endif %}<span>{{ post.source }}</span></a></li>{% endif %}
+                {% for tag in post.display_tags %}<li><button class="post-tag" type="button" data-tag-select="{{ tag }}">{{ tag }}</button></li>{% endfor %}
+              </ul>
+              {% endif %}
+            </div>
+          </article>
         </li>
         {% endfor %}
       </ol>
     </main>
     <footer class="site-footer">
       <span>Sharif Haason</span>
-      <a href="/feed.xml">RSS</a>
+      <nav aria-label="Machine-readable resources">
+        <a href="/feed.xml">RSS</a>
+        <a href="/feed.json">JSON feed</a>
+        <a href="/llms.txt">LLM guide</a>
+        <a href="/api/openapi.json">API</a>
+        <a href="/.well-known/agent.json">Agent manifest</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </nav>
     </footer>
   </div>
   <script src="/static/js/blog-filter.js?v=20260916-3" defer></script>
