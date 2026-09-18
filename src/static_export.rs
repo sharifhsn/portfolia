@@ -63,6 +63,14 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
         serde_json::to_string(&super::agent_manifest_json())
             .expect("agent manifest should serialize"),
     )?;
+    fs::write(
+        well_known_dir.join("security.txt"),
+        super::security_txt_content(),
+    )?;
+    fs::write(
+        output_dir.join("manifest.webmanifest"),
+        serde_json::to_string(&super::web_manifest_json()).expect("web manifest should serialize"),
+    )?;
     for post in posts {
         fs::write(
             api_posts_dir.join(format!("{}.json", post.slug)),
@@ -103,11 +111,18 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     fs::write(output_dir.join("_redirects"), redirects)?;
     fs::write(
         output_dir.join("404.html"),
-        r#"<!doctype html>
-<html lang="en">
+        r##"<!doctype html>
+<html lang="en-US">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#fcfdfe">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" sizes="355x355" href="/static/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <title>Page not found | Sharif Haason</title>
   <link rel="stylesheet" href="/static/css/site.css">
 </head>
@@ -119,14 +134,20 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
   </main>
 </body>
 </html>
-"#,
+"##,
     )?;
     fs::write(
         output_dir.join("_headers"),
         r#"/*
   X-Content-Type-Options: nosniff
+  Content-Language: en-US
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()
+  Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Permitted-Cross-Domain-Policies: none
+  Cross-Origin-Opener-Policy: same-origin
 
 /static/css/fonts/*
   Cache-Control: public, max-age=31536000, immutable
@@ -138,9 +159,19 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
 
+/feed.json
+  Content-Type: application/feed+json; charset=utf-8
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=86400, must-revalidate
+  Content-Type: application/manifest+json; charset=utf-8
+
 /.well-known/*
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
+
+/.well-known/security.txt
+  Content-Type: text/plain; charset=utf-8
 
 /feed.*
   Cache-Control: public, max-age=300, must-revalidate
@@ -228,8 +259,14 @@ mod tests {
         assert!(output.join("api/profile.json").is_file());
         assert!(output.join("api/openapi.json").is_file());
         assert!(output.join(".well-known/agent.json").is_file());
+        assert!(output.join(".well-known/security.txt").is_file());
+        assert!(output.join("manifest.webmanifest").is_file());
         assert!(output.join("404.html").is_file());
         assert!(output.join("_headers").is_file());
+        let headers = fs::read_to_string(output.join("_headers")).expect("headers exist");
+        assert!(headers.contains("Content-Security-Policy:"));
+        assert!(headers.contains("Content-Language: en-US"));
+        assert!(headers.contains("Strict-Transport-Security:"));
         let redirects = fs::read_to_string(output.join("_redirects")).expect("redirects exist");
         assert!(
             redirects.contains("/v/6/blog/fe621-week-02 /blog/computational-methods-week-02/ 301")
@@ -242,6 +279,9 @@ mod tests {
                 < redirects.find("/v/6/blog/:slug").unwrap()
         );
         assert!(output.join("static/css/site.css").is_file());
+        assert!(output.join("static/img/apple-touch-icon.png").is_file());
+        assert!(output.join("static/img/icon-192.png").is_file());
+        assert!(output.join("static/img/icon-512.png").is_file());
 
         let blog_index =
             fs::read_to_string(output.join("blog/index.html")).expect("blog index exists");

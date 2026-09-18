@@ -20,6 +20,8 @@ use tower_http::services::ServeDir;
 
 const SITE_ORIGIN: &str = "https://sharifhsn.dev";
 const SITE_NAME: &str = "Sharif Haason";
+const PROFILE_IMAGE_PATH: &str = "/static/img/profile.jpg";
+const SOURCE_REPOSITORY: &str = "https://github.com/sharifhsn/portfolia";
 const MIN_VISIBLE_TAG_COUNT: usize = 5;
 const REQUESTED_VISIBLE_TAGS: &[&str] = &[
     "Computational Methods",
@@ -122,11 +124,15 @@ fn site_url(path: &str) -> String {
     format!("{SITE_ORIGIN}{}", canonical_path(path))
 }
 
+fn asset_url(path: &str) -> String {
+    format!("{SITE_ORIGIN}{path}")
+}
+
 fn canonical_path(path: &str) -> String {
     if path == "/"
         || path.ends_with('/')
         || path.rsplit('/').next().is_some_and(|part| {
-            [".json", ".xml", ".txt", ".pdf", ".docx"]
+            [".json", ".xml", ".txt", ".pdf", ".docx", ".webmanifest"]
                 .iter()
                 .any(|suffix| part.ends_with(suffix))
         })
@@ -183,6 +189,8 @@ fn person_json_ld() -> serde_json::Value {
         "@id": format!("{SITE_ORIGIN}/#person"),
         "name": SITE_NAME,
         "url": SITE_ORIGIN,
+        "image": asset_url(PROFILE_IMAGE_PATH),
+        "description": page_description("home"),
         "jobTitle": "Product Engineer",
         "worksFor": {"@type": "Organization", "name": "Monark Markets"},
         "sameAs": [
@@ -202,6 +210,24 @@ fn page_json_ld(canonical_url: &str, page: &str) -> String {
     } else {
         "WebPage"
     };
+    let mut webpage = serde_json::json!({
+        "@type": page_type,
+        "@id": format!("{canonical_url}#webpage"),
+        "url": canonical_url,
+        "name": page_title(page),
+        "description": page_description(page),
+        "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
+        "about": {"@id": format!("{SITE_ORIGIN}/#person")},
+        "inLanguage": "en-US"
+    });
+    if page == "home" {
+        webpage["mainEntity"] = serde_json::json!({"@id": format!("{SITE_ORIGIN}/#person")});
+        webpage["primaryImageOfPage"] = serde_json::json!({
+            "@type": "ImageObject",
+            "url": asset_url(PROFILE_IMAGE_PATH)
+        });
+    }
+
     safe_json(&serde_json::json!({
         "@context": "https://schema.org",
         "@graph": [
@@ -213,16 +239,7 @@ fn page_json_ld(canonical_url: &str, page: &str) -> String {
                 "name": SITE_NAME,
                 "publisher": {"@id": format!("{SITE_ORIGIN}/#person")}
             },
-            {
-                "@type": page_type,
-                "@id": format!("{canonical_url}#webpage"),
-                "url": canonical_url,
-                "name": page_title(page),
-                "description": page_description(page),
-                "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
-                "about": {"@id": format!("{SITE_ORIGIN}/#person")},
-                "inLanguage": "en-US"
-            }
+            webpage
         ]
     }))
 }
@@ -279,7 +296,6 @@ fn projects_json_ld(canonical_url: &str, projects: &[Project]) -> String {
 
 fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
     let mut article = serde_json::json!({
-        "@context": "https://schema.org",
         "@type": "Article",
         "@id": format!("{canonical_url}#article"),
         "url": canonical_url,
@@ -303,7 +319,25 @@ fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
     if !post.source_url.is_empty() {
         article["citation"] = serde_json::Value::String(post.source_url.clone());
     }
-    safe_json(&article)
+    let breadcrumbs = serde_json::json!({
+        "@type": "BreadcrumbList",
+        "@id": format!("{canonical_url}#breadcrumb"),
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": site_url("/")},
+            {"@type": "ListItem", "position": 2, "name": "Writing", "item": site_url("/blog")},
+            {"@type": "ListItem", "position": 3, "name": post.title.clone(), "item": canonical_url}
+        ]
+    });
+    safe_json(&serde_json::json!({
+        "@context": "https://schema.org",
+        "@graph": [person_json_ld(), {
+            "@type": "WebSite",
+            "@id": format!("{SITE_ORIGIN}/#website"),
+            "url": SITE_ORIGIN,
+            "name": SITE_NAME,
+            "publisher": {"@id": format!("{SITE_ORIGIN}/#person")}
+        }, article, breadcrumbs]
+    }))
 }
 
 fn clean_inline_text(source: &str) -> String {
@@ -378,7 +412,9 @@ fn sitemap_xml(posts: &[BlogPost]) -> String {
         xml.push_str("  <url><loc>");
         xml.push_str(&xml_escape(&site_url(&format!("/blog/{}", post.slug))));
         xml.push_str("</loc><lastmod>");
-        xml.push_str(&xml_escape(&post.date));
+        xml.push_str(&xml_escape(
+            post.updated_at.as_deref().unwrap_or(&post.date),
+        ));
         xml.push_str("</lastmod></url>\n");
     }
     xml.push_str("</urlset>\n");
@@ -423,6 +459,16 @@ fn llms_txt(posts: &[BlogPost]) -> String {
             "Agent manifest",
             "/.well-known/agent.json",
             "Read-only discovery manifest for machine clients.",
+        ),
+        (
+            "Web app manifest",
+            "/manifest.webmanifest",
+            "Browser-installable site metadata and icon information.",
+        ),
+        (
+            "Security contact",
+            "/.well-known/security.txt",
+            "Machine-readable vulnerability reporting policy.",
         ),
         (
             "OpenAPI description",
@@ -586,6 +632,10 @@ fn api_profile_json() -> serde_json::Value {
     serde_json::json!({
         "version": "1",
         "site": SITE_ORIGIN,
+        "canonicalUrl": site_url("/"),
+        "language": "en-US",
+        "sourceRepository": SOURCE_REPOSITORY,
+        "imageUrl": asset_url(PROFILE_IMAGE_PATH),
         "agentManifestUrl": site_url("/.well-known/agent.json"),
         "openApiUrl": site_url("/api/openapi.json"),
         "profileUrl": site_url("/"),
@@ -612,9 +662,14 @@ fn agent_manifest_json() -> serde_json::Value {
         "name": "Sharif Haason public portfolio",
         "description": page_description("home"),
         "site": site_url("/"),
+        "canonicalHost": SITE_ORIGIN,
+        "language": "en-US",
+        "sourceRepository": SOURCE_REPOSITORY,
         "access": "public-read-only",
         "authentication": "none",
         "mutations": false,
+        "representations": ["text/html", "text/plain", "text/markdown", "application/json", "application/atom+xml", "application/feed+json"],
+        "citationGuidance": "Prefer the canonical HTML URL for citations; use structured endpoints when exact metadata or full Markdown is needed.",
         "discovery": [
             {"rel": "llms", "url": site_url("/llms.txt"), "description": "Concise site map and article descriptions."},
             {"rel": "llms-full", "url": site_url("/llms-full.txt"), "description": "Complete public writing corpus in Markdown."},
@@ -623,9 +678,46 @@ fn agent_manifest_json() -> serde_json::Value {
             {"rel": "projects", "url": site_url("/api/projects.json"), "description": "Structured project summaries."},
             {"rel": "profile", "url": site_url("/api/profile.json"), "description": "Public profile and resume links."},
             {"rel": "sitemap", "url": site_url("/sitemap.xml"), "description": "Canonical URL inventory."},
-            {"rel": "feed", "url": site_url("/feed.json"), "description": "JSON Feed 1.1 article feed."}
+            {"rel": "feed", "url": site_url("/feed.json"), "description": "JSON Feed 1.1 article feed."},
+            {"rel": "manifest", "url": asset_url("/manifest.webmanifest"), "description": "Web application metadata and icon information."},
+            {"rel": "security", "url": site_url("/.well-known/security.txt"), "description": "Vulnerability reporting policy."}
         ]
     })
+}
+
+fn web_manifest_json() -> serde_json::Value {
+    serde_json::json!({
+        "name": "Sharif Haason",
+        "short_name": "Sharif Haason",
+        "description": page_description("home"),
+        "lang": "en-US",
+        "dir": "ltr",
+        "start_url": "/",
+        "scope": "/",
+        "display": "browser",
+        "theme_color": "#fcfdfe",
+        "background_color": "#fcfdfe",
+        "icons": [
+            {
+                "src": "/static/img/icon-192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any maskable"
+            },
+            {
+                "src": "/static/img/icon-512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any maskable"
+            }
+        ]
+    })
+}
+
+fn security_txt_content() -> String {
+    format!(
+        "Contact: {SOURCE_REPOSITORY}/security\nPolicy: {SOURCE_REPOSITORY}/blob/main/SECURITY.md\nExpires: 2027-09-18T00:00:00Z\nPreferred-Languages: en\nCanonical: {SITE_ORIGIN}/.well-known/security.txt\n"
+    )
 }
 
 fn openapi_json() -> serde_json::Value {
@@ -1409,7 +1501,9 @@ async fn feed(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
 }
 
 async fn feed_json_endpoint(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
-    json_response(&feed_json(posts.as_slice()))
+    let body =
+        serde_json::to_string(&feed_json(posts.as_slice())).expect("JSON feed should serialize");
+    text_response("application/feed+json; charset=utf-8", body)
 }
 
 async fn api_posts(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
@@ -1427,6 +1521,15 @@ async fn api_profile() -> Response {
 
 async fn agent_manifest() -> Response {
     json_response(&agent_manifest_json())
+}
+
+async fn web_manifest() -> Response {
+    let body = serde_json::to_string(&web_manifest_json()).expect("web manifest should serialize");
+    text_response("application/manifest+json; charset=utf-8", body)
+}
+
+async fn security_txt() -> Response {
+    text_response("text/plain; charset=utf-8", security_txt_content())
 }
 
 async fn openapi() -> Response {
@@ -1530,12 +1633,14 @@ async fn main() {
         .route("/llms-full.txt", get(llms_full))
         .route("/feed.xml", get(feed))
         .route("/feed.json", get(feed_json_endpoint))
+        .route("/manifest.webmanifest", get(web_manifest))
         .route("/api/posts.json", get(api_posts))
         .route("/api/posts/{*path}", get(api_post))
         .route("/api/projects.json", get(api_projects))
         .route("/api/profile.json", get(api_profile))
         .route("/api/openapi.json", get(openapi))
         .route("/.well-known/agent.json", get(agent_manifest))
+        .route("/.well-known/security.txt", get(security_txt))
         .route("/v/6/blog/{slug}", get(legacy_blog_article))
         .route("/v/{id}/{page}", get(legacy_page))
         .route("/v/{id}", get(legacy_home))
@@ -1590,6 +1695,10 @@ mod tests {
             "https://sharifhsn.dev/api/posts/circuits.json"
         );
         assert_eq!(
+            site_url("/manifest.webmanifest"),
+            "https://sharifhsn.dev/manifest.webmanifest"
+        );
+        assert_eq!(
             legacy_blog_target("fe621-week-02"),
             "/blog/computational-methods-week-02/"
         );
@@ -1606,6 +1715,9 @@ mod tests {
             let Html(html) = render_site(page).unwrap();
             assert!(html.contains("Sharif Haason"), "page {page}");
             assert!(html.contains("https://schema.org"));
+            if page == "home" {
+                assert!(html.contains("\"mainEntity\""));
+            }
             assert!(html.contains("<link rel=\"canonical\""));
             assert!(!html.contains("/v/6"));
             assert!(!html.contains("/designs"));
@@ -1716,6 +1828,8 @@ mod tests {
         );
         let profile_json = api_profile_json();
         assert_eq!(profile_json["person"]["name"], SITE_NAME);
+        assert_eq!(profile_json["language"], "en-US");
+        assert_eq!(profile_json["sourceRepository"], SOURCE_REPOSITORY);
         assert_eq!(
             profile_json["resume"]["pdfUrl"],
             "https://sharifhsn.dev/static/resume/sharif-haason.pdf"
@@ -1723,6 +1837,17 @@ mod tests {
         let manifest = agent_manifest_json();
         assert_eq!(manifest["access"], "public-read-only");
         assert_eq!(manifest["mutations"], false);
+        assert_eq!(manifest["canonicalHost"], SITE_ORIGIN);
+        assert!(
+            manifest["discovery"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|item| {
+                    item["rel"] == "manifest"
+                        && item["url"] == "https://sharifhsn.dev/manifest.webmanifest"
+                })
+        );
         assert!(
             manifest["discovery"]
                 .as_array()
@@ -1737,6 +1862,16 @@ mod tests {
         assert_eq!(openapi["openapi"], "3.1.0");
         assert!(openapi["paths"]["/api/posts/{slug}.json"].is_object());
         assert!(openapi["components"]["schemas"]["Post"].is_object());
+
+        let web_manifest = web_manifest_json();
+        assert_eq!(web_manifest["start_url"], "/");
+        assert_eq!(web_manifest["icons"].as_array().unwrap().len(), 2);
+        assert_eq!(web_manifest["icons"][0]["sizes"], "192x192");
+        assert_eq!(web_manifest["icons"][1]["sizes"], "512x512");
+        assert!(
+            security_txt_content()
+                .contains("Canonical: https://sharifhsn.dev/.well-known/security.txt")
+        );
     }
 
     #[test]
@@ -2000,7 +2135,7 @@ mod tests {
         assert!(index.contains("data-tag-filter"));
         assert!(index.contains("id=\"writing-search\""));
         assert!(index.contains("data-search=\""));
-        assert!(index.contains("class=\"post-description\""));
+        assert!(index.contains("class=\"post-description p-summary\""));
         assert!(index.contains("href=\"/api/posts.json\""));
         assert!(index.contains("type=\"radio\""));
         assert!(index.contains("name=\"writing-topic\""));
@@ -2027,6 +2162,7 @@ mod tests {
         assert!(article.contains("Source: Archive"));
         assert!(article.contains("/api/posts/circuits.json"));
         assert!(article.contains("application/ld+json"));
+        assert!(article.contains("BreadcrumbList"));
 
         let Html(course_article) =
             render_blog_article(&posts, "computational-methods-week-02").unwrap();

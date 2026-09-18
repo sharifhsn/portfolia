@@ -23,12 +23,19 @@ reading-first Rust/Axum/Askama portfolio with a static Cloudflare Pages export.
   description of the structured read endpoints.
 - [`/.well-known/agent.json`](https://sharifhsn.dev/.well-known/agent.json) —
   explicit read-only agent discovery manifest.
+- [`manifest.webmanifest`](https://sharifhsn.dev/manifest.webmanifest) —
+  browser-facing site metadata and icon information.
+- [`/.well-known/security.txt`](https://sharifhsn.dev/.well-known/security.txt)
+  — vulnerability reporting policy; the repository policy is in
+  [`SECURITY.md`](SECURITY.md).
 - [`sitemap.xml`](https://sharifhsn.dev/sitemap.xml) — canonical URL inventory.
 
 The machine-readable contract and source-of-truth rules are in
 [`context/AI_AGENTS.md`](context/AI_AGENTS.md). The active architecture is in
 [`context/APPLICATION.md`](context/APPLICATION.md), and the deployment record is
-in [`context/HOSTING.md`](context/HOSTING.md).
+in [`context/HOSTING.md`](context/HOSTING.md). The standards-backed web
+metadata and security niceties are recorded in
+[`context/WEB_NICETIES.md`](context/WEB_NICETIES.md).
 
 ## Development
 

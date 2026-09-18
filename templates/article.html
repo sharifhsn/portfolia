@@ -1,18 +1,40 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-US">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#fcfdfe">
+  <meta name="color-scheme" content="light">
+  <meta name="format-detection" content="telephone=no">
   <meta name="author" content="Sharif Haason">
   <meta name="description" content="{{ post.description }}">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="alternate" hreflang="en" href="{{ canonical_url }}">
+  <link rel="alternate" hreflang="x-default" href="{{ canonical_url }}">
+  <link rel="icon" type="image/png" sizes="355x355" href="/static/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="alternate" type="application/atom+xml" title="Sharif Haason — Writing" href="/feed.xml">
   <meta property="og:type" content="article">
   <meta property="og:title" content="{{ post.title }} | Sharif Haason">
   <meta property="og:description" content="{{ post.description }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Sharif Haason">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://sharifhsn.dev/static/img/profile.jpg">
+  <meta property="og:image:secure_url" content="https://sharifhsn.dev/static/img/profile.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="800">
+  <meta property="og:image:height" content="800">
+  <meta property="og:image:alt" content="Portrait of Sharif Haason">
+  <meta property="article:author" content="https://sharifhsn.dev/resume/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ post.title }} | Sharif Haason">
+  <meta name="twitter:description" content="{{ post.description }}">
+  <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
+  <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   {% if let Some(published_at) = post.published_at %}<meta property="article:published_time" content="{{ published_at }}">
   {% else %}<meta property="article:published_time" content="{{ post.date }}">
   {% endif %}
@@ -32,6 +54,7 @@
   <link rel="service-desc" type="application/vnd.oai.openapi+json" title="Structured API" href="/api/openapi.json">
   <link rel="alternate" type="application/json" title="Agent discovery manifest" href="/.well-known/agent.json">
   <link rel="alternate" type="text/plain" title="Sharif Haason — full writing corpus" href="/llms-full.txt">
+  <link rel="alternate" type="text/plain" title="Security contact" href="/.well-known/security.txt">
   {% if post.has_math %}<link rel="stylesheet" href="/static/css/katex.min.css?v=20260918-1">{% endif %}
 </head>
 <body>
@@ -47,11 +70,11 @@
     </header>
     <main id="main" class="content article-content">
       <p class="back-link"><a href="/blog/">All writing</a></p>
-      <article>
+      <article class="h-entry">
         <header class="article-header">
-          <h1>{{ post.title }}</h1>
+          <h1 class="p-name">{{ post.title }}</h1>
           <div class="article-meta">
-            <time datetime="{{ post.date }}">{{ post.date_display }}</time>
+            <time class="dt-published" datetime="{{ post.date }}">{{ post.date_display }}</time>
             <span>Article {{ position }} of {{ total }}</span>
             {% if post.source != "" %}<span>Source: {{ post.source }}</span>{% endif %}
           </div>
@@ -61,9 +84,9 @@
           </ul>
           {% endif %}
         </header>
-        <div class="post-body">{{ post.body_html|safe }}</div>
+        <div class="post-body e-content">{{ post.body_html|safe }}</div>
         {% if post.source_url != "" %}
-        <p class="original-source"><a href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer">View the original {{ post.source }} source</a></p>
+        <p class="original-source"><a class="u-syndication" href="{{ post.source_url }}" target="_blank" rel="syndication noopener noreferrer">View the original {{ post.source }} source</a></p>
         {% endif %}
       </article>
       <nav class="article-nav" aria-label="Article navigation">
@@ -75,11 +98,12 @@
     <footer class="site-footer">
       <span>Sharif Haason</span>
       <nav aria-label="Machine-readable resources">
-        <a href="/feed.xml">RSS</a>
+        <a href="/feed.xml">Atom feed</a>
         <a href="/feed.json">JSON feed</a>
         <a href="/llms.txt">LLM guide</a>
         <a href="/api/openapi.json">API</a>
         <a href="/.well-known/agent.json">Agent manifest</a>
+        <a href="/.well-known/security.txt">Security</a>
         <a href="/sitemap.xml">Sitemap</a>
       </nav>
     </footer>
@@ -87,18 +111,7 @@
   {% if post.has_math %}
   <script defer src="/static/js/katex.min.js?v=20260918-1"></script>
   <script defer src="/static/js/auto-render.min.js?v=20260918-1"></script>
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      renderMathInElement(document.querySelector(".post-body"), {
-        delimiters: [
-          { left: "$$", right: "$$", display: true },
-          { left: "\\[", right: "\\]", display: true },
-          { left: "\\(", right: "\\)", display: false }
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+  <script defer src="/static/js/math-render.js?v=20260918-1"></script>
   {% endif %}
 </body>
 </html>

@@ -1,12 +1,21 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-US">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#fcfdfe">
+  <meta name="color-scheme" content="light">
+  <meta name="format-detection" content="telephone=no">
   <meta name="author" content="Sharif Haason">
   <meta name="description" content="Long-form writing and technical explanations by Sharif Haason.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="alternate" hreflang="en" href="{{ canonical_url }}">
+  <link rel="alternate" hreflang="x-default" href="{{ canonical_url }}">
+  <link rel="icon" type="image/png" sizes="355x355" href="/static/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="author" href="/resume/">
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="alternate" type="application/atom+xml" title="Sharif Haason — Writing" href="/feed.xml">
@@ -17,11 +26,24 @@
   <link rel="alternate" type="application/json" title="Sharif Haason — structured profile" href="/api/profile.json">
   <link rel="service-desc" type="application/vnd.oai.openapi+json" title="Structured API" href="/api/openapi.json">
   <link rel="alternate" type="application/json" title="Agent discovery manifest" href="/.well-known/agent.json">
+  <link rel="alternate" type="text/plain" title="Security contact" href="/.well-known/security.txt">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Writing | Sharif Haason">
   <meta property="og:description" content="Long-form writing and technical explanations by Sharif Haason.">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Sharif Haason">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://sharifhsn.dev/static/img/profile.jpg">
+  <meta property="og:image:secure_url" content="https://sharifhsn.dev/static/img/profile.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="800">
+  <meta property="og:image:height" content="800">
+  <meta property="og:image:alt" content="Portrait of Sharif Haason">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Writing | Sharif Haason">
+  <meta name="twitter:description" content="Long-form writing and technical explanations by Sharif Haason.">
+  <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
+  <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>Writing | Sharif Haason</title>
   <link rel="stylesheet" href="/static/css/site.css?v=20260918-3">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
@@ -77,11 +99,11 @@
       <ol id="writing-results" class="post-list">
         {% for post in posts %}
         <li class="post-item">
-          <article class="post-row" data-tags="{{ post.tag_keys }}" data-search="{{ post.search_text }}" aria-labelledby="post-title-{{ post.slug }}">
-            <time class="post-date" datetime="{{ post.date }}">{{ post.date_display }}</time>
+          <article class="post-row h-entry" data-tags="{{ post.tag_keys }}" data-search="{{ post.search_text }}" aria-labelledby="post-title-{{ post.slug }}">
+            <time class="post-date dt-published" datetime="{{ post.date }}">{{ post.date_display }}</time>
             <div class="post-summary">
-              <h2 id="post-title-{{ post.slug }}"><a class="post-title" href="/blog/{{ post.slug }}/">{{ post.title }}</a></h2>
-              <p class="post-description">{{ post.description }}</p>
+              <h2 id="post-title-{{ post.slug }}"><a class="post-title p-name u-url" href="/blog/{{ post.slug }}/">{{ post.title }}</a></h2>
+              <p class="post-description p-summary">{{ post.description }}</p>
               {% if post.source_url != "" || post.display_tags.len() > 0 %}
               <ul class="post-labels" aria-label="Post type and topics">
                 {% if post.source_url != "" %}<li class="post-source"><a class="post-source-link" href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer" aria-label="View original {{ post.source }} source">{% if post.source == "LinkedIn" %}<span class="linkedin-mark" aria-hidden="true">in</span>{% endif %}<span>{{ post.source }}</span></a></li>{% endif %}
@@ -97,11 +119,12 @@
     <footer class="site-footer">
       <span>Sharif Haason</span>
       <nav aria-label="Machine-readable resources">
-        <a href="/feed.xml">RSS</a>
+        <a href="/feed.xml">Atom feed</a>
         <a href="/feed.json">JSON feed</a>
         <a href="/llms.txt">LLM guide</a>
         <a href="/api/openapi.json">API</a>
         <a href="/.well-known/agent.json">Agent manifest</a>
+        <a href="/.well-known/security.txt">Security</a>
         <a href="/sitemap.xml">Sitemap</a>
       </nav>
     </footer>
