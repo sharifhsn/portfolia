@@ -26,7 +26,7 @@ We’ll assume that the payoff of a derivative is 100(r-0.11)\_+
 
 We also know the probability of going up, staying and going down as 0.25, 0.5, 0.25
 
-![Hand-drawn Hull-White trinomial tree from the source notes.](/static/img/Advanced Derivatives-week-06-hull-white-tree.png)
+![Hand-drawn Hull-White trinomial tree from the source notes.](/static/img/advanced-derivatives-week-06-hull-white-tree.png)
 
 Hull-White uses an alternative branching process. There is the typical (up med down) then (UP up med), (med down DOWN).
 
@@ -46,7 +46,7 @@ Then we determine \\(\\theta(t)\\) so it matches the initial term structure.
 
 Let’s look at the stages:
 
-![Handwritten tree-construction steps from the Week 6 source notes.](/static/img/Advanced Derivatives-week-06-tree-construction.png)
+![Handwritten tree-construction steps from the Week 6 source notes.](/static/img/advanced-derivatives-week-06-tree-construction.png)
 
 Then we set \\(\\Delta R = \\sigma \\sqrt{3 \\Delta t}\\)
 

@@ -348,6 +348,32 @@ fn clean_inline_text(source: &str) -> String {
         .replace('|', "\\|")
 }
 
+fn strip_markdown_links(source: &str) -> String {
+    let mut output = String::with_capacity(source.len());
+    let mut remainder = source;
+
+    while let Some(open) = remainder.find('[') {
+        output.push_str(&remainder[..open]);
+        let after_open = &remainder[open + 1..];
+        let Some(close_rel) = after_open.find("](") else {
+            output.push_str(&remainder[open..]);
+            return output;
+        };
+        let close = open + 1 + close_rel;
+        let destination_start = close + 2;
+        let Some(destination_close_rel) = remainder[destination_start..].find(')') else {
+            output.push_str(&remainder[open..]);
+            return output;
+        };
+
+        output.push_str(&remainder[open + 1..close]);
+        remainder = &remainder[destination_start + destination_close_rel + 1..];
+    }
+
+    output.push_str(remainder);
+    output
+}
+
 fn summarize_markdown(source: &str, title: &str) -> String {
     let paragraph = source
         .split("\n\n")
@@ -359,7 +385,7 @@ fn summarize_markdown(source: &str, title: &str) -> String {
                 && !block.starts_with("~~~")
         })
         .unwrap_or(title);
-    let summary = paragraph
+    let summary = strip_markdown_links(paragraph)
         .replace("**", "")
         .replace("__", "")
         .replace(['*', '`', '>'], "")
@@ -1680,6 +1706,17 @@ mod tests {
         assert!(html.contains(&format!("<code>{inline_code_content}</code>")));
         assert!(html.contains("$$code_j$$"));
         assert!(!html.contains("<em>"));
+    }
+
+    #[test]
+    fn summaries_use_markdown_link_labels_without_raw_destinations() {
+        assert_eq!(
+            summarize_markdown(
+                "The [link](https://example.com/a-long-path) works.",
+                "Fallback"
+            ),
+            "The link works."
+        );
     }
 
     #[test]

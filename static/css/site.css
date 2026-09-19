@@ -772,6 +772,15 @@ p {
     gap: 1.25rem;
   }
 
+  .site-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .site-footer nav {
+    justify-content: flex-start;
+  }
+
   .content {
     min-height: calc(100vh - 11rem);
     padding: 2.25rem 0 4rem;

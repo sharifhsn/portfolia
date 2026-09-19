@@ -54,7 +54,7 @@ y\_0 \= forward yield at time 0
 
 We have a relationship where F\_0 \= G(y\_0)
 
-![Hand-drawn bond price and bond yield curves from the source notes.](/static/img/Advanced Derivatives-week-04-bond-price-yield.png)
+![Hand-drawn bond price and bond yield curves from the source notes.](/static/img/advanced-derivatives-week-04-bond-price-yield.png)
 
 If we make our forward equivalent to the expected future bond price, then
 
@@ -292,4 +292,4 @@ Rate is observed and paid at time T, not T\*. Convexity adjustment to each forwa
 
 This one is dependent on time when you have resets.
 
-![Handwritten sketch from the Week 4 source notes.](/static/img/Advanced Derivatives-week-04-rate-adjustment.png)
+![Handwritten sketch from the Week 4 source notes.](/static/img/advanced-derivatives-week-04-rate-adjustment.png)
