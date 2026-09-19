@@ -45,7 +45,7 @@
   <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>Writing | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260918-4">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260918-5">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -64,39 +64,42 @@
         <h1 id="page-title">Writing</h1>
         <p>Long-form writing and technical explanations.</p>
       </section>
-      <section class="tag-filter" aria-label="Filter writing">
-        <label class="writing-search" for="writing-search">
-          <span class="search-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
-          </span>
-          <span class="sr-only">Search writing</span>
-          <input id="writing-search" type="search" placeholder="Search titles, summaries, and topics" autocomplete="off" aria-describedby="filter-status">
-        </label>
-        <fieldset class="tag-filter-set">
-          <legend>Browse by topic</legend>
-          <div class="tag-all">
-            <label class="tag-choice">
-              <input type="radio" name="writing-topic" value="" data-tag-filter checked>
-              <span class="tag-pill">All writing <span class="tag-count">{{ total }}</span></span>
-            </label>
-          </div>
-          {% for group in tag_groups %}
-          <div class="tag-group" role="group" aria-label="{{ group.name }}">
-            <h3>{{ group.name }}</h3>
-            <div class="tag-options">
-              {% for tag in group.tags %}
+      <div class="blog-layout">
+        <aside class="tag-filter" aria-label="Filter writing">
+          <label class="writing-search" for="writing-search">
+            <span class="search-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+            </span>
+            <span class="sr-only">Search writing</span>
+            <input id="writing-search" type="search" placeholder="Search writing" autocomplete="off" aria-describedby="filter-status">
+          </label>
+          <fieldset class="tag-filter-set">
+            <legend>Browse by topic</legend>
+            <div class="tag-all">
               <label class="tag-choice">
-                <input type="radio" name="writing-topic" value="{{ tag.name }}" data-tag-filter>
-                <span class="tag-pill">{{ tag.name }} <span class="tag-count">{{ tag.count }}</span></span>
+                <input type="radio" name="writing-topic" value="" data-tag-filter checked>
+                <span class="tag-pill">All writing <span class="tag-count">{{ total }}</span></span>
               </label>
-              {% endfor %}
             </div>
-          </div>
-          {% endfor %}
-        </fieldset>
-        <p id="filter-status" class="filter-status" data-filter-status aria-live="polite">Showing {{ total }} pieces.</p>
-      </section>
-      <ol id="writing-results" class="post-list">
+            {% for group in tag_groups %}
+            <div class="tag-group" role="group" aria-label="{{ group.name }}">
+              <h3>{{ group.name }}</h3>
+              <div class="tag-options">
+                {% for tag in group.tags %}
+                <label class="tag-choice">
+                  <input type="radio" name="writing-topic" value="{{ tag.name }}" data-tag-filter>
+                  <span class="tag-pill">{{ tag.name }} <span class="tag-count">{{ tag.count }}</span></span>
+                </label>
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+          </fieldset>
+        </aside>
+        <section class="blog-results" aria-labelledby="writing-results-title">
+          <h2 id="writing-results-title" class="sr-only">Writing results</h2>
+          <p id="filter-status" class="filter-status" data-filter-status aria-live="polite">Showing {{ total }} pieces.</p>
+          <ol id="writing-results" class="post-list">
         {% for post in posts %}
         <li class="post-item">
           <article class="post-row h-entry" data-tags="{{ post.tag_keys }}" data-search="{{ post.search_text }}" aria-labelledby="post-title-{{ post.slug }}">
@@ -114,7 +117,9 @@
           </article>
         </li>
         {% endfor %}
-      </ol>
+          </ol>
+        </section>
+      </div>
     </main>
     <footer class="site-footer">
       <span>Sharif Haason</span>
