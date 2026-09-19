@@ -7,12 +7,13 @@ instructor = 'Juan'
 term = 'Spring 2025'
 [taxonomies]
 categories = ['FX']
-tags = ['FX', 'GARCH', 'Volatility Estimation']
+tags = ['FX', 'Risk Engineering', 'GARCH', 'Volatility Estimation']
 +++
-The risk-statistics portion of FE-635 introduces GARCH as a way to model time-varying volatility. Returns may have little serial correlation while their squared returns cluster: calm periods tend to be followed by calm periods, and shocks tend to persist.
 
-A simple GARCH(1,1) recurrence is
+## Week 8 — 24 March 2025
 
-$$\sigma_t^2=\omega+\alpha\epsilon_{t-1}^2+\beta\sigma_{t-1}^2.$$
+The syllabus records “Risk Management: GARCH — Statistics.” The personal course export contains the schedule and the workbook implementation notes for the Black–Scholes/FX material, but it does not contain a worked GARCH lecture or recurrence.
 
-The parameters describe long-run variance, reaction to a new shock, and persistence. Estimation and diagnostics matter as much as the recurrence; a fitted model should be checked against the horizon and the tail behavior of the risk report.
+### Source boundary
+
+This entry is deliberately a source pointer: the GARCH lecture is listed in the syllabus, but the detailed class notes are not present in the exported document. I have removed the former generated GARCH explanation rather than attributing textbook material to the class.

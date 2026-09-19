@@ -9,8 +9,23 @@ term = 'Fall 2024'
 categories = ['Risk Management']
 tags = ['Risk Management', 'Bonds', 'Hedging']
 +++
-The bond-hedging lab combines duration, futures, and forward positions. A portfolio can be made locally insensitive to a yield move by matching its dollar duration with an offsetting instrument.
 
-The hedge has to match the exposure being measured. A bond's price, accrued interest, maturity, coupon, and day-count convention determine the sensitivity; a futures contract adds its own conversion factor and basis. Matching only the face amount can leave a large residual rate exposure.
+### Lecture Notes
 
-The notes use this as a practical version of the earlier lesson: a hedge is a model of a risk, and the model must be re-estimated as the portfolio and the curve change.
+#### Lab 4
+
+Notes added to lab 4 and discussion which delves into the analytic part establishing the connection between the two.
+
+#### Futures/Forwards
+
+Futures are less flexible because they are standardized, and you have to announce the price constantly because you’re on the open market.
+
+The forward contract you sleep for a year, wake up, and they honor an agreement.
+
+#### Hedging Bonds
+
+The beta on bonds is the duration.
+
+If we zoom in very far, we can see the earth is flat and get the slope (derivative).
+
+As rates go up, bond prices go down.

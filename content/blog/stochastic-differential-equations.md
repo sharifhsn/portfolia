@@ -9,10 +9,33 @@ term = 'Fall 2024'
 categories = ['Stochastic Calculus']
 tags = ['Stochastic Calculus', 'SDEs', 'Diffusions']
 +++
-The SDE section writes a state process as a drift plus a diffusion term,
 
-$$dX_t=b(t,X_t)\,dt+\sigma(t,X_t)\,dW_t.$$
+### Lecture Notes
 
-The coefficients describe deterministic motion and random shocks. Unlike an ordinary differential equation, an SDE is interpreted through an integral equation and a chosen filtration. The notes compare continuous diffusions with jump processes and use Itô's formula to transform solutions.
+Came late because my brother couldn’t get up 🙁
 
-For pricing, this notation is valuable because a model can be specified by its local characteristics even when there is no closed-form path. Existence, integrability, and the chosen measure determine whether the process is usable as a financial model.
+#### Stochastic Differential Equations
+
+A SDE is of the form
+
+\(dX(u) = \beta(u, X(u)) du + \gamma (u, X(u)) dW(u)\)
+
+where β is the drift and γ is the diffusion.
+
+Diffeqs always need a boundary condition, given by
+
+\(X(t) = x, t \geq 0, x \in \mathbb{R}\)
+
+In order to solve, we want to find
+
+Most of the time, these don’t have closed-form solutions, so you have to solve numerically with Euler’s method.
+
+We can express SDE as PDE using Feynman-Kac, if our solution
+
+
+
+This is the end of the book of the final.
+
+Over the next two weeks, we will look at what we can do based on what we’ve been learning.
+
+Next week, we will introduce the idea of non-continuous stock processes i.e. jumps.

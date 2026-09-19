@@ -3,14 +3,17 @@ title = 'XVA and Counterparty Risk'
 date = 2025-04-21
 source = 'FE-635 | Risk Engineering'
 source_date_basis = "Meeting date verified against the personal Academics calendar."
-instructor = 'Juan'
+instructor = 'Yee Han Look'
 term = 'Spring 2025'
 [taxonomies]
 categories = ['FX']
-tags = ['FX', 'XVA', 'Counterparty Risk']
+tags = ['FX', 'Counterparty Risk', 'XVA', 'CVA', 'FVA']
 +++
-The XVA section adds counterparty and funding effects to an otherwise clean derivative value. CVA is the expected loss from counterparty default on positive exposure; FVA captures the funding cost of carrying an uncollateralized position. The exact decomposition depends on collateral, netting, and the institution's convention.
 
-The calculation is path dependent: simulate or approximate future exposure, combine it with default probabilities and recovery, and discount the expected loss. Netting sets and collateral agreements can change the exposure more than a small shift in a market input.
+## Week 11 — 21 April 2025
 
-The class notes use XVA to connect pricing and risk governance. A model output is meaningful only when the legal agreement and the exposure definition are the same ones used by the desk.
+The syllabus records “Introduction to X-VAs: CVA/FVA,” taught by Yee Han.
+
+### Source boundary
+
+The personal course export has the topic and date, but no worked XVA lecture notes. The former CVA/FVA explanation was generated from general knowledge rather than recovered class notes, so this entry now records only what the source supports.

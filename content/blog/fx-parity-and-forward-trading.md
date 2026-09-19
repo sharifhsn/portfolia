@@ -9,8 +9,23 @@ term = 'Spring 2025'
 categories = ['FX']
 tags = ['FX', 'FX Parity', 'Forward Contracts']
 +++
-The FE-635 notes begin with the distinction between spot and forward FX. The forward rate is the exchange rate implied by borrowing in one currency, lending in the other, and carrying the position to maturity. The notation in the class workbook uses the forward FX rate as \(S\), so the quote convention has to be fixed before a formula is evaluated.
 
-Covered interest parity is the no-arbitrage check. Domestic and foreign discounting rates determine the forward adjustment, while day-count and currency conventions determine how those rates are applied. A forward is a contract on a future exchange, not a forecast of where spot must end up.
+## Week 3 — 10 February 2025
 
-The practical checklist is simple: identify the domestic currency, foreign currency, spot quote, maturity, and compounding convention before comparing two prices.
+The syllabus records this class as “Stochastic Processes — Intro to FX: FX parity; Spot and Forward trading; FX conventions.” The source document does not contain a prose derivation of covered interest parity, so I am keeping the implementation notes and the topic record rather than filling that gap with a generated explanation.
+
+### Notes on inputs
+
+The workbook notes record the conventions used by the later pricing functions:
+
+- Days-to-time conversion uses a 365-day year.
+- (S) is the forward FX rate, not spot FX.
+- Contract types are (C) (call), (P) (put), (F) (forward), (D) (deposit in local currency, usually USD), and (M) (deposit in the foreign currency, usually MXN).
+- (DiscRate) is the discounting-currency rate; (ExtRate) is the foreign-currency rate.
+- Prices are returned in USD. Notionals are entered in MXN except for a USD deposit ((D)).
+
+The quote direction and domestic/foreign labels therefore need to be fixed before comparing a spot, forward, or parity calculation.
+
+### Source boundary
+
+The personal course export contains the syllabus and these workbook conventions, but no worked parity example. This article intentionally marks that source boundary instead of presenting an LLM-generated derivation as class notes.

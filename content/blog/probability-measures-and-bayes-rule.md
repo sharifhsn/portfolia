@@ -9,12 +9,187 @@ term = 'Fall 2024'
 categories = ['Probability Theory']
 tags = ['Probability Theory', 'Conditional Probability', 'Bayes Rule']
 +++
-A probability measure \(\mathbb P\) assigns a number in \([0,1]\) to every event in \(\mathcal F\). The notes begin with \(\mathbb P(\Omega)=1\) and countable additivity for disjoint events:
 
-$$\mathbb P\left(\bigcup_{n=1}^{\infty}A_n\right)=\sum_{n=1}^{\infty}\mathbb P(A_n).$$
+## Week 2
 
-From those axioms follow the familiar rules for complements, inclusion, and finite unions. Conditioning then changes the measure after new information arrives. For \(\mathbb P(B)>0\),
+### Reading
 
-$$\mathbb P(A\mid B)=\frac{\mathbb P(A\cap B)}{\mathbb P(B)}.$$
+#### FT-2 | Probability Measure
 
-The total-probability and Bayes formulas update a partition of the sample space when an observation occurs. The notes emphasize that Bayes' rule is a bookkeeping identity for the same joint event, not a new probability model. Independence is the special case in which \(\mathbb P(A\cap B)=\mathbb P(A)\mathbb P(B)\).
+We have already considered the measurable space \((\Omega, \mathcal{F})\) of the sample space and \(\sigma\)-algebra. We can now define the probability measure \(\mathbb{P}\) as a measure defined on events in the \(\sigma\)-algebra \(\mathcal{F}\), taking values in the unit interval \[0, 1\]. This measures the size of the events, which has two properties: the probability of \(\Omega\) is 1, which means that all outcomes are accounted for in the sample space, and that the measure is countably additive, which allows us to extend the probability of individual events to the entire \(\sigma\)-algebra.
+
+There are three ways of thinking on how the numerical values of probability manifest. Frequentism assigns values directly from data. Objectivism assigns values based on some model which is considered to describe aspects of the universe. Subjectivism characterizes probability as measuring beliefs about the world.
+
+The definition of probability measure is as follows:
+
+\(\mathbb{P}(\Omega) = 1\)
+
+and for any sequence of disjoint events in \(\mathcal{F}\):
+
+\(\mathbb{P}(\bigcup_{n=1}^\infty A_n) = \sum_{n=1}^\infty \mathbb{P}(A_n)\)
+
+There are some other basic properties that arise from these definitions:
+
+When \(A \subset B\)
+
+\(\mathbb{P}(B \backslash A) = \mathbb{P}(B) - \mathbb{P}(A)\)
+
+\(\mathbb{P}(A) \leq \mathbb{P}(B)\)
+
+\(\mathbb{P}(A^c) = 1 - \mathbb{P}(A)\)
+
+\(\mathbb{P}(\emptyset) = 0\)
+
+For all \(A, B\):
+
+\(\mathbb{P}(A \cup B) = \mathbb{P}(A) + \mathbb{P}(B) - P(A \cap B)\)
+
+Poincaré’s formula:
+
+\(\mathbb{P}(A_1 \cup A_2 \cup \ldots \cup A_n) = \sum_{I \subset \{1, 2, \ldots, n\}} (-1)^{|I| + 1} \mathbb{P}(\bigcap_{i \in I} A_i)\)
+
+\(= \sum_{i=1}^n \mathbb{P}(A_i) - \sum_{i < j \leq n} \mathbb{P}(A_i \cap A_j)\)
+
+\(+ \sum_{i < j < k \leq n} \mathbb{P}(A_i \cap A_j \cap A_k) - \ldots + (-1)^n \mathbb{P}(A_1 \cap A_2 \ldots \cap A_n)\)
+
+This is better expressed as the idea that the probability measure of the unions of sets can be expressed as the alternating signed partial sum of all the different partial intersections of the sequence of sets. It is proved by induction over the previous property.
+
+Finite subadditivity (Boole’s inequality):
+
+\(\mathbb{P} \left( \bigcup_{i=1}^n A_i \right) \leq \sum_{i=1}^n \mathbb{P}(A_i)\)
+
+To show this, we shall set:
+\(B_1 = A_1, B_2 = A_2 \cap A_1^c, \ldots, B_n = A_n \cap A_{n-1}^c \cap \ldots \cap A_1^c\)
+
+You can think of this every successive element being disjoint with all the previous elements, which means
+
+\(B_i \cap B_j = \emptyset\)
+
+and also
+
+\(\bigcup_{i=1}^n B_i = \bigcup_{i=1}^n A_i\)
+
+because the union of all the disjoint parts of the sets will include all the overlap in the sets.
+
+A **partition** of a set \(\Omega\) is a collection of disjoint sets \(\{\Omega_i\}\) where the union recreates the original set:
+\(\bigcup_i \Omega_i = \Omega\)
+
+We can think of the probability of an event as the intersections of the event with a partition of \(\Omega\). This is **the law of total probability**. For \((A_i)_{i \in I}\) a partition of \(\Omega\) and every event \(B \in \mathcal{F}\):
+
+\(\mathbb{P}(B) = \sum_{i \in I} \mathbb{P}(B \cap A_i)\)
+
+##### Uniqueness of Probability Measures
+
+Let’s consider the idea of a \(\lambda\)-system \(\mathcal{U}\) which is a family of events where:
+
+\(\Omega \in \mathcal{U}\)
+
+For any \(A, B \in \mathcal{U}\) and \(A \subset B\), \(B \backslash A \in \mathcal{U}\)
+
+For a sequence of disjoint events \((A_n)_n \in \mathcal{U}\):
+
+\(\bigcup_n A_n \in \mathcal{U}\)
+
+You might notice that this is fairly similar to the definition of a \(\sigma\)-algebra. In fact, a \(\sigma\)-algebra is a \(\lambda\)-system, and every \(\lambda\)-system closed to finite intersection is a \(\sigma\)-algebra.
+
+Now let’s consider a collection of sets \(\mathcal{M} \subseteq P(\Omega)\) where \(\mathcal{U}(\mathcal{M})\) is the smallest \(\lambda\)-system which contains \(\mathcal{M}\): \(\mathcal{U}(\mathcal{M}) = \sigma(\mathcal{M})\)
+
+Note that this is distinct from the previous definition because although the \(\lambda\)-system is known to be a \(\sigma\)-algebra, it is now also defined to be the same as one which is generated by the same collection of sets.
+
+Now let’s consider some probability measures \(\mathbb{P}_1\) and \(\mathbb{P}_2\) on the \(\sigma\)-algebra \(\mathcal{F}\) generated from a collection of sets \(\mathcal{M}\). If \(\mathbb{P}_1\) and \(\mathbb{P}_2\) coincide on \(\mathcal{M}\), then they coincide on \(\mathcal{F}\). This means that for every event, the two probability measures assign the same probabilities, which includes all the different kinds of events generated by the \(\sigma\)-algebra. This also applies to partitions of a sample space.
+
+##### Monotone Class
+
+This is a variant of a \(\lambda\)-system. A **monotone class \(\mathcal{M}\)** of subsets in \(\Omega\) is closed under the formation of monotone unions and intersections, i.e.
+
+\(A_1, A_2, \ldots \in \mathcal{M}\) and \(A_n \subseteq A_{n+1}, \cup_n A_n = A \Rightarrow A \in \mathcal{M}\)
+
+where the sets are increasing in size, containing the previous one,, and the union of all of them equals the last one.
+
+\(A_1, A_2, \ldots \in \mathcal{M}\) and \(A_n \supseteq A_{n+1} \Rightarrow \cap_n A_n \in \mathcal{M}\)
+
+or where the sets are decreasing in size, containing the next one, and the intersection of all of them equals the last one.
+
+**Open question:** more stuff about monotone classes only if the professor talks about them.
+
+##### Monotone Convergence Properties of Probability
+
+How do we deal with infinity?
+
+If \(A_n, A \in \mathcal{F}\) and \(A_n \uparrow A\), which means that \(A\) is a monotonically increasing class, then \(\mathbb{P}(A_n) \uparrow \mathbb{P}(A)\) and the same is true for \(A_n \downarrow A\).
+
+Under countable subadditivity, the probability measure of the union of sets is less than or equal to the sum of the probability measures of those sets. That makes sense intuitively because it would be equal if the sets were disjoint, but the sets might overlap, making it less. We can use the above properties to extend this idea to countably infinite sets.
+
+A **null set** is a set with probability measure 0. \(\emptyset\) is the obvious example, and in infinite sets there may be others like the probability measure of a singleton set in the Borel \(\sigma\)-algebra.
+
+##### Conditional Probability
+
+“In some cases the probability of an event happening depends not just on the experiment itself but on other information as well. **Conditional probability** forms a framework in which this additional information can be incorporated.”
+
+\(\mathbb{P}(A | B) = \frac{\mathbb{P}(A \cap B)}{\mathbb{P}(B)}\)
+
+Obviously, the probability measure of \(B\) cannot be 0, which makes sense because in order for something to be conditioned, the condition has to have happened, which is not possible if the probability is 0.
+
+We can get the **multiplicative rule** from this formula.
+
+\(\mathbb{P}(A \cap B) = \mathbb{P}(A|B)\mathbb{P}(B),\)
+
+\(\mathbb{P}(A \cap B \cap C) = \mathbb{P}(A|B \cap C)\mathbb{P}(B|C) \mathbb{P}(C)\), etc.
+
+Let’s take an example. We have Urn 1 which contains 2 black balls and 3 white balls, and Urn 2 which contains 1 of each. One urn is chosen at random and one ball is chosen randomly from that urn. If a black ball is chosen, what is the probability it came from Urn 1?
+
+Let’s assign our variables.
+
+\(A\) is the event of choosing Urn 1, and \(B\) is the event of choosing a black ball. We’re trying to find \(P(A|B)\), so we need \(P(A \cap B)\). There are four total events in our sample space: { Urn1Black, Urn1White, Urn2Black, Urn2White }. The probability of Urn1Black is \(0.5 \times \0.4 = 0.2\). The probability of choosing a black ball is \(0.5\) in the case of Urn 2 and \(0.4\) in the case of Urn 1, which averages to \(0.45\). So the overall probability is \(0.2 / 0.45\), which is \(4/9\).
+
+The **total probability formula** given \(A_n\) partition of \(\Omega\) is
+
+\(\mathbb{P}(B) = \sum_{i=1}^n \mathbb{P}(B|A_i)\mathbb{P}(A_i)\)
+
+for any event \(B \in \mathcal{F}\).
+
+If Stanley wants to draw a card from 20, where 8 are favorable to him, what is the probability of him drawing a favorable card if he draws first, second, or third?
+
+First is easy. \(8/20 = 0.4\)
+
+For second, there are two different possibilities. Either the first draw was a favorable or unfavorable card. Let’s use the formula above.
+
+\(B\) is the event of Stanley drawing a favorable card. There are two \(A\) events in consideration, which are the first card being favorable and unfavorable. \(\mathbb{P}(A_1) = 2/5\) and \(\mathbb{P}(A_2) = 3/5\). If a favorable card was drawn first, then the new probability is \(7/19\). Otherwise, it’s \(8/19\). So the complete formula becomes
+
+\(\mathbb{P}(B) = 2/5 \times 7/19 + 3/5 \times 8/19 = 0.4\)
+
+It’s clear that the same situation would arise if he drew the third card.
+
+**Bayes’ formula** is the following (like the others it’s based on a partition \(A\) and arbitrary set \(B \in \mathcal{F}\)):
+
+\(\mathbb{P}(A_j | B) = \frac{\mathbb{P}(B|A_j)\mathbb{P}(A_j)}{\sum_{i=1}^n \mathbb{P}(B|A_i)\mathbb{P}(A_i)}\)
+
+“This theorem can be interpreted as: All of a sudden we find out \(B\) happened. In the light of this new information there should be a simple way to update all the probabilities of the sets in the partition \((\mathbb{P}(A_j | B))\). Indeed, the Bayes rule provides just that.”
+
+So you take the existing \(A\), and then condition it on \(B\), and then the calculation cascades across the events in the sample space i.e. \(A\).
+
+##### Independence
+
+Two events \(A\) and \(B\) are defined as **independent** if
+
+\(\mathbb{P}(A \cap B) = \mathbb{P}(A)\mathbb{P}(B)\)
+
+which can be extended to the idea of being **mutually independent** (or simply independent) for a set of events:
+
+\(\mathbb{P}\left(\bigcup_{j \in J} A_j \right) = \prod_{j \in J} \mathbb{P}(A_j)\)
+
+There’s also the idea of **jointly independent** (or pairwise independent):
+
+\(\mathbb{P}(A_i \cup A_j) = \mathbb{P}(A_i)\mathbb{P}(A_j)\)
+
+which does not necessarily imply independence.
+
+For two \(\sigma\)-algebras \(G\) and \(H\), they are \(\mathbb{P}\)-independent if
+
+\(\mathbb{P}(G \cup H) = \mathbb{P}(G)\mathbb{P}(H)\)
+
+and the same applies for mutual independence as with events.
+
+We can also show that if all \(\sigma\)-algebras in a family are each generated from a collection of independent sets, they are independent. This independence is also associative. There’s an additional property of “disassociativity of the independence”, where independent families included in bigger independent families remain independent.
+
+\(\sigma\)-algebras generated by events are related in their independence.
