@@ -377,7 +377,7 @@ which is the value of the put. We didn’t have to rederive everything because o
 
 You can use the boundary and the PDE to find the value of a put option, or you can use probability arguments. We derived the generic derivative PDE and used boundary constraints, which we will need later. We didn’t actually use the PDE to get the formula for the call option, we just use it to confirm the option price.
 
-There’s not necessarily a good motivation for the intuition between the d+ and d-, the d\* is when the option is actually exercised, and the d+ nd d- are modifications of that. This d\* is arguably the boundary for Brownian motion for the option to be exercised, that’s the only real world application.
+There’s not necessarily a good motivation for the intuition between the d+ and d-, the d\* is when the option is actually exercised, and the d+ and d- are modifications of that. This d\* is arguably the boundary for Brownian motion for the option to be exercised, that’s the only real world application.
 
 Because I have these nice boundary constraints on the strike price, it’s more common to price the put and then get the call from the put-call parity. Prof did this in this PhD dissertation.
 

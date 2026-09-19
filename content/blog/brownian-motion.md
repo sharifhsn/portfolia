@@ -114,7 +114,7 @@ Next slides will have hand waving:
 
 Joint normal distribution
 
-Technically, if you took a rigorous probability theory class, you learned about the joint normal distribution. Looking at normal variables that are not independent of each other. In that sense, we define the joint normal distribution through a vector fo the means and a matrix of the covariances. We bring this up to stress the idea that if we have increments that are independent and normally distributed, the variables are jointly normally distributed. If we wanted to look at \(Cov(W(s), W(t))\) where \(s < t\):
+Technically, if you took a rigorous probability theory class, you learned about the joint normal distribution. Looking at normal variables that are not independent of each other. In that sense, we define the joint normal distribution through a vector of the means and a matrix of the covariances. We bring this up to stress the idea that if we have increments that are independent and normally distributed, the variables are jointly normally distributed. If we wanted to look at \(Cov(W(s), W(t))\) where \(s < t\):
 
 \(\mathbb{E}[W(s) W(t)] - \mathbb{E}[W(s)] \mathbb{E}[W(t)]\)
 
@@ -287,7 +287,7 @@ THis is why we had the homework problem on the moment-generating function. This 
 
 #### First Passage Time
 
-There are some interesting behaviors to Brwonian motion
+There are some interesting behaviors to Brownian motion
 
 A random variable that tells me the first time that my Brownian motion reaches a certain level \(m\):
 \(\tau_m = \min\{t \geq 0 ; W(t) = m\}\)

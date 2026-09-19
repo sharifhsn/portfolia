@@ -20,7 +20,7 @@ Besides the primary Internet protocols, there are some others to learn about, li
 
 What happens if a device doesn't have a permanent IP address? You take your phone around multiple mobile networks, there isn't a consistent IP address between them. How do you access the internet without an IP address?
 
-**Dynamic Host Configuration Protocol** is a client-server protocol that is used in these scenarios. As the name implies, it allows for dynamic IP address allocation that are leased for a certain amount of time. Configuring things like the subnet mask, gateway configuration, etc. to set up an IP is complicated and not feasible for the average user. Imagine if you had to do all that setup everytime your phone moved to a new location!
+**Dynamic Host Configuration Protocol** is a client-server protocol that is used in these scenarios. As the name implies, it allows for dynamic IP address allocation that are leased for a certain amount of time. Configuring things like the subnet mask, gateway configuration, etc. to set up an IP is complicated and not feasible for the average user. Imagine if you had to do all that setup every time your phone moved to a new location!
 
 DHCP has two main components: the protocol for delivering the bootstrapping information from the server to clients, and the algorithm for dynamically assigning addresses to new clients. How do you start a connection from nothing?
 

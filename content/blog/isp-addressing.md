@@ -51,6 +51,6 @@ An entire 4 bytes is devoted to fragmentation machinery. This is not in IPv6, wh
 
 ## ICMP
 
-What do we do to propagate errors? We're already using IP for sending messages, how do we send errors? This what the **ICMP** protcol is for. It is unreliable like UDP, and is tightly coupled with the implementation of IP. Its protcol ID is 1, which signifies its importance.
+What do we do to propagate errors? We're already using IP for sending messages, how do we send errors? This what the **ICMP** protocol is for. It is unreliable like UDP, and is tightly coupled with the implementation of IP. Its protocol ID is 1, which signifies its importance.
 
 There are certain known error codes. The *echo request/reply* also known as *ping* is simply a request to check if the host is alive and responding. There is also the **traceroute**, which records the route that a packet takes by tracking TTL. As we know, when a router receives a packet, it decrements TTL. If we start TTL at 0 and slowly increase it, it will throw time exceeded back to us from each router in order. This way, we can see every router on the way to our destination.

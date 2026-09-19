@@ -18,7 +18,7 @@ On problem 2, either you optimize for risk-free or risky assets. The question be
 
 #### Final
 
-EIther we have the same thing as Exam 1, released on 13 or 19?
+Either we have the same thing as Exam 1, released on 13 or 19?
 Bonus question on Project 2, but requires reading. Stochastic Interest Rate Models (Vasicek)
 
 Yields are going up, because people believe that Trump will create inflationary pressure.

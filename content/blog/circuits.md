@@ -69,7 +69,7 @@ Most batteries in the world use ac instead of dc. Therefore, we must note the di
 
 $$V = V_0 \sin{2πft}$$
 
-where \\(V_0\\) is the maximum voltage and \\(f\\) is the frequence of isolation. This value is in radians when the sine function is applied.
+where \\(V_0\\) is the maximum voltage and \\(f\\) is the frequency of isolation. This value is in radians when the sine function is applied.
 
 Current oscillates at the same rate, and so does power. We can simply substitute the above equation for \\(V\\) to evaluate those.
 

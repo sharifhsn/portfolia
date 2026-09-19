@@ -59,7 +59,7 @@ There are two general operating modes, as discussed previously: kernel space, an
 
 ## Address Translation
 
-To start out with, we will make some assumptions about how address spaces are laid out. They are all contigous spaces in memory of the same size that are smaller than physical memory. As we will see later with segmentation, this assumption will not hold up, but it useful for now.
+To start out with, we will make some assumptions about how address spaces are laid out. They are all contiguous spaces in memory of the same size that are smaller than physical memory. As we will see later with segmentation, this assumption will not hold up, but it useful for now.
 
 In order to translate a *virtual address* to a *physical address* in memory, we need some kind of reference space in memory. This is given by the **base** and **bounds** registers, which give the physical memory locations of where the virtual address space starts and ends, respectively. These registers are not part of the regular ISA and are instead part of the previously mentioned MMU, and operating on them requires privilege. The MMU can also throw an exception upon illegal memory access which is handled by our OS.
 

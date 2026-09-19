@@ -116,7 +116,7 @@ which is the conditioning random variable.
 
 \(= \sum_{t\leq x} p_{X\mid Y}(t\mid y)\)
 
-We can use all of thes expressions, which are the same. They might be useful in different contexts, though.
+We can use all of these expressions, which are the same. They might be useful in different contexts, though.
 
 ##### 8.16
 

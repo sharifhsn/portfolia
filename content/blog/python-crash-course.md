@@ -99,7 +99,7 @@ You might notice that I just performed this operation on a string; didn't I just
 
 A tuple is an immutable set of multiple elements, just like in OCaml. Slicing operations work the same way in that they return a subsequence tuple. There's a weird side effect where if you slice in a way that returns a single element, you can get a single-element tuple.
 
-Lists in Python are much more flexible in OCaml, as they can be heterogenous with any type within. They are also mutable, so elements of lists can be reassigned.
+Lists in Python are much more flexible in OCaml, as they can be heterogeneous with any type within. They are also mutable, so elements of lists can be reassigned.
 
 Slicing can superpower this assignment by reassigning multiple values at once
 

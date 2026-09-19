@@ -387,7 +387,7 @@ It’s about discretizing the derivatives. You have to look at every equation yo
 
 It’s all about the points you pick. If your boundary is not a straight line, say a curve, then you want to form a relationship that has three points you know, a point you don’t know.
 
-That’s the explicit scheme. Which is easier, but it has some drawbacks and some limitations, as descried relating to convergence.
+That’s the explicit scheme. Which is easier, but it has some drawbacks and some limitations, as described relating to convergence.
 
 Implicit gives you a system of equations, which will be linear, and eventually you will solve it.
 

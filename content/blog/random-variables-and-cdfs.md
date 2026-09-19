@@ -181,7 +181,7 @@ We can solve for \(\mathbb{P}(X=0) = \frac{3}{12}\)
 
 We also want to show this inequality \(X(\omega) \leq Y(\omega), \forall \omega \in \Omega\)
 
-You wnt to show that \(F_X(a) \geq F_Y(a), a \in \mathbb{R}\)
+You want to show that \(F_X(a) \geq F_Y(a), a \in \mathbb{R}\)
 
 Hint: \(F(X(a) = \mathbb{P}(X \leq a) ? \mathbb{P}(y \leq a) = F_Y(a)\)
 

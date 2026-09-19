@@ -406,7 +406,7 @@ You can see that this is the strike price minus a little bit. But the problem is
 
 ## Paper
 
-This stuff is not new, in 1998\. Black-Derman-Toi? Model. Florescu heard about it and got mad, and wrote a paper to critique this.
+This stuff is not new, in 1998\. Black-Derman-Toy? Model. Florescu heard about it and got mad, and wrote a paper to critique this.
 
 *Personal reminder: look at this on Canvas.*
 

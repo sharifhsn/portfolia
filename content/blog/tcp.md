@@ -22,7 +22,7 @@ TCP is the well-known protocol for reliable transfer of data. But how does it ac
 
 There are lots of problems that can happen with UDP. Let's create a protocol that doesn't have this unreliability.
 
-Our new protocol has a sequence number for each packet, either 0 or 1. This is known as an *alternating bit protocol*. When it sends a packet, it waits for ACK (acknowledgment) before it sends the next packet. This will take one RTT (round trip transmission) per packet. This is obviously pretty inefficient, but it does solve at least some of these issues. It solves the duplicate issue because if it sends the same packet, it will have the same bit sequence number and hterefore will not be taken into account. You can think of this as an infinite loop which flips its break condition after being broken. This is possible because you're only sending one packet at a time. Here is time and utilization.
+Our new protocol has a sequence number for each packet, either 0 or 1. This is known as an *alternating bit protocol*. When it sends a packet, it waits for ACK (acknowledgment) before it sends the next packet. This will take one RTT (round trip transmission) per packet. This is obviously pretty inefficient, but it does solve at least some of these issues. It solves the duplicate issue because if it sends the same packet, it will have the same bit sequence number and therefore will not be taken into account. You can think of this as an infinite loop which flips its break condition after being broken. This is possible because you're only sending one packet at a time. Here is time and utilization.
 
 $$ T_{transmit} = \frac{L_{packetLength}}{R_{transmissionRate}} $$
 
@@ -90,7 +90,7 @@ The sequence and acknowledgment numbers are how TCP messages are ordered despite
 
 ## RTT
 
-Round-trip time is an important concept when we consider making our protocol as fast as possible. This is how long it takes for a segment to be sent and an acknowledgment for that segment to be recieved. In order to get an accurate measure of the RTT, TCP takes the current RTT and refines it to an average as more segments are transmitted, since any one SampleRTT (SRTT) might be an outlier. In order to get the average EstimatedRTT we follow this formula:
+Round-trip time is an important concept when we consider making our protocol as fast as possible. This is how long it takes for a segment to be sent and an acknowledgment for that segment to be received. In order to get an accurate measure of the RTT, TCP takes the current RTT and refines it to an average as more segments are transmitted, since any one SampleRTT (SRTT) might be an outlier. In order to get the average EstimatedRTT we follow this formula:
 
 $$ERTT = (1 - α) \cdot ERTT + α \cdot SRTT$$
 

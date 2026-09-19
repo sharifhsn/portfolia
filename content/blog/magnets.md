@@ -105,4 +105,4 @@ A useful visual for the magnetic field of a current loop is a bar magnet placed 
 
 $$ΣB_{||}Δl = μ_0I$$
 
-**where \\(Δl\\) is a small segment of length along a closed path of arbitrary shape around the current, \\(B_{||}\\) is the component of the magnetic field parallel to \\(Δl\\), \\(I\\) i sthe net current passing through the surface bounded by the path, and the \\(μ_0\\) is the permeability of free space. The symbol \\(Σ\\) indicates the sum of all \\(B_{||}Δl\\) terms must be taken around the closed path.**
+**where \\(Δl\\) is a small segment of length along a closed path of arbitrary shape around the current, \\(B_{||}\\) is the component of the magnetic field parallel to \\(Δl\\), \\(I\\) is the net current passing through the surface bounded by the path, and the \\(μ_0\\) is the permeability of free space. The symbol \\(Σ\\) indicates the sum of all \\(B_{||}Δl\\) terms must be taken around the closed path.**

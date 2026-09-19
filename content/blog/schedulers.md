@@ -83,7 +83,7 @@ if a.priority > b.priority {
 }
 ```
 
-MLFQ prioritizes *nice* processes. This is a technical term that means that a process is satistfied with getting a response and is willing to turn over the CPU as needed without the OS needing to force it to.
+MLFQ prioritizes *nice* processes. This is a technical term that means that a process is satisfied with getting a response and is willing to turn over the CPU as needed without the OS needing to force it to.
 
 All jobs begin by having top priority, but if a job takes too long on the RR, then you demote it to a lower priority level. This way, smaller jobs that are contained within RR are executed quickly at top priority.
 

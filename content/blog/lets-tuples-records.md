@@ -70,7 +70,7 @@ let [x] = [1] in 1 :: x (*  evaluates to [1; 1*)
 
 ## Tuples
 
-Tuples represent collections, like lists, but they contain a fixed amount of values. The tradeoff is that they can be *heterogenous*, which means they can have multiple types. The type of a tuple is the type of each of its component, separated by asterisks.
+Tuples represent collections, like lists, but they contain a fixed amount of values. The tradeoff is that they can be *heterogeneous*, which means they can have multiple types. The type of a tuple is the type of each of its component, separated by asterisks.
 
 ```ocaml
 (1, 2) (* int * int *)

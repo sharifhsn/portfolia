@@ -35,7 +35,7 @@ As mentioned, every process has its own address space. The OS assigns a chunk of
 
 Our problem is that a CPU can only execute one execution stream at one time. We want processes to be running at the same time, so how do we achieve the illusion that the process has full control of the CPU?
 
-One solution is *direct execution*. We will run the process as simply as possible and execute all of its instructions in sequence. This is extremely simple to implement, but it means we can only run one process at once. If the process runs forever, then the CPU is stuck. Processes might write to other data that it's not supposed to, or do some slow I/O operation, or execute privileged instructions it's not allowed to accesss. In general, we don't want to trust processes to behave. Operating systems use *limited direct execution*, which maintains some control over the execution of the process instead of giving it unfettered access to the CPU.
+One solution is *direct execution*. We will run the process as simply as possible and execute all of its instructions in sequence. This is extremely simple to implement, but it means we can only run one process at once. If the process runs forever, then the CPU is stuck. Processes might write to other data that it's not supposed to, or do some slow I/O operation, or execute privileged instructions it's not allowed to access. In general, we don't want to trust processes to behave. Operating systems use *limited direct execution*, which maintains some control over the execution of the process instead of giving it unfettered access to the CPU.
 
 ## System Calls
 

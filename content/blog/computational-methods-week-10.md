@@ -214,17 +214,17 @@ $$
 L(\\theta) = \\prod_{i=2}^n f(x_i | x_{i-1}, \\theta) f(x_1 | \\theta)
 $$
 
-This is actually not the same function. There’s another thing to be aware of. This is a **homogenous process**.
+This is actually not the same function. There’s another thing to be aware of. This is a **homogeneous process**.
 
 Distribution does not depend on the time you are collecting it, only depends on the difference of the times.
 
-If you’re looking at a non-homogenous process, the distribution of today, tomorrow, and the next day are not the same as a year from today, next day from that, next day from that.
+If you’re looking at a non-homogeneous process, the distribution of today, tomorrow, and the next day are not the same as a year from today, next day from that, next day from that.
 
-Stationary is always the same, homogenous
+Stationary is always the same, homogeneous
 
-A non homogenous process would have a distribution of \\(X_1, X_2, X_3\\) vs \\(X_{100}, X_{200}, X_{300}\\), this is always going to be very different.
+A non homogeneous process would have a distribution of \\(X_1, X_2, X_3\\) vs \\(X_{100}, X_{200}, X_{300}\\), this is always going to be very different.
 
-\\(X_{101}, X_{201}, X_{301}\\). For a non homogenous process, these are also different. But for a homogenous process, this will be the same as long as the time interval is the same, ANY TIME INTERVAL.
+\\(X_{101}, X_{201}, X_{301}\\). For a non homogeneous process, these are also different. But for a homogeneous process, this will be the same as long as the time interval is the same, ANY TIME INTERVAL.
 
 By the way, this is a joint distribution.
 
@@ -274,7 +274,7 @@ This is just the PDE of the normal
 
 And notice that there’s no t, just Δt. So the only thing that matters is S\_t and Δt.
 
-That’s what homogenous means.
+That’s what homogeneous means.
 
 What we know is:
 
@@ -288,13 +288,13 @@ $$
 
 Any process where’s the coefficients here don’t depend on time, only the stochastic process and the parameter.
 
-The big deal is, any Feller process is homogenous.
+The big deal is, any Feller process is homogeneous.
 
-It turns out that as long as the coefficients dont’ depend on time, the solutions odn’t depend on time.
+It turns out that as long as the coefficients don’t depend on time, the solutions don’t depend on time.
 
 I make all these parentheses because it’s kind of crucial for us.
 
-It’s not enough for us to have an equal distance between times, you need to have a homogenous process. If you have daily, then they’re different, 100 different functions for 100 different days. Now I just have one function, which I plug in at different points in time.
+It’s not enough for us to have an equal distance between times, you need to have a homogeneous process. If you have daily, then they’re different, 100 different functions for 100 different days. Now I just have one function, which I plug in at different points in time.
 
 The following is NON-homogeneous.
 
@@ -432,11 +432,11 @@ $$
 
 By the way, if there is no mean reverting here, it’s just called O-U. With mean reverting, it’s called mean reverting O-U. The alpha mu dt thing is gone in that case.
 
-This is the real trick, which comes from differentia equations.
+This is the real trick, which comes from differential equations.
 
 If you look at the LHS, you should remember something. You remember integrating factors, the way to solve first order diffeqs.
 
-And in fact that is a firs torder.
+And in fact that is a first order.
 
 What do you do with integrating factor? I don’t remember, I remember it existed, but it’s complicated, with some weird formula.
 

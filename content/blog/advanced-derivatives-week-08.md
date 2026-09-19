@@ -248,7 +248,7 @@ Then the conditional probabilities are known as default intensities or hazard ra
 
 
 
-The unconditinal probability of default within a certain default vs the survival probability.
+The unconditional probability of default within a certain default vs the survival probability.
 
 The survival probability is V(t)
 

@@ -235,7 +235,7 @@ Now let’s look at continuous time
 
 ##### 6.8
 
-Typical example: we are given the density and are aske to solve for the moments.
+Typical example: we are given the density and are asked to solve for the moments.
 
 \(f(x) = \frac{27}{490} (ex^2 - 2x), \frac{2}{3} < x < 3\)
 

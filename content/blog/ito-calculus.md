@@ -92,7 +92,7 @@ If we were dealing with regular calculus, and you asked me to find the different
 
 \(df(W(t)) = f'(W(t)) W'(t)dt = f'(W(t)) dW(t)\)
 
-We’re still nto going to have it correct because of quadratic variation. We actually have
+We’re still not going to have it correct because of quadratic variation. We actually have
 
 \(df(W(t)) = f'(W(t)) dW(t) + \frac{1}{2}f''(W(t))dt\)
 
@@ -126,7 +126,7 @@ I’m going to say that for a given partition \(\Pi\), I’m going to let \(x = 
 
 \(f(W(t_{j+1})) - f(W(t_j)) = f'(W(t_j)) (W(t_{j+1}) - W(t_j)) + \frac{1}{2}f''(W(t_j)) (W(t_{j+1}) - W(t_j))^2 + \frac{1}{6}f'''(W(t_j)) (W(t_{j+1}) - W(t_j))^3 + \ldots\)
 
-Then, I am now going to take (and remember, if I can do it to both sides I can do anything) I am going to add both of thes esides up
+Then, I am now going to take (and remember, if I can do it to both sides I can do anything) I am going to add both of these sides up
 
 \(\sum_{j=0}^{n-1}\left(f(W(t_{j+1})) - f(W(t_j))\right) = \sum_{j=0}^{n-1}\left(f'(W(t_j)) (W(t_{j+1}) - W(t_j)) + \frac{1}{2}f''(W(t_j)) (W(t_{j+1}) - W(t_j))^2 + \frac{1}{6}f'''(W(t_j)) (W(t_{j+1}) - W(t_j))^3 + \ldots\right)\)
 

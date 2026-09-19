@@ -22,9 +22,9 @@ Here is the stochastic process we can approximate. Euler works for any stochasti
 
 $$dX\_t \= \\alpha(X\_t) dt \+ \\beta(X\_t) dW\_t$$
 
-These coefficients are not functions of time, so they are homogenous.
+These coefficients are not functions of time, so they are homogeneous.
 
-The iea is to use Itô for bothα and β. They are functions of stochastic process X\_t. THerefore I can use Itô for both.
+The idea is to use Itô for bothα and β. They are functions of stochastic process X\_t. Therefore I can use Itô for both.
 
 I get
 
@@ -70,7 +70,7 @@ Then there is
 
 $$dW\_u dW\_s \\sim O(\\Delta t)$$
 
-FOr the reason just discussed.
+For the reason just discussed.
 
 Once I substitute everything, I will neglect the first two orders, and will be left with terms with just du and ds
 

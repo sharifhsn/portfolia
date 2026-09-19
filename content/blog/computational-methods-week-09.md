@@ -296,7 +296,7 @@ If you take the nth derivative, you get a bunch of derivatives evaluated at 0\. 
 
 In practice, this thing has two problems. The specific doesn’t exist. With small exceptions, the equation is too complicated to get the value of the function that corresponds to it.
 
-If you’re interested in applyin this and want to work with Laplace transform, use Mathematica which Dragos buys for Stevens
+If you’re interested in applying this and want to work with Laplace transform, use Mathematica which Dragos buys for Stevens
 
 ## Fourier Transform
 
@@ -387,7 +387,7 @@ The solution is not that complicated.
 
 There is also something called the Feller condition.
 
-In order for this Heston model to be nicely behaved (homogenous), you should have
+In order for this Heston model to be nicely behaved (homogeneous), you should have
 
 $$2K\\theta \> \\sigma^2$$
 

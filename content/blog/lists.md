@@ -6,7 +6,7 @@ date = 2022-01-27
 categories = ["Principles of Programming Languages"]
 tags = ["Principles of Programming Languages"]
 +++
-Lists are the most basic data structure in OCaml. The most analoguous structure is a vector in C++ or Rust. Lists are *homogenous* and of *arbitrary length*.
+Lists are the most basic data structure in OCaml. The most analogous structure is a vector in C++ or Rust. Lists are *homogeneous* and of *arbitrary length*.
 
 The most basic list is **nil**, the empty list: `[]`. We can prepend elements to a list through the **cons** operator: `::`. Every display of a list is actually just syntactic sugar for every element being cons with the empty list:
 
@@ -57,7 +57,7 @@ let rec sum l =
 
 This `sum` function works for every case of `l`. Either it is nil, or it is a head cons a tail. You will also notice here that the two cases resolve to the same type. This is another requirement for match statements: all patterns must evaluate to the same type, which is not necessarily the type of the initial expression. Here, the initial expression has the type `int list` and the return expression has the type `int`. This function only works for `int list`. This restriction is not present for our `head` function because `h` is polymorphic type `'a`.
 
-Pattern matching is generally much better than its alternatives. OCaml will warn you if your function is non-exhaustive, and it will throw an exception for an unhandled case. Also, duplicated cases are easy to avoid becaues OCaml will give a similar warning for unused cases.
+Pattern matching is generally much better than its alternatives. OCaml will warn you if your function is non-exhaustive, and it will throw an exception for an unhandled case. Also, duplicated cases are easy to avoid because OCaml will give a similar warning for unused cases.
 
 ## Recursion with Lists
 

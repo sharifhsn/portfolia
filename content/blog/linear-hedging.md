@@ -74,7 +74,7 @@ Why does technical analysis work? It’s because everyone uses it.
 
 
 
-Hedging is trying to eliminate uncertainty. We need to compare apples to apples, so we want the underlying and hedge vehicle to be 100% correlated with equal volatilities. The underlying goes lik
+Hedging is trying to eliminate uncertainty. We need to compare apples to apples, so we want the underlying and hedge vehicle to be 100% correlated with equal volatilities. The underlying goes like
 
 #### Optimal Hedge
 

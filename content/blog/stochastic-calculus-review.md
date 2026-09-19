@@ -74,7 +74,7 @@ Indicator is transformed, where does that came from
 
 We can substitute
 
-What is random? W(t). What it’s distrubtion? normal over real line.
+What is random? W(t). What it’s distribution? normal over real line.
 
 Then take the infinite integral.
 
@@ -103,7 +103,7 @@ based on what we know
 
 \(I^4(t) = \int_0^t 4I^3(u) \Delta(u) dW(u) + \int_0^t 6I^2(u)(9u^2) du\)
 
-When I take the expectation, I can see that an Ito integral with respec tto a martingale is a martingale, so the first term is gone.
+When I take the expectation, I can see that an Ito integral with respect to a martingale is a martingale, so the first term is gone.
 
 \(\mathbb{E}[I^4(t)] = \int_0^t 54 u^2 \mathbb{E}[I^2(u)] du\)
 

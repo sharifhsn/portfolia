@@ -18,10 +18,10 @@ The Economic Value of Mean Squared Error: Evidence from Portfolio Selection
 
 What’s the intuition? Everyone talks about optimization, rational agents doing the best they can. A colleague told the president of Stevens that it’s all cost benefit analysis. The question is how you measure that. We know we have model risk, you get \(\hat{w}\) never \(w^*\), only an estimate. Expectation vs reality. We’ll never get to that target. There will always be some loss.
 
-How do we mitigate that discrepancy. Instead of tryin got shrink the y-axis, you actually work with the x-axis, which is where the MSE coemes from. If yo uwant to handle this model risk ex ante, before you start, you apply this to the portfolio selectin problem.
+How do we mitigate that discrepancy. Instead of trying to shrink the y-axis, you actually work with the x-axis, which is where the MSE comes from. If you want to handle this model risk ex ante, before you start, you apply this to the portfolio selection problem.
 
 We’ll eventually show that there’s a linear relationship between MSE and decision loss.
-What made this paper more interesting is that, everyone talks about ML, prediction, optimization. And there’s interestin literature on those issues.
+What made this paper more interesting is that, everyone talks about ML, prediction, optimization. And there’s interesting literature on those issues.
 
 On the website.
 
@@ -139,7 +139,7 @@ The Macaulay duration, which is D, is actually more intuitive. It can be compute
 
 \(w_t = \frac{CF_t / (1+y)^t}{P_0}\)
 
-Let’s go back to the definition fo the fixed coupon bonds. What’s the risk?
+Let’s go back to the definition of the fixed coupon bonds. What’s the risk?
 
 Each coupon gets its own weight. It takes me time to recover my investment. The weight at time t, I’m getting a cash flow one year from now. After taking into account the time value of money, how much money did I recover from that first cash flow. I want to think about this as, I put money away, how long does it take for me to receive money, and then how long to get back my full investment.
 

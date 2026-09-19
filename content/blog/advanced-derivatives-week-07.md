@@ -160,7 +160,7 @@ where we have another process u, and two volatilities/brownian motions.
 
 u in this context is a random mean reversion level.
 
-The previous model fits the term structure at time 0 and defines such mean reverting level, which is subject to some randomness. We have some historical data for htis.
+The previous model fits the term structure at time 0 and defines such mean reverting level, which is subject to some randomness. We have some historical data for this.
 
 You also have ρ the correlation between dW\_1 and dW\_2, and the rest are constants.
 

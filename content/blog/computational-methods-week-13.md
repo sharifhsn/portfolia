@@ -30,7 +30,7 @@ At the core, you have $$x \\in \\mathbb{R}^d$$. This is the number. You cannot d
 
 You observe x and y, and you want to know the connection. If I input x, how do I get y? The oldest problem: I have some function y \= f(x), and I want to know what it is.
 
-This is the one variable description. With multiple variables, you start talkin about regressions, ANOVA, etc. These are all functions that relate x to y. But all of these things in typical regression are linear, which means f is a linear function.
+This is the one variable description. With multiple variables, you start talking about regressions, ANOVA, etc. These are all functions that relate x to y. But all of these things in typical regression are linear, which means f is a linear function.
 
 What does linear mean exactly?
 

@@ -92,7 +92,7 @@ If you are financial engineer, you need to be able to understand randomness and 
 
 Once you have the model, you match the model to data. In the simplest example, I look at a model for my stock price, using GBM. GBM has two parameters, drift and variance. I look at historical data and estimate a long term drift and variance. I will use those two parameters to generate data for the future. Then you have to estimate your parameters. Then you also have to identify a way to generate randomness. This is a very vague statement, but what I mean is if I have a model that I hypothesize, the noise is gamma. I need to have a programming language that generates random variables as gamma random variables. First you need to justify why you need gamma and not normal, etc. Then you can generate randomness.
 
-We have this high frequency trading simulator stuff, and we use these zero intelligence agents to interact with real teams that are doing the trading. We need to worry about, how do we initialize these agents? How much money do we give them? We did some research that if you start with homogenous agents vs heterogenous agents, heterogeneous is much closer to reality. So how do you create this heterogenous? We use the Dirichlet distribution and sample from it to initialize the wealth of the initial agents. We identify the characteristics that the simulation needs to have, then identify distributions and rvs that fit that characteristic.
+We have this high frequency trading simulator stuff, and we use these zero intelligence agents to interact with real teams that are doing the trading. We need to worry about, how do we initialize these agents? How much money do we give them? We did some research that if you start with homogeneous agents vs heterogeneous agents, heterogeneous is much closer to reality. So how do you create this heterogeneous? We use the Dirichlet distribution and sample from it to initialize the wealth of the initial agents. We identify the characteristics that the simulation needs to have, then identify distributions and rvs that fit that characteristic.
 
 Once you’re done with steps 1 and 2,
 
@@ -258,7 +258,7 @@ Next week, he’s going to give us a better Monte Carlo method
 
 One of the other problems is a variance deduction technique.
 
-Euler Milstein is a better approximation than this one, but it only works for homogenous processes, which are not time-varying i.e. don’t contain x in α or β.
+Euler Milstein is a better approximation than this one, but it only works for homogeneous processes, which are not time-varying i.e. don’t contain x in α or β.
 
 ## Variance Reduction
 

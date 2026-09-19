@@ -31,7 +31,7 @@ Remember that the electric force depends on the small test charge \\(q_0\\). If 
 
 For the first time, we're going to be talking about **electric potential**, expressed in **volts** \\((V)\\). This is different from electric potential energy, which is expressed in joules (\\(J)\\). The equation for electric potential derived from EPE is \\(V = \frac{EPE}{q_0}\\), showing that volts are the same as joule/coulomb.
 
-\\(V\\) can only truly be measured as \\(ΔV\\), becuase it is relative measurement in terms of work, similar to energy. This potential difference \\(ΔV\\) is known as **voltage**. When we talk about voltage in common parlance, that is the electric potential difference between two charges, typically the terminals of a capacitor.
+\\(V\\) can only truly be measured as \\(ΔV\\), because it is relative measurement in terms of work, similar to energy. This potential difference \\(ΔV\\) is known as **voltage**. When we talk about voltage in common parlance, that is the electric potential difference between two charges, typically the terminals of a capacitor.
 
 We can think of positives and negatives here like gravity. Because electricity flows from positive to negative, that's the direction of "gravity". Positive charges accelerate to lower electric potential like massive objects accelerate to lower heights. Negative charges oppose this acceleration like the normal force to higher electric potential.
 
