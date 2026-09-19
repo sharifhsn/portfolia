@@ -117,8 +117,8 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="theme-color" content="#fcfdfe">
-  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0f1418">
+  <meta name="color-scheme" content="dark">
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/png" sizes="355x355" href="/static/img/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="theme-color" content="#fcfdfe">
-  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0f1418">
+  <meta name="color-scheme" content="dark">
   <meta name="format-detection" content="telephone=no">
   <meta name="author" content="Sharif Haason">
   <meta name="description" content="{{ description }}">
@@ -47,14 +47,16 @@
   <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>{{ title }}</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260918-5">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260919-1">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="site-shell">
     <header class="site-header">
-      <a class="site-name" href="/" {% if page == "home" %}aria-current="page"{% endif %}>Sharif Haason</a>
+      <a class="site-name" href="/" {% if page == "home" %}aria-current="page"{% endif %}>
+        <span>Sharif Haason</span><small>systems · markets · notes</small>
+      </a>
       <nav aria-label="Main navigation">
         <a href="/blog/" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
         <a href="/projects/" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>

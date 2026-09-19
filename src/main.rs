@@ -721,8 +721,8 @@ fn web_manifest_json() -> serde_json::Value {
         "start_url": "/",
         "scope": "/",
         "display": "browser",
-        "theme_color": "#fcfdfe",
-        "background_color": "#fcfdfe",
+        "theme_color": "#0f1418",
+        "background_color": "#0f1418",
         "icons": [
             {
                 "src": "/static/img/icon-192.png",
