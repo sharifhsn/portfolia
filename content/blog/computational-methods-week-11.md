@@ -16,7 +16,7 @@ The two theorems are the basis of the entire Monte Carlo simulation.
 
 **The Law of Large Numbers** **(LLN)**
 
-This says, very simply, given iid random variables X1, … Xn, mean μ, finite/bounded variance. If the variable has an infinite variance, it cannot converge because it goes all over the place. So that’s the one condition.
+This says, very simply, given iid random variables \(X_1, \ldots, X_n\), mean \(\mu\), finite/bounded variance. If the variable has an infinite variance, it cannot converge because it goes all over the place. So that’s the one condition.
 
 Then
 
@@ -34,7 +34,7 @@ How does it converge, though? It’s one thing to converge slowly, and another t
 
 This is governed by the **Central Limit Theorem** **(CLT)** that you also learn about in probability and statistics.
 
-This says that if you have the same situation X1…Xn iid, mean μ variance σ^2 \< ∞. Bounded means I have unknown variable Xi, variance keeps going up, σ \* n. Technically its’ finite, but it keeps going up.
+This says that if you have the same situation \(X_1, \ldots, X_n\) iid, mean \(\mu\), variance \(\sigma^2 < \infty\). Bounded means I have unknown variable \(X_i\), variance keeps going up, \(\sigma \cdot n\). Technically its’ finite, but it keeps going up.
 
 then
 
@@ -50,7 +50,7 @@ But the approximation helps us understand it better:
 
 If you have fifty distributions, and you look at the distribution of those fifty, it will look close to some normal distribution. If you increase it even more, it will shrink the variance, and it will get closer to your object the estimate. And this gives you a numerical measure of how close you are, it allows you to express a *confidence interval*.
 
-At 95% C.I. \\(\\bar{X} \\pm 1.96 \\tfrac{\\sigma}{\\sqrt{n}}\\)
+At 95% C.I. \(\bar{X} \pm 1.96 \tfrac{\sigma}{\sqrt{n}}\)
 
 Now technically we don’t know σ. So in practice we use the sample stdev S, which is
 
@@ -58,29 +58,29 @@ $$
 S = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (X_i - \bar{X})^2}
 $$
 
-Then if n is small, we use t\_n-1 instead of N(0, 1\)
+Then if \(n\) is small, we use \(t_{n-1}\) instead of \(N(0, 1)\)
 
 But we’re never doing less than 10k simulations so this is irrelevant to us.
 
-n degrees of freedom with greater than 100 n, it goes Normal.
+\(n\) degrees of freedom with greater than 100 \(n\), it goes Normal.
 
 What does this have to do with anything?
 
 This is the key idea.
 
-We’re going to obtain somehow values for my stock in the future. Based on those values in the future, I’m going to estimate the value of my derivative. I estimate one path, and I pretend that’ smy path in the future. If I know that’s the path in the future, I can use the terminal value and current values of the path to calculate the derivative, if I know the values of the path. That’s my observation X1.
+We’re going to obtain somehow values for my stock in the future. Based on those values in the future, I’m going to estimate the value of my derivative. I estimate one path, and I pretend that’ smy path in the future. If I know that’s the path in the future, I can use the terminal value and current values of the path to calculate the derivative, if I know the values of the path. That’s my observation \(X_1\).
 
-Then I’ll do another path, which will be X2. And i’ll obtain all those rvs, and I can estimate μ, the expected value of the derivative. I’m using this formula to estimate an expectation.
+Then I’ll do another path, which will be \(X_2\). And i’ll obtain all those r.v.s, and I can estimate \(\mu\), the expected value of the derivative. I’m using this formula to estimate an expectation.
 
 It works every time for this purpose because of the LLN.
 
-The question is, how do we calculate these things, with mean μ? The **real problem** needs you to forecast what X\_T is in the future.
+The question is, how do we calculate these things, with mean \(\mu\)? The **real problem** needs you to forecast what \(X_T\) is in the future.
 
 **Step 1**, most important step:
 
-Hypothesize a model of evolution from X\_0 to X\_T
+Hypothesize a model of evolution from \(X_0\) to \(X_T\)
 
-I know where I am now, I’m at X\_0.
+I know where I am now, I’m at \(X_0\).
 
 I want to know what are my assumptions about the world that will lead me from now until T. THis is more complicated, because you need to place all these assumptions. Let’s say I generate a stock price, which we’ve been doing, I want to know what the price of the fixed income of the treasury bond is, which is repaid a year from now. The Treasury is AAA, never default. You know what the price is. Can I calculate the rate of this instrument that is issued for this price right now, then gives me $1 payoff at maturity. But in the Trump era, but we don’t know if it’s safe anymore. So we need to figure out what the risks are. Then you need to play in things that aren’t part of your model? How do you implement this? You can do jumps. Between now and next year, Trump will do something to collapse the market, which will be permanent not temporary. Last week was temporary, nobody cares. But a permanent thing where the economy is severely damaged, that makes it so I might not get this money I’m getting. Then you need to introduce jumps. That requires you to do Monte Carlo with jumps, which is on the homework.
 
@@ -98,11 +98,11 @@ Once you’re done with steps 1 and 2,
 
 **Step 3**
 
-is really simple. Create values for X\_T (iid), and that’s it.
+is really simple. Create values for \(X_T\) (iid), and that’s it.
 
 **Example with Call Option**
 
-Using X\_T1, you can calculate the value of C1 as
+Using \(X_T^1\), you can calculate the value of \(C_1\) as
 
 $$
 C^1 = (X_T^1 - K)_+ e^{-rT}
@@ -124,7 +124,7 @@ $$
 
 **Furthermore**, the CLT tells us how close we are. I can construct the confidence interval
 
-Students get really confused about this. There are two ns. There’s the confidence interval for the mean, which gets closer to 0\. But it also appears in the second one, because that one is for the actual random variable. Not C bar, which is an average, but the actual C random variable.
+Students get really confused about this. There are two \(n\)s. There’s the confidence interval for the mean, which gets closer to 0. But it also appears in the second one, because that one is for the actual random variable. Not \(\bar{C}\), which is an average, but the actual \(C\) random variable.
 
 You have the random variable which is the value of the call. If you have one path, you get an estimate, one estimate, one call value. That estimate, that rv, is going to have a mean, that will be the true value of the call, and it will have a certain variance, which is probably huge. The way you estimate that, you take a sample, maybe 50, and then maybe estimate this quantity. It will get closer to the stdev.
 
@@ -138,7 +138,7 @@ It also works for Barrier Options. I mention this because we discussed them. The
 
 Asian options also work. The payoff is determined by taking an average over the lifetime of an option. If it expires in one month, and it’s calculated daily, you take daily stock values, and then the value of the stock is an average. Or you could have an average vs a terminal value, there’s different versions. But in general, one of the terms is the average value of the stock price.
 
-Monte Carlo can be used for ANYTHING. Nothing is financial inherently. If I want to examine deaths from a disesase because Trump took us out of WHO, you can make an estimate of the contagion. This X\_0 could be the number of infected people currently. Then you could have some kind of dynamic of how the disease spreads, and then X\_T is the number of people infected at time T. THen you can simulate multiple things, and then calculate all sorts of derivative prices, with some “payoff” of how much money I pay in hospitals, based on how many people die of disease. Monte Carlo is used everywhere, particularly in biology.
+Monte Carlo can be used for ANYTHING. Nothing is financial inherently. If I want to examine deaths from a disease because Trump took us out of WHO, you can make an estimate of the contagion. This \(X_0\) could be the number of infected people currently. Then you could have some kind of dynamic of how the disease spreads, and then \(X_T\) is the number of people infected at time \(T\). Then you can simulate multiple things, and then calculate all sorts of derivative prices, with some “payoff” of how much money I pay in hospitals, based on how many people die of disease. Monte Carlo is used everywhere, particularly in biology.
 
 ## Monte Carlo for SDEs
 
@@ -156,7 +156,7 @@ This is odne in the book so you can look it up.
 
 How do you develop a Monte Carlo skill from SDE?
 
-You can assume that X\_0 is some fixed point.
+You can assume that \(X_0\) is some fixed point.
 
 The first thing is to remember that this is the notation, the SDE doesn’t actually exist. The actual SDE is
 
@@ -170,15 +170,15 @@ $$
 
 Euler discretization.
 
-We will take \[0, T\] divided into M.
+We will take \([0, T]\) divided into \(M\).
 
 Typically you generate millions of paths. The number of intervals you create has nothing to do with number of paths. Good estimation requires number of paths. But for this thing it doesn’t matter. You use whatever frequency you want. Estimate a month call option. Now you have to decide, do I want to generate every day? The time interval will be 1/252 or 1/365, and generate 25 or 30 for a month, but it’s your choice, and it doesn’t make a big difference.
 
 The actual diffusion of your rv will be the same. It will matter if for example you estimate a barrier option. It’s about passing a threshold. If you have a lot of frequency, your rv might cross the barrier and you don’t know it.
 
-We have m intervals and m \+ 1 points, t\_0, t\_1, t\_m \= T.
+We have \(m\) intervals and \(m + 1\) points, \(t_0, t_1, t_m = T\).
 
-X\_0 will start at fixed x\_0
+\(X_0\) will start at fixed \(x_0\)
 
 Then our process is:
 
@@ -190,7 +190,7 @@ IT does not really need to be equally spaced, it works with everything. You can 
 
 You just need to be careful about time between observations.
 
-The functions α and β is known. You choose the times. The only unknown noise is W. We know that increments are N(0, Δt), so you can calculate this as Z \* √Δt where Z is N(0, 1).
+The functions \(\alpha\) and \(\beta\) are known. You choose the times. The only unknown noise is \(W\). We know that increments are \(N(0, \Delta t)\), so you can calculate this as \(Z \cdot \sqrt{\Delta t}\) where \(Z\) is \(N(0, 1)\).
 
 99% of the errors are coming from the student using the N(0,1) directly for W, and it’s too large.
 
@@ -207,7 +207,7 @@ Jumps allow us to introduce events that are unpredictable. You need to know they
 We discussed two ways.
 Exponential times we accumulate,
 
-or in our case (much better), since we have 0 to T and we know the time interval, we create the Poisson random variables, generated, with λ \* t as the expected number of events. Once you generate that, the Poisson tells you how many times our president will influence the financial market. Then you create these n uniform variables from 0 to T, and sort them, and those are the actual generated times when he says the stupid things.
+or in our case (much better), since we have 0 to \(T\) and we know the time interval, we create the Poisson random variables, generated, with \(\lambda \cdot t\) as the expected number of events. Once you generate that, the Poisson tells you how many times our president will influence the financial market. Then you create these \(n\) uniform variables from 0 to \(T\), and sort them, and those are the actual generated times when he says the stupid things.
 
 Then how are the stupid things going to influence the markets? Last week, he said tariffs on Wednesday, and markets went down. I am not watching the market, so tell me when to buy. NVDA is overpriced, TSLA will go down, I can’t make up my mind. This is being an investment banker or trader, not FE.
 
@@ -223,25 +223,25 @@ $$
 
 This can be ANYTHING, our choice, could be Black-Scholes, or something else. You just have to fit it to real data.
 
-Where Y\_t is a compound Poisson process. The sum of these jumps, where the time of these jumps happens according to an actual Poisson process.
+Where \(Y_t\) is a compound Poisson process. The sum of these jumps, where the time of these jumps happens according to an actual Poisson process.
 
-We know how to generate the α β part, same methodology. The only question is, what do I do with the jumps?
+We know how to generate the \(\alpha\)-\(\beta\) part, same methodology. The only question is, what do I do with the jumps?
 
 I’m going to have to generate for each path, a set of jumps, and then add them to the price process.
 
-Generate Poisson(λT) \-\> k (every time a different k)
+Generate \(\operatorname{Poisson}(\lambda T) \to k\) (every time a different \(k\))
 
-Once I know k, I generate T\_1…T\_k times of the jumps for the Y\_t process.
+Once I know \(k\), I generate \(T_1, \ldots, T_k\) times of the jumps for the \(Y_t\) process.
 
-And these are in the interval \[0, T\]. If you forgot how to do this, you take each T\_i \~ Uniform(0, T) and sort them.
+And these are in the interval \([0, T]\). If you forgot how to do this, you take each \(T_i \sim \operatorname{Uniform}(0, T)\) and sort them.
 
-What about jump amounts? Y\_1… Y\_k the size of the jumps
+What about jump amounts? \(Y_1, \ldots, Y_k\) are the size of the jumps
 
 It depends how you model your stochastic process. Let’s say I’m modeling Donald Trump. Maybe he says something about tariffs, he goes down. So there’s no point generating a rv that goes up, I know it goes down. So I will generate it on a distribution of negative numbers, uniform(-0.5, \-1). Let’s say the second jump will be positive, so do something like that. You need to adapt it to your case.
 
 But let’s just say for simplicity it’s iid. Homework says you should use the Normal distribution.
 
-Identify the intervals Δt which contain T\_1.. T\_k
+Identify the intervals \(\Delta t\) which contain \(T_1, \ldots, T_k\)
 It’s possible that all the jumps happen really close to each other, in the same interval. I will just add all the jumps in the interval together.
 
 The jumps happen in the interval.
@@ -250,7 +250,7 @@ Whenever you have the jump, you add the jump. If not, you don’t care.
 
 The path
 
-In the example in the homework, it uses returns, so it’s going to be logarithm S\_t plus other stuff, so be careful. Write down the math before you program anything. You might not be sure whether to multiply or to add.
+In the example in the homework, it uses returns, so it’s going to be \(\log S_t\) plus other stuff, so be careful. Write down the math before you program anything. You might not be sure whether to multiply or to add.
 
 This is the basic idea behind Monte Carlo.
 
@@ -258,11 +258,11 @@ Next week, he’s going to give us a better Monte Carlo method
 
 One of the other problems is a variance deduction technique.
 
-Euler Milstein is a better approximation than this one, but it only works for homogeneous processes, which are not time-varying i.e. don’t contain x in α or β.
+Euler Milstein is a better approximation than this one, but it only works for homogeneous processes, which are not time-varying i.e. don’t contain \(x\) in \(\alpha\) or \(\beta\).
 
 ## Variance Reduction
 
-Imagine I’m pricing an option, and I look at the price I’m getting, and I get a 95% CI which is $10 wide, with n \= 100 paths. If you look at the difference, it’s \\(2 \* 1.96 (because it’s margin of error) \* \\frac{\\hat{\\sigma}}{100} \= 10\\)
+Imagine I’m pricing an option, and I look at the price I’m getting, and I get a 95% CI which is $10 wide, with n \= 100 paths. If you look at the difference, it’s \\(2 \* 1.96 (because it's margin of error) \* \\frac{\\hat{\\sigma}}{100} \= 10\\)
 
 This is about $10.
 

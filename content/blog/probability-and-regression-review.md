@@ -24,7 +24,7 @@ then
 
 and for variance,
 
-\(\mathbb{V}[Z] = a^2\mathbb{V}[X] + b^2\mathbb{V}[Y] + 2ab cov(X, Y)\)
+\(\mathbb{V}[Z] = a^2\mathbb{V}[X] + b^2\mathbb{V}[Y] + 2ab\,\operatorname{Cov}(X,Y)\)
 
 We can actually do this from a portfolio perspective, it’s the same idea. We have some weight
 
@@ -152,7 +152,7 @@ This is tricky because we have to convert between annual and daily. If we have i
 
 If we consider daily, we have
 
-\(VaR_\d = \sigma_d \cdot Z_{1 - \alpha}\)
+\(\operatorname{VaR}_d = \sigma_d \cdot Z_{1-\alpha}\)
 
 and we are given that \(\alpha\) is 0.01.
 
@@ -190,7 +190,7 @@ There’s a portfolio  on Canvas, an Excel spreadsheet in the FE\_535\_Session\_
 
 What is the correlation between these two assets? What is \(\beta\), what does it stand for? It is the derivative of the regression, how will covariance change x?
 
-\(\beta = \frac{cov(x, y)}{\mathbb{V}[X]}\)
+\(\beta = \frac{\operatorname{Cov}(X,Y)}{\mathbb{V}[X]}\)
 
 If \(\beta\) is positive, that tells us correlation is positive, so we can consider them related. This is also
 
@@ -212,7 +212,7 @@ Let’s take the square here.
 
 I can write the volatility of this asset as systematic volatility.
 
-\(\sigma_y^2 = \frac{\beta^2 \sigma x^2}{\rho{xy}^2}\)
+\(\sigma_y^2 = \frac{\beta^2 \sigma_x^2}{\rho_{xy}^2}\)
 
 There’s a proportion of total volatility that will be explained by this variable x.
 

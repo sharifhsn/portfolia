@@ -28,7 +28,7 @@ $$ T_{transmit} = \frac{L_{packetLength}}{R_{transmissionRate}} $$
 
 $$ U_{sender} = \frac{\frac{L}{R}}{RTT - \frac{L}{R}} $$
 
-If we can send W packets at aa time, then we can replace $\frac{L}{R}$ with \\(W\\), which will improve our time by a factor of \\(W\\)! However, if we send a stream of packets, then there are more issues. If you send a receiver too much data, then it will throw out the data it cannot receive. If packets get lost somewhere in the router, you will have no idea. Stopping the stream to check for issues wastes a lot of time.
+If we can send W packets at aa time, then we can replace \(\frac{L}{R}\) with \\(W\\), which will improve our time by a factor of \\(W\\)! However, if we send a stream of packets, then there are more issues. If you send a receiver too much data, then it will throw out the data it cannot receive. If packets get lost somewhere in the router, you will have no idea. Stopping the stream to check for issues wastes a lot of time.
 
 We can solve this using a window time. We send packets up until the first ACK is received, then we check for any problems with ACK. But what is the window size?
 
@@ -92,15 +92,15 @@ The sequence and acknowledgment numbers are how TCP messages are ordered despite
 
 Round-trip time is an important concept when we consider making our protocol as fast as possible. This is how long it takes for a segment to be sent and an acknowledgment for that segment to be received. In order to get an accurate measure of the RTT, TCP takes the current RTT and refines it to an average as more segments are transmitted, since any one SampleRTT (SRTT) might be an outlier. In order to get the average EstimatedRTT we follow this formula:
 
-$$ERTT = (1 - α) \cdot ERTT + α \cdot SRTT$$
+$$ERTT = (1 - \\alpha) \cdot ERTT + \\alpha \cdot SRTT$$
 
-\\(α\\) in this formula is typically 0.125. This means that average is weighted towards recent samples, since they better reflect the current weight.
+\\(\\alpha\\) in this formula is typically 0.125. This means that average is weighted towards recent samples, since they better reflect the current weight.
 
 We should also have a measure of variance in RTT, since averages can be deceiving. DevRTT is the measure of the variance, which is calculated like this:
 
-$$DevRTT = (1 - β) \cdot DevRTT + β \cdot | SampleRTT - EstimatedRTT |$$
+$$DevRTT = (1 - \\beta) \cdot DevRTT + \\beta \cdot | SampleRTT - EstimatedRTT |$$
 
-Like ERTT, DRTT moves and is weighted recently, with a \\(β\\) value of usually 0.25.
+Like ERTT, DRTT moves and is weighted recently, with a \\(\\beta\\) value of usually 0.25.
 
 The reason this is important is because the interval at which a TCP segment transmission times out is based on RTT. TCP calculates this way:
 

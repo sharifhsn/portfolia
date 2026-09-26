@@ -50,7 +50,7 @@ This is a simple example.
 
 I want to say a property of the cdf:
 
-If you have \(X: \Omega \rightarrow \mathbb{R}\) is a discrete r.v., \(cdf F(t)\) is piecewise constant and has finite/countable jumps.
+If you have \(X: \Omega \rightarrow \mathbb{R}\) is a discrete r.v., the cdf \(F(t)\) is piecewise constant and has finite/countable jumps.
 
 If you think about cdf, it’s a probability that lies from 0 to 1.
 
@@ -58,7 +58,7 @@ The graph of discrete cdf is exclusive coming from the right side, so the hole i
 
 For simplicity, we will denote the following notations:
 
-\(X(\Omega = \{a_1, a_2, a_3, \ldots \}\)
+\(X(\Omega)=\{a_1, a_2, a_3, \ldots \}\)
 
 \(p_i = P(X=a_i), i=1\)
 

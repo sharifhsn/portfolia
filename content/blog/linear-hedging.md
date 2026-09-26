@@ -14,13 +14,13 @@ tags = ['Risk Management', 'Hedging', 'Linear Risk']
 
 Let’s say I’m trading futures. What is the log return of this?
 
-The futures contract at time 1 is worth S\_0 e^{1r}, then at time 2 is S\_0 e^{2r}, etc.
+The futures contract at time 1 is worth \(S_0 e^{r}\), then at time 2 is \(S_0 e^{2r}\), etc.
 
 If you look at log returns, then it’s simply a linear function of the underlying returns.
 
 
 
-I can use a futures contract to hedge my beta (systematic risk)
+I can use a futures contract to hedge my \(\beta\) (systematic risk)
 
 
 
@@ -86,13 +86,13 @@ A unit hedge has the quantities transacted as being identical. But in general, h
 
 The example is jet fuel and heating oil. These will actually move together, and this is lab 4. Let’s imagine you’re an airline company that wants to manage liability for jet fuel and minimize the cost to pay.
 
-Now we’re adding a futures contract. Let ΔS be the change in dollar value of inventory, and ΔF be the change in dollar value of the futures contract. The change in value of portfolio is
+Now we’re adding a futures contract. Let \(\Delta S\) be the change in dollar value of inventory, and \(\Delta F\) be the change in dollar value of the futures contract. The change in value of portfolio is
 
 \(\Delta V = \Delta S + N\times\Delta F\)
 
 What is the optimal N?
 
-We can either think about V as the whole value of the portfolio, and also the change in the value of the portfolio. I’m buying today, selling tomorrow, what is the difference? That’s my unhedged ΔS. For ΔF, we have to know how much we’re going to sell today and buy tomorrow to balance these out. Let’s calculate variance:
+We can either think about \(V\) as the whole value of the portfolio, and also the change in the value of the portfolio. I’m buying today, selling tomorrow, what is the difference? That’s my unhedged \(\Delta S\). For \(\Delta F\), we have to know how much we’re going to sell today and buy tomorrow to balance these out. Let’s calculate variance:
 \(\mathbb{V}[\Delta V] = \mathbb{V}[\Delta S] + N^2\mathbb{V}[\Delta F] + 2N\operatorname{Cov}(\Delta S,\Delta F)\)
 
 Now how do you optimize this function?
@@ -117,9 +117,9 @@ The optimal hedge ratio is
 
 in the long position, and negative for the short position.
 
-Q is the inventory being hedged, in this case ¥125M. Q\_f is how many contracts you’re actually getting, in this case 12.5M.
+\(Q\) is the inventory being hedged, in this case ¥125M. \(Q_f\) is how many contracts you’re actually getting, in this case 12.5M.
 
-So what is β actually? It’s estimated from the price time series on the underlying and the futures. We’re trying to explain the movement of the underlying as a result of the futures contract, and we will regress one on the other. That β is the coefficient of the futures contracts in question.
+So what is \(\beta\) actually? It’s estimated from the price time series on the underlying and the futures. We’re trying to explain the movement of the underlying as a result of the futures contract, and we will regress one on the other. That \(\beta\) is the coefficient of the futures contracts in question.
 
 
 
@@ -131,7 +131,7 @@ For an asset you short, for a liability you long.
 
 A famous example will be used for lab 4.
 
-Working with real data, all you have to do is figure out the beta between the two (regression) and then hedge the liability (go long).
+Working with real data, all you have to do is figure out the \(\beta\) between the two (regression) and then hedge the liability (go long).
 
 
 

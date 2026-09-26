@@ -27,15 +27,15 @@ An induced emf is created in a metal rod that moves through a magnetic field as 
 
 We can find the motional emf when the length, velocity, and magnetic field are all perpendicular i.e. they all have their own axis:
 
-$$Ε = vBL$$
+$$E = vBL$$
 
 There is another magnetic force that opposes the motional emf. The current creates its own magnetic field, which by RHR1 would actually oppose the velocity of a mutually perpendicular system. We have to have an external force moving the rod otherwise the magnetic field produced by its own current will cause it to stop.
 
 ## Magnetic Flux
 
-Remember electric flux? Magnetic flux is quite similar in that it is defined as amount of magnetic field passing through an area, so \\(Φ = BA\cos{θ}\\) in \\(Wb\\) or \\(T \cdot m^2\\). We can define motional emf through magnetic flux like so:
+Remember electric flux? Magnetic flux is quite similar in that it is defined as amount of magnetic field passing through an area, so \\(\\Phi = BA\cos{\\theta}\\) in \\(Wb\\) or \\(T \cdot m^2\\). We can define motional emf through magnetic flux like so:
 
-$$Ε = -\frac{ΔΦ}{Δt}$$
+$$E = -\frac{\\Delta\\Phi}{\\Delta t}$$
 
 or, emf is the rate of change of magnetic flux. This is why we can induce an emf by changing the area of a coil. The reason that the equation is negative is because the induced current will create a magnetic force which will oppose its velocity direction.
 
@@ -43,9 +43,9 @@ or, emf is the rate of change of magnetic flux. This is why we can induce an emf
 
 **Faraday's Law** is precisely the equation we just laid out but with one additional component to account for loops:
 
-$$Ε = -N\frac{ΔΦ}{Δt}$$
+$$E = -N\frac{\\Delta\\Phi}{\\Delta t}$$
 
-The emf is generated if the flux changes, which depends on \\(B\\), \\(A\\), or \\(ɸ\\), which are magnetic field, area, and angle of the magnetic field with respect to the normal of the surface.
+The emf is generated if the flux changes, which depends on \\(B\\), \\(A\\), or \\(\\phi\\), which are magnetic field, area, and angle of the magnetic field with respect to the normal of the surface.
 
 ## Lenz's Law
 

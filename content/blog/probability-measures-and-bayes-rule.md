@@ -16,7 +16,7 @@ tags = ['Probability Theory', 'Conditional Probability', 'Bayes Rule']
 
 #### FT-2 | Probability Measure
 
-We have already considered the measurable space \((\Omega, \mathcal{F})\) of the sample space and \(\sigma\)-algebra. We can now define the probability measure \(\mathbb{P}\) as a measure defined on events in the \(\sigma\)-algebra \(\mathcal{F}\), taking values in the unit interval \[0, 1\]. This measures the size of the events, which has two properties: the probability of \(\Omega\) is 1, which means that all outcomes are accounted for in the sample space, and that the measure is countably additive, which allows us to extend the probability of individual events to the entire \(\sigma\)-algebra.
+We have already considered the measurable space \((\Omega, \mathcal{F})\) of the sample space and \(\sigma\)-algebra. We can now define the probability measure \(\mathbb{P}\) as a measure defined on events in the \(\sigma\)-algebra \(\mathcal{F}\), taking values in the unit interval \([0, 1]\). This measures the size of the events, which has two properties: the probability of \(\Omega\) is 1, which means that all outcomes are accounted for in the sample space, and that the measure is countably additive, which allows us to extend the probability of individual events to the entire \(\sigma\)-algebra.
 
 There are three ways of thinking on how the numerical values of probability manifest. Frequentism assigns values directly from data. Objectivism assigns values based on some model which is considered to describe aspects of the universe. Subjectivism characterizes probability as measuring beliefs about the world.
 
@@ -140,7 +140,7 @@ Let’s take an example. We have Urn 1 which contains 2 black balls and 3 white 
 
 Let’s assign our variables.
 
-\(A\) is the event of choosing Urn 1, and \(B\) is the event of choosing a black ball. We’re trying to find \(P(A|B)\), so we need \(P(A \cap B)\). There are four total events in our sample space: { Urn1Black, Urn1White, Urn2Black, Urn2White }. The probability of Urn1Black is \(0.5 \times \0.4 = 0.2\). The probability of choosing a black ball is \(0.5\) in the case of Urn 2 and \(0.4\) in the case of Urn 1, which averages to \(0.45\). So the overall probability is \(0.2 / 0.45\), which is \(4/9\).
+\(A\) is the event of choosing Urn 1, and \(B\) is the event of choosing a black ball. We’re trying to find \(P(A|B)\), so we need \(P(A \cap B)\). There are four total events in our sample space: { Urn1Black, Urn1White, Urn2Black, Urn2White }. The probability of Urn1Black is \(0.5 \times 0.4 = 0.2\). The probability of choosing a black ball is \(0.5\) in the case of Urn 2 and \(0.4\) in the case of Urn 1, which averages to \(0.45\). So the overall probability is \(0.2 / 0.45\), which is \(4/9\).
 
 The **total probability formula** given \(A_n\) partition of \(\Omega\) is
 

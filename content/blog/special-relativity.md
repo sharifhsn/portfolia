@@ -26,10 +26,10 @@ The theory behind special relativity is two-fold:
 This means that if even an observer has a huge difference in relative velocity, the speed of light is the same. This causes knock-on effects on the experience of time, and **time dilation**:
 
 $$
-Δt = \frac{Δt_0}{\sqrt{1-\frac{v^2}{c^2}}}
+\\Delta t = \frac{\\Delta t_0}{\sqrt{1-\frac{v^2}{c^2}}}
 $$
 
-The proper time \\(Δt_0\\) is the time interval with respect to an observer at rest. The dilated time is the time when the observer is at velocity \\(v\\).
+The proper time \\(\\Delta t_0\\) is the time interval with respect to an observer at rest. The dilated time is the time when the observer is at velocity \\(v\\).
 
 In the same way that time can be dilated, length can also be contracted:
 

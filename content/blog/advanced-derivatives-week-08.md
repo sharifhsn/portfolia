@@ -26,31 +26,31 @@ But the problem is the calibration.
 
 Notation
 
-\\(t_k\\) kth reset date
+\(t_k\) kth reset date
 
-So t would progress like t\_0 \= 0, t\_1 \= 0.25, t\_2 \= 0.5…
+So \(t_0=0\), \(t_1=0.25\), \(t_2=0.5\), …
 
-\\(F_k\\) forward rate between k and k \+ 1
+\(F_k\) forward rate between \(k\) and \(k+1\)
 
-m(t) index for next reset date at time t.
+\(m(t)\) index for next reset date at time \(t\).
 
-So if t \= 0.4, then m(t) \= 0.5
+So if \(t=0.4\), then \(m(t)=0.5\).
 
 
 
-δ\_k \= t\_k+1 \- t\_k
+\(\delta_k=t_{k+1}-t_k\)
 
 So basically you can imagine that you have your forward curve,
 
 
 
-xi: ξ(t) \= volatility of F\_k(t) at time t
+\(\xi\): \(\xi(t)\) = volatility of \(F_k(t)\) at time \(t\)
 
 
 
 Assume that we have only one factor
 
-This factor is the forward risk neutral process with respect to P(t, t\_k+1)
+This factor is the forward risk neutral process with respect to \(P(t,t_{k+1})\)
 
 Then, our process
 
@@ -96,7 +96,7 @@ $$
 \\frac{dF_k(t)}{F_k(t)} = \\sum_{i= m(t)}^k \\frac{\\delta_i F_i(t) \\xi_i(t) \\xi_k(t)}{1+\\delta_i F_i(t)} dt + \\xi_k(t) dW
 $$
 
-This is the process followed by the forward rate between t\_k and t\_k+1, in a risk-neutral world.
+This is the process followed by the forward rate between \(t_k\) and \(t_{k+1}\), in a risk-neutral world.
 
 In the limiting case, when this interval becomes smaller, this converges to HJM
 
@@ -108,17 +108,17 @@ It can be simplified with:
 
 ## Simplified Model
 
-Assume that ξ\_k(t) function only on the number of whole accrued periods between the next date and t\_k.
+Assume that \(\xi_k(t)\) functions only on the number of whole accrued periods between the next date and \(t_k\).
 
 
 
-Define Λ\_i as the value of ξ\_k(t) (volatility of forward) when there are i such accrued periods.
+Define \(\Lambda_i\) as the value of \(\xi_k(t)\) (volatility of the forward) when there are \(i\) such accrued periods.
 
 Then the volatility of the forward can be redefined as
 
 \\(\\xi_k(t) = \\Lambda_{k-m(t)}\\) which is a step function
 
-And such values like Λ\_i can be estimated from the volatilities used to value caplets in Black’s model.
+And such values like \(\Lambda_i\) can be estimated from the volatilities used to value caplets in Black’s model.
 
 Recall that to value a caplet, we have
 
@@ -126,7 +126,7 @@ $$
 L\\delta_k P(0, t_{k+1}) [F_k N(d_1) - R_k N(d_2)]
 $$
 
-blah blah blah d\_1 and d\_2
+blah blah blah \(d_1\) and \(d_2\)
 
 If we equate the variances between Black’s model and this, we get
 
@@ -184,9 +184,9 @@ In terms of simulation, what’s happening in the code is that if you assume tha
 
 On each trial, we start with the forward rate at time 0, which is calculated from the initial zero curve.
 
-F\_0(0), F\_1(0), … F\_N-1(0)
+\(F_0(0), F_1(0), \ldots, F_{N-1}(0)\)
 
-Then we can use an approximation formula (described above) to calculate F\_1(t\_1), F\_2(t\_1)...
+Then we can use an approximation formula (described above) to calculate \(F_1(t_1)\), \(F_2(t_1)\)...
 
 
 
@@ -273,6 +273,3 @@ We can use the CDS to determine the piecewise constant hazard rates and then con
 So this is a calibration in which we can price the risk of default through CDS.
 
 First we will look at bonds.
-
-
-

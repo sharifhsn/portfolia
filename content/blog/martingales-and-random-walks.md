@@ -50,7 +50,7 @@ The reason that it’s squared is that it’s always positive, which means that 
 
 We have a sample space and we take variables. You measure how much variables fluctuate with each other with respect to the inputs from the sample space.
 
-\(Cov(X, Y) = \mathbb{E}\{(X - \mathbb{E}[X])(Y - \mathbb{E}[Y])\}\)
+\(\operatorname{Cov}(X,Y) = \mathbb{E}\{(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])\}\)
 
 \(= \sum_{\omega \in \Omega} (X(\omega) - \mathbb{E}[X])(Y(\omega) - \mathbb{E}[Y])\mathbb{P}(\omega)\)
 
@@ -58,7 +58,7 @@ You’re going through every entry and seeing how much \(X\) differs from its me
 
 We can say that two variables are uncorrelated if their covariance is 0. Independent variables are uncorrelated, but uncorrelated variables may not be independent. The value of covariance doesn’t tell you how correlated variables are, only the correlation coefficient does:
 
-\(\rho(X, Y) = \frac{Cov(X, Y)}{\sqrt{\mathbb{V}(X)\mathbb{V}(Y)}}\)
+\(\rho(X,Y) = \frac{\operatorname{Cov}(X,Y)}{\sqrt{\mathbb{V}(X)\mathbb{V}(Y)}}\)
 
 If this value is 0, then they are uncorrelated. This coefficient is always \([-1, 1]\). -1 means perfectly inverse, and 1 means perfectly direct. This only has to do with direction, not necessarily magnitude.
 
@@ -100,7 +100,7 @@ If you have a stochastic process where for every non-negative function \(f\) on 
 
 We can define the outcomes of the tosses of a coin where heads is 1, and tails is -1. The process of flipping a coin and calculating the sum of the values is the **symmetric random walk** \(M\). These increments are independent from each other, whether symmetric or asymmetric. Knowing that there were a bunch of heads in the past doesn’t give you any information about future flips. Our increment is defined by:
 
-\(M_k_{i+1} - M_k_i = \sum_{j=k_i +1}^{k_{i + 1}} X_j\)
+\(M_{k_{i+1}}-M_{k_i} = \sum_{j=k_i+1}^{k_{i+1}} X_j\)
 
 This starts at plus 1 because… wasn’t listening 😓
 
@@ -109,17 +109,17 @@ If we want to calculate the expected value of this, we can use the linearity of 
 
 By adding these together, we can see that the expectation of the random variable is 0.
 
-Is variance a linear operator? If it is, then \(Var(\alpha X + \beta Y) = \alpha Var(X) + \beta Var(Y)\)
+Is variance a linear operator? If it is, then \(\operatorname{Var}(\alpha X+\beta Y) = \alpha\operatorname{Var}(X) + \beta\operatorname{Var}(Y)\)
 
 Using our definition of variance, this is the same as
 
 \(\mathbb{E}[(\alpha X + \beta Y)^2] - \mathbb{E}[\alpha X + \beta Y]^2\)
 
-\(= (\alpha^2 \mathbb{E}[x^2] + 2 \alpha \beta \mathbb{E}[XY] + \beta^2 \mathbb{E}]Y] - \alpha^2 (\mathbb{E}[X])^2 - 2\alpha \beta \mathbb{E}[X] \mathbb{E}[Y] - \beta^2 \mathbb{E}[Y]^2\)
+\(= \alpha^2\mathbb{E}[X^2] + 2\alpha\beta\mathbb{E}[XY] + \beta^2\mathbb{E}[Y^2] - \alpha^2\mathbb{E}[X]^2 - 2\alpha\beta\mathbb{E}[X]\mathbb{E}[Y] - \beta^2\mathbb{E}[Y]^2\)
 
 and this ends up equalling, once you cancel everything out
 
-\(= \alpha^2 Var(X) + 2 \alpha \beta Cov(X, Y) + \beta^2 Var(Y)\)
+\(= \alpha^2\operatorname{Var}(X) + 2\alpha\beta\operatorname{Cov}(X,Y) + \beta^2\operatorname{Var}(Y)\)
 
 Clearly, this is not a linear operator. Only in the scenario where the variables are independent and their coefficient is 1, i.e. they are independent and identically distributed (iid), do they act as if they are linear.
 
@@ -195,11 +195,11 @@ This does not necessarily occur\! If the step size changed to 2 and -1, this is 
 
 We still have independence of increments in this walk. The expected value of a walk is still 0. We can use the same arguments to determine that this is a martingale. But if we look at the variance of the increments in the scaled symmetric random walk, it is now
 
-\(Var(\sum_{j=ns+1}^{nt} \frac{1}{\sqrt{n}} X_j)\)
+\(\operatorname{Var}\left(\sum_{j=ns+1}^{nt} \frac{1}{\sqrt{n}}X_j\right)\)
 
 This presents a problem for our attempt to convert between summation of variances because there is now a coefficient. But because \(\alpha = \beta\) in this case, **Open question:** explain this conversion more clearly.
 
-\(= \sum_{j=ns+1}^{nt} \frac{1}{n} Var(X_j)\)
+\(= \sum_{j=ns+1}^{nt} \frac{1}{n}\operatorname{Var}(X_j)\)
 
 \(= \frac{1}{n}(nt - ns) = t - s\)
 
@@ -211,19 +211,19 @@ The quadratic variation becomes \(t\), but the first order variation goes to \(\
 
 We will prove that the scaled symmetric walk approaches the normal distribution. Any normal variable is defined by \(\mu\) and \(\sigma^2\). It also has a
 
-\(\varphi_{W^{(n)}(t)}(s) = \mathbb{E}[e^{SW^(n)(t)}]\)
+\(\varphi_{W^{(n)}(t)}(s) = \mathbb{E}[e^{sW^{(n)}(t)}]\)
 
 \(= \mathbb{E}[e^{\sum_{j=1}^{nt}\frac{s}{\sqrt{n}}X_j}]\)
 
-\(= \mathbb{E}[\Pi_{j=1}^{nt}e^{\frac{s}{\sqrt{n}}X_j}]\)
+\(= \mathbb{E}\left[\prod_{j=1}^{nt}e^{\frac{s}{\sqrt{n}}X_j}\right]\)
 
 This is the expected value of the product as a whole bunch of independent variables, which means that it’s the same as the product of the expectations:
 
-\(= \Pi_{j=1}^{nt} \mathbb{E}[e^{\frac{s}{\sqrt{n}} X_j}]\)
+\(= \prod_{j=1}^{nt} \mathbb{E}\left[e^{\frac{s}{\sqrt{n}}X_j}\right]\)
 
 Important: understand what’s random and what’s not. \(X_j\) only is random. Given the expectation of \(X_j\) being known:
 
-\(= \Pi_{j=1}^{nt} (\frac{1}{2}e^{\frac{s}{\sqrt{n}}} + \frac{1}{2}e^{-\frac{s}{\sqrt{n}}})\)
+\(= \prod_{j=1}^{nt}\left(\frac{1}{2}e^{\frac{s}{\sqrt{n}}}+\frac{1}{2}e^{-\frac{s}{\sqrt{n}}}\right)\)
 
 this is the same as
 
@@ -281,7 +281,7 @@ We can use the linearity of expectation to get
 
 Using our previous definition of variance as
 
-\(\mathbb{E}[X^2] = Var(X) + \mathbb{E}[X]^2\)
+\(\mathbb{E}[X^2] = \operatorname{Var}(X) + \mathbb{E}[X]^2\)
 
 We know that the mean of the increment of Brownian motion is 0 and its variation is time \(t\).
 
@@ -295,7 +295,7 @@ therefore,
 
 because the limit of a constant is the same as the constant.
 
-\(Var((W(t_{j+1}) - W(t_j))^2) = \mathbb{E}[(W(t_{j+1}) - W(t_j))^4]\)
+\(\operatorname{Var}((W(t_{j+1}) - W(t_j))^2) = \mathbb{E}[(W(t_{j+1}) - W(t_j))^4]\)
 
 Without standardization, the fourth moment is \(3 \sigma^4\)
 

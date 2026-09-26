@@ -63,15 +63,15 @@ App(
 )
 ```
 
-Let's parse this out forwards. First we read that there is a parenthesis, which means that there is an expression enclosed within. There is a \\(λ\\), which means that the expression is a lambda. The next letter is `x`, which is the name of the `Lam`. The period following separates the function definition to the containing expression, which continues to another \\(λ\\). That means that the containing expression is also a `Lam`, which is called "y". The containing expression is now an `App` which is composed of two `Var`s. This is the end of the nesting because we hit the end parenthesis. The same logic applies for the second expression but with less nesting. Since we have two expressions at the top-level, the full expression is an `App`.
+Let's parse this out forwards. First we read that there is a parenthesis, which means that there is an expression enclosed within. There is a \\(\\lambda\\), which means that the expression is a lambda. The next letter is `x`, which is the name of the `Lam`. The period following separates the function definition to the containing expression, which continues to another \\(\\lambda\\). That means that the containing expression is also a `Lam`, which is called "y". The containing expression is now an `App` which is composed of two `Var`s. This is the end of the nesting because we hit the end parenthesis. The same logic applies for the second expression but with less nesting. Since we have two expressions at the top-level, the full expression is an `App`.
 
-The scope of \\(λ\\) extends as far to the right as possible, excepting parentheses. This is why we needed the parentheses for the first term in the above statement, otherwise the first \\(λ\\) would extend throughout the entire statement. The application, however, is left-associative, like OCaml. 
+The scope of \\(\\lambda\\) extends as far to the right as possible, excepting parentheses. This is why we needed the parentheses for the first term in the above statement, otherwise the first \\(\\lambda\\) would extend throughout the entire statement. The application, however, is left-associative, like OCaml.
 
 ## Beta Reduction
 
 A function call of type `(λx.e1) e2` replaces all instances of `x` in `e1` with `e2`. That means that we can substitute this statement with `e1{e2/x}`. This is called **beta reduction**. All we have done is apply the function and replace the formal parameters through substitutions. Beta reductions should always be idempotent for the statement. When no more beta reductions can be performed on a term, then it is said to be in *beta normal form*, for example `λx.e`.
 
-Another example will be instructive here. Take the term `(λx.λz.x z) y`. This is a function application, since it has two terms. It follows the form that we stated earlier, so we can substitute all instances of `y` on the outside \\(λ\\). This would give us the final term `λz.(y z)` eliminating the outside `λx` and replacing the `x` in the inner term with `y`.
+Another example will be instructive here. Take the term `(λx.λz.x z) y`. This is a function application, since it has two terms. It follows the form that we stated earlier, so we can substitute all instances of `y` on the outside \\(\\lambda\\). This would give us the final term `λz.(y z)` eliminating the outside `λx` and replacing the `x` in the inner term with `y`.
 
 ## Alpha Conversion
 

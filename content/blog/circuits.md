@@ -17,9 +17,9 @@ Circuits are the method by which all electricity travels throughout the world an
 
 ## Electromotive Force (emf) and Current
 
-The **emf** is similar to voltage, but not quite the same. It is the maximum voltage of a battery, signified by \\(Ε\\) (capital epsilon). It represents the maximum amount of joules of energy that can transfer from a battery based on the charge.
+The **emf** is similar to voltage, but not quite the same. It is the maximum voltage of a battery, signified by \\(E\\) (capital epsilon). It represents the maximum amount of joules of energy that can transfer from a battery based on the charge.
 
-**Current** is formed when an electric field parallel to a wire moves free electrons from the positive terminal of a battery to the negative terminal. You can think of it mentally like the flow of charge over time, like water going through a hose, and in fact the equation is \\(I = \frac{Δq}{Δt}\\). For a non-constant flow, this is the average current. Current uses the unit \\(A\\) for ampere.
+**Current** is formed when an electric field parallel to a wire moves free electrons from the positive terminal of a battery to the negative terminal. You can think of it mentally like the flow of charge over time, like water going through a hose, and in fact the equation is \\(I = \frac{\\Delta q}{\\Delta t}\\). For a non-constant flow, this is the average current. Current uses the unit \\(A\\) for ampere.
 
 A **direct current (dc)** has electrons that go through the circuit in the same direction at all times, which is negative to positive. An **alternating current (ac)** alternates direction constantly from moment to moment.
 
@@ -31,7 +31,7 @@ A **direct current (dc)** has electrons that go through the circuit in the same 
 
 $$\frac{V}{I} = R = constant | V = IR$$
 
-**\\(R\\) is the resistance of the piece of material in ohms (Ω).**
+**\\(R\\) is the resistance of the piece of material in ohms (\(\Omega\)).**
 
 Again using our hose analogy, resistance is like how narrow the hose opening is which lets our water through. Resistance is typically discussed in the context of **resistors**, which are electrical devices that apply resistance to a circuit.
 
@@ -39,15 +39,15 @@ Again using our hose analogy, resistance is like how narrow the hose opening is 
 
 The resistance of a piece of material is dependent on certain qualities. If you think in your head of a small plastic tic-tac as our resistor, this is the formula:
 
-$$R = ρ\frac{L}{A}$$
+$$R = \\rho\frac{L}{A}$$
 
-where \\(L\\) is length, \\(A\\) is cross-sectional area, and \\(ρ\\) is a constant called **resistivity** that is constant to a material. Conductors have very low resistivities, and insulators have very high resistivities.
+where \\(L\\) is length, \\(A\\) is cross-sectional area, and \\(\\rho\\) is a constant called **resistivity** that is constant to a material. Conductors have very low resistivities, and insulators have very high resistivities.
 
 Resistivity also typically depends on temperature, though in more complicated ways than can be expressed in the above formula. The most common way to express it as:
 
-$$ρ = ρ_0[1 + α(T - T_0)]$$
+$$\\rho = \\rho_0[1 + \\alpha(T - T_0)]$$
 
-You can also use resistance instead of resistivity here. The important constant here is \\(α\\), which is the *temperature coefficient of resistivity*, which can be positive or negative depending on how the specific material relates resistivity to temperature.
+You can also use resistance instead of resistivity here. The important constant here is \\(\\alpha\\), which is the *temperature coefficient of resistivity*, which can be positive or negative depending on how the specific material relates resistivity to temperature.
 
 > Some materials, known as *superconductors*, have resistivity of zero at certain temperatures. This means you can circulate a current indefinitely within that circuit without needing a supply of emf from a battery. They can be used in MRI, maglevs, and computer chips.
 
@@ -55,7 +55,7 @@ You can also use resistance instead of resistivity here. The important constant 
 
 **Power** is an important concept when we want to give energy to electrical appliances. The easiest way to think about it on a high level is the change in energy per unit time. Another way to think about it is the flow of voltage transferred.
 
-$$P = \frac{Change\ in\ energy}{Time\ interval} = \frac{(Δq)V}{Δt} = \frac{Δq}{Δt}V = IV$$
+$$P = \frac{Change\ in\ energy}{Time\ interval} = \frac{(\\Delta q)V}{\\Delta t} = \frac{\\Delta q}{\\Delta t}V = IV$$
 
 The units of power are in watts \\(W\\), which you might remember from lightbulbs. Current multiplied by voltage makes sense; it's the flow multiplied by the quantity, which tells you change in quantity over time. You can also write it as:
 
@@ -67,7 +67,7 @@ which is often useful when we don't have one of those elements.
 
 Most batteries in the world use ac instead of dc. Therefore, we must note the differences between it and dc. The voltage is not always the same, and fluctuates constantly according to this equation:
 
-$$V = V_0 \sin{2πft}$$
+$$V = V_0 \sin{2\\pi f t}$$
 
 where \\(V_0\\) is the maximum voltage and \\(f\\) is the frequency of isolation. This value is in radians when the sine function is applied.
 
@@ -109,7 +109,7 @@ If resistors are in series or parallel, we can combine them fairly easily. There
 
 The junction rule states that the total current directed into a junction must equal the total current directed out of the junction. This is just an extension of conservation of electric charge that we discussed earlier. You can imagine an intersection of cars where you have four cars waiting at the light. They can either turn right or go straight. Either way they go, however, there must be four cars that are leaving the intersection unless something has gone horribly wrong.
 
-The loop rule relates a similar idea but in relation to electric potential. The voltage rises at every capacitor, and it must have drops through every resistor that equal the rise through the resistor. For example, after a 12 V rise through a capacitor, a pass through a 5 Ω and a 1 Ω resistor must drop 10 V and 2 V respectively in order to have it be the same.
+The loop rule relates a similar idea but in relation to electric potential. The voltage rises at every capacitor, and it must have drops through every resistor that equal the rise through the resistor. For example, after a 12 V rise through a capacitor, a pass through a \(5\,\Omega\) and a \(1\,\Omega\) resistor must drop 10 V and 2 V respectively in order to have it be the same.
 
 Some important notes:
 
@@ -135,10 +135,10 @@ We often have circuits that have both resistors and capacitors. In this situatio
 
 $$q = q_0[1 - e^{-t/(RC)}]$$
 
-\\(RC\\) here is very simply, the resistance multiplied by the capacitance, which ends up being a unit in seconds known as \\(τ\\), the time constant. That is the amount of time for the capacitor to charge to 63.2%, which is \\(1 - e^{-1}\\).
+\\(RC\\) here is very simply, the resistance multiplied by the capacitance, which ends up being a unit in seconds known as \\(\\tau\\), the time constant. That is the amount of time for the capacitor to charge to 63.2%, which is \\(1 - e^{-1}\\).
 
 Discharging works with a similar equation:
 
 $$q = q_0e^{-t/(RC)}$$
 
-where \\(τ\\) represents losing 63.2% charge.
+where \\(\\tau\\) represents losing 63.2% charge.

@@ -22,10 +22,10 @@ Many people believe that Albert Einstein won the Nobel Prize for his discovery o
 The number of photoelectrons emitted, the photocurrent, increases with intensity, though the kinetic energy does not. The kinetic energy only increases with an increase in energy of the light i.e. a decrease in the wavelength. Above a certain wavelength, no electrons are ejected.
 
 $$
-\frac{hc}{λ_0} = W_0 + KE_{max}
+\frac{hc}{\\lambda_0} = W_0 + KE_{max}
 $$
 
-where \\(W_0\\) is the work function for the metal in question. You can think of it as an intrinsic quality of the metal. \\(λ_0\\) is the cutoff wavelength after which no more electrons will be ejected.
+where \\(W_0\\) is the work function for the metal in question. You can think of it as an intrinsic quality of the metal. \\(\\lambda_0\\) is the cutoff wavelength after which no more electrons will be ejected.
 
 ## Pair Production/Annihilation
 
@@ -44,7 +44,7 @@ The opposite operation can occur when an electron and a positron combining will 
 All particles exhibit wave-like characteristics, which can be demonstrated by the double-slit experiment. The wavelength of a particle in this instance can be determined from the following equation:
 
 $$
-λ = \frac{h}{p} = \frac{h}{mv} = \frac{h}{\sqrt{2mKE}}
+\\lambda = \frac{h}{p} = \frac{h}{mv} = \frac{h}{\sqrt{2mKE}}
 $$
 
 The wavelength of a photon is a little different, since photons are completely massless. The momentum and energy of a photon are related by a simpler equation \\(E = pc\\), which applies to all massless particles, not just photons.
@@ -54,7 +54,7 @@ The wavelength of a photon is a little different, since photons are completely m
 One key problem for physicists studying particles is the **Heisenberg Uncertainty Principle**. In layman's terms, the observation of a particle fundamentally changes its quality, so it can never be truly measured. In mathematical terms, the accuracy of a measurement of a position's momentum and position at the same time is limited:
 
 $$
-(Δp_y)(Δy) ≥ \frac{h}{4π}
+(\\Delta p_y)(\\Delta y) \\geq \frac{h}{4\\pi}
 $$
 
 and the same function exists for simultaneous measurements of energy and time.

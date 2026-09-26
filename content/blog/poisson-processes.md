@@ -20,7 +20,7 @@ All of the stuff we learned about stochastic calculus has been organized around 
 
 What exactly is a Poisson process?
 
-If τ be a random variable with this pdf
+If \(\tau\) is a random variable with this pdf
 
 \(f_\tau(t) = \begin{cases} \lambda e^{-\lambda t} & t \geq 0 \\ 0 & t < 0 \end{cases}\)
 
@@ -129,7 +129,7 @@ If it’s squared, then we can use the same steps to take out zero through reind
 
 \(= \sum_{l=0}^\infty \frac{(l + 1)(\lambda(t-s))^{l+1} e^{-\lambda(t-s)}}{l!}\)
 
-So I’m going to factor out one of those λ(t-s) and distribute l + 1
+So I’m going to factor out one of those \(\lambda(t-s)\) and distribute \(l + 1\)
 
 \(= \lambda(t-s) \left[ \sum_{l=0}^\infty \frac{l(\lambda(t-s))^l e^{-\lambda(t-s)}}{l!} + \sum_{l=0}^\infty \frac{(\lambda(t-s))^l e^{-\lambda(t-s)}}{l!}\right]\)
 
@@ -139,7 +139,7 @@ The first term is just the expectation. The second is interesting. It’s the su
 
 
 
-What would be the moment generating function with dummy variable u?
+What would be the moment generating function with dummy variable \(u\)?
 
 \(\gamma_{N(t)}(u) = \mathbb{E}[e^{uN(t)}]\)
 
@@ -173,7 +173,7 @@ But because of the memoryless nature, we can take out what’s independent.
 
 #### Compound Process
 
-We can’t just say the process could go up by 1. That’s not interesting to us. What we do here is make a compound Poisson process which uses N(t) to determine how many events have happened until t. Then it draws the sizes of those events from another distribution that we are going to say are iid called {Y\_i} with expectation β.
+We can’t just say the process could go up by 1. That’s not interesting to us. What we do here is make a compound Poisson process which uses \(N(t)\) to determine how many events have happened until \(t\). Then it draws the sizes of those events from another distribution that we are going to say are iid called \(\{Y_i\}\) with expectation \(\beta\).
 
 \(Q(t) = \sum_{i=1}^{N(t)} Y_i\)
 
@@ -217,11 +217,11 @@ We will require that every process has independent increments for now.
 
 We’re now going to define the stochastic integral
 
-where X has jumps and is not a
+where \(X\) has jumps and is not a
 
 \(X(t) = X(0) + I(t) + R(t) + J(t)\)
 
-where J(t) is an adapted, right-continuous process with J(0) = 0 and (J(t) = \lim_{s\downarrow t}J(s)\).
+where \(J(t)\) is an adapted, right-continuous process with \(J(0) = 0\) and \(J(t) = \lim_{s\downarrow t}J(s)\).
 
 Also known as **cadlag**, continuous from the right, and limit exists from the left, from the French. This is very important to adapted processes.
 
@@ -231,7 +231,7 @@ Well how do you calculate this \(\Delta J(s)\)?
 
 It’s \(J(s) - J(s_-)\)
 
-This will give the magnitude of the jump at time s, and 0 everywhere else.
+This will give the magnitude of the jump at time \(s\), and 0 everywhere else.
 
 We will still need the square-integrability to hold true, in order for this stochastic integral to be a martingale, even though it has jumps.
 
@@ -253,7 +253,7 @@ This is the same as the Ito decomposition for the continuous aprt of the process
 
 We’re going to prove that our Brownian motion and our Poisson process are independent, with the Ito formula.
 
-Let u1 and u2 be our dummy variables:
+Let \(u_1\) and \(u_2\) be our dummy variables:
 
 \(Y(t) = e^{u_1W(t) + u_2N(t) - \tfrac{1}{2}u_1^2 t - \lambda t(e^{u_2}-1)}\)
 
@@ -271,7 +271,7 @@ We can get an Ito product rule for Ito processes.
 
 We need this to prove the **Doleans-Dade exponential**
 
-\(Z^X(t) = e^{X^c(t) - \tfrac{1}{2}[X^c, X^c](t)} \product_{0 < s \leq t} (1 + \Delta X(s))\)
+\(Z^X(t) = e^{X^c(t) - \tfrac{1}{2}[X^c, X^c](t)} \prod_{0 < s \leq t} (1 + \Delta X(s))\)
 
 We claim that this process is the solution to the SDE
 
@@ -314,7 +314,7 @@ And the rest of this stuff…
 
 \(+  \sum_{0 < u \leq t} (S(u) - S(u_-))\)
 
-We can say that the σ² portions cancel out, so for a jump at time u,
+We can say that the \(\sigma^2\) portions cancel out, so for a jump at time \(u\),
 
 \(S(u) = S(0) e^{(r - \lambda k - \tfrac{\sigma^2}{2})u + \sigma W(u) + \sum_{i=0}^{N(u_-)} X_i + X_{N(u)}}\)
 
@@ -326,5 +326,3 @@ Let’s look at the discount process
 
 \(D(t) = e^{-rt}\)
 \(D(t) S(t) = S(0) + \int_0^t - \lambda k D(u)S(u) du + \int_0^t \sigma S(u) D(u) d \tilde{W}(u) + \sum_{0 < u \leq t} D(u) S(u_-) (e^{X_{N(u)}} - 1)\Delta N(u)\)
-
-

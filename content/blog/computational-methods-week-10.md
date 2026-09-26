@@ -38,7 +38,7 @@ We say okay, I need to understand the dynamic of this data. In order to do this,
 
 In that stochastic equation we have two terms, drift and diffusion. Drift is trend, diffusion is variability.
 
-Once I hypothesize a model, the next step is to find the parameters. For BS, estimate sigma and mu. You can calibrate, or estimate from path of process (more complicated).
+Once I hypothesize a model, the next step is to find the parameters. For BS, estimate \(\sigma\) and \(\mu\). You can calibrate, or estimate from path of process (more complicated).
 
 Calibration, you look at a derivative. A function of an underlying.
 

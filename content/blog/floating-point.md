@@ -17,9 +17,9 @@ tags = ["floating point","Computer Architecture"]
 
 ## Numbers in Computers
 
-Math is infinite. Or at least it can be. Numbers like \\(5\\) can be represented finitely, but a number like \\(π\\) is not so simple to represent. \\(3.14159265358979\dots\\) but that still isn't enough. It'll never be enough.
+Math is infinite. Or at least it can be. Numbers like \\(5\\) can be represented finitely, but a number like \\(\\pi\\) is not so simple to represent. \\(3.14159265358979\dots\\) but that still isn't enough. It'll never be enough.
 
-Unfortunately, computers are not infinite. Although we would like to hold every digit of \\(π\\) in our computer's memory, the fact is that there will always be limits to how numbers can be represented in computers.
+Unfortunately, computers are not infinite. Although we would like to hold every digit of \\(\\pi\\) in our computer's memory, the fact is that there will always be limits to how numbers can be represented in computers.
 
 Integers are numbers like \\(3\\), \\(15\\), \\(-154\\), etc. They have no decimal point and can be negative. Representing these numbers in a computer is fairly simple, with the limit only being placed on the size of the number.
 
@@ -29,10 +29,10 @@ However, not all real numbers play so nicely. How do we represent the value \\(1
 
 We have to have a different standard to define how these numbers will be represented in a computer. This standard is called **floating point**.
 
-Generally, a floating point representation is composed of three parts: the **base** \\(β\\), the **significand** \\(p\\), and the largest/smallest allowed exponents \\(e_{max}\\) and \\(e_{min}\\). This is the complete formula for floating point (ignoring specific details):
+Generally, a floating point representation is composed of three parts: the **base** \\(\\beta\\), the **significand** \\(p\\), and the largest/smallest allowed exponents \\(e_{max}\\) and \\(e_{min}\\). This is the complete formula for floating point (ignoring specific details):
 
 $$
-\lceil \log_2{(e_{max} - e_{min} + 1)} \rceil + \lceil \log_2{β^p \rceil + 1}
+\lceil \log_2{(e_{max} - e_{min} + 1)} \rceil + \lceil \log_2{\\beta^p \rceil + 1}
 $$
 
 For example, let's say we had a floating point representation in base 2 which allowed for exponents of sizes up to \\(+128\\) and down to \\(-127\\), and had twenty-three bits of precision for the significand. This representation would need 32 bits.
@@ -40,38 +40,38 @@ For example, let's say we had a floating point representation in base 2 which al
 A number written in floating point representation might look like this:
 
 $$
-1.010001 × 2^{7}
+1.010001 \\times 2^{7}
 $$
 
 where the first part is the significand, the base of the exponent is the base, and it's raised to its exponent. Floating point numbers are written like scientific notation to be *normalized*, where there is only one nonzero digit in front of the decimal point—this will become important for IEEE 754.
 
 ## Imprecision
 
-I mentioned bits of precision, which is finite. Some decimal numbers can't be represented by a finite amount of precision. For example, the number \\(0.3\\) is finitely representable in base 10, but becomes \\(\overline{1.001} × 2^{-2}\\) in binary. This number will *never* be perfectly represented in binary, so we have to have approximations.
+I mentioned bits of precision, which is finite. Some decimal numbers can't be represented by a finite amount of precision. For example, the number \\(0.3\\) is finitely representable in base 10, but becomes \\(\overline{1.001} \\times 2^{-2}\\) in binary. This number will *never* be perfectly represented in binary, so we have to have approximations.
 
 In order to understand how much error we encounter, we must be able to measure it. There are two techniques to measure error in floating point: `ulps` or "units in the last place" and *relative error*.
 
-Let's use an example here, with \\(β = 10\\) and \\(p = 3\\). We want to approximate \\(2.781828\\) to a floating point number with this precision. Since we can only encode 3 digits of precision, we end up with \\(2.78 × 10^0\\). If we imagine a special decimal point after the precision stops for floating point, then the difference between these two is \\(0.1828\\). This is difference for `ulps`. **The closest floating point number can still have a `ulps` error of up to \\(\frac{β}{2} \cdot β^{-p}\\). This number is known as the machine epsilon \\(ε\\).**
+Let's use an example here, with \\(\\beta = 10\\) and \\(p = 3\\). We want to approximate \\(2.781828\\) to a floating point number with this precision. Since we can only encode 3 digits of precision, we end up with \\(2.78 \\times 10^0\\). If we imagine a special decimal point after the precision stops for floating point, then the difference between these two is \\(0.1828\\). This is difference for `ulps`. **The closest floating point number can still have a `ulps` error of up to \\(\frac{\\beta}{2} \cdot \\beta^{-p}\\). This number is known as the machine epsilon \\(\\epsilon\\).**
 
-Relative error is a familiar concept in most sciences. It is simply the difference between measured and actual, divided by the actual value. In this case, our floating point approximation \\(2.78 × 10^0\\) is the "measured" value and our real number \\(2.781828\\) is our actual value. In this case, it is \\(0.001828 / 2.781828 = 0.0006\\). Since this number can be small, it is often expressed in terms of \\(ε\\). In this example, \\(ε = 5 × 10^{-3} = 0.005\\) so our relative error is \\(0.13ε\\).
+Relative error is a familiar concept in most sciences. It is simply the difference between measured and actual, divided by the actual value. In this case, our floating point approximation \\(2.78 \\times 10^0\\) is the "measured" value and our real number \\(2.781828\\) is our actual value. In this case, it is \\(0.001828 / 2.781828 = 0.0006\\). Since this number can be small, it is often expressed in terms of \\(\\epsilon\\). In this example, \\(\\epsilon = 5 \\times 10^{-3} = 0.005\\) so our relative error is \\(0.13\\epsilon\\).
 
-Since we know the maximum `ulp` error for the closest floating point number, we should find the same for relative error. One difference about relative error is that it changes based on the size of the numbers, not just the absolute error in the significand. The largest possible error is \\(\frac{β}{2}β^{-p} × β^e\\).
+Since we know the maximum `ulp` error for the closest floating point number, we should find the same for relative error. One difference about relative error is that it changes based on the size of the numbers, not just the absolute error in the significand. The largest possible error is \\(\frac{\\beta}{2}\\beta^{-p} \\times \\beta^e\\).
 
-However, the relative error changes based on the size of the real number in question, and all real numbers within the same exponent range will have this error. So, the relative error for a number closer to \\(1.0 × β^e\\) will be larger than for a number closer to \\(β × β^e\\). This variation is called **wobble**. The relative error is always bounded by \\(ε\\), as in the prior example. Depending on the significand, however, the wobble can be up to \\(β\\) for the same exponent. Crucially, this wobble can be expressed in either relative error or `ulps`, as long as the other is held fixed.
+However, the relative error changes based on the size of the real number in question, and all real numbers within the same exponent range will have this error. So, the relative error for a number closer to \\(1.0 \\times \\beta^e\\) will be larger than for a number closer to \\(\\beta \\times \\beta^e\\). This variation is called **wobble**. The relative error is always bounded by \\(\\epsilon\\), as in the prior example. Depending on the significand, however, the wobble can be up to \\(\\beta\\) for the same exponent. Crucially, this wobble can be expressed in either relative error or `ulps`, as long as the other is held fixed.
 
-Typically, relative error is used, because it is more useful for compounding operations whereas `ulps` can vary wildly within \\(β\\).
+Typically, relative error is used, because it is more useful for compounding operations whereas `ulps` can vary wildly within \\(\\beta\\).
 
-An important concept to understand here is **contaminated digits**. These are the least significant digits of a floating point number which may be error-prone and are therefore untrustworthy. The number of contaminated digits is \\(\log_β{n}\\) where \\(n\\) is the factor of the relative error to \\(ε\\), like \\(0.13\\) in the earlier example.
+An important concept to understand here is **contaminated digits**. These are the least significant digits of a floating point number which may be error-prone and are therefore untrustworthy. The number of contaminated digits is \\(\log_\\beta{n}\\) where \\(n\\) is the factor of the relative error to \\(\\epsilon\\), like \\(0.13\\) in the earlier example.
 
 ## Error Mitigation
 
 We have found how to measure error; now how do we reduce it? One method is to use **guard digits**. When performing calculations, a computer can "extend" the calculation by a few digits so that the extended digits are contaminated by the floating point operation. These digits will then be rounded out of the final result, reducing the contamination of the result.
 
-Without a guard digit, the relative error can be large as \\(β - 1\\), which can put every digit in error! However, adding just *one* guard digit bounds the relative error to *less than \\(2ε\\)!*
+Without a guard digit, the relative error can be large as \\(\\beta - 1\\), which can put every digit in error! However, adding just *one* guard digit bounds the relative error to *less than \\(2\\epsilon\\)!*
 
 Another method is to reduce the number of **cancellations**. A cancellation occurs when nearby quantities are subtracted. When this happens, the most significant and uncontaminated digits cancel out and the less significant, more contaminated digits are left. Cancellations can seriously magnify rounding errors in a series of cancellations; this is called *catastrophic cancellation*. However, cancellation can also be *benign*. If the two quantities being subtracted are exactly known, then the subtraction will have a tiny relative error if done with a guard digit.
 
-Sometimes, we can rearrange formulas to have less or more benign cancellations. For example, the formula \\(x^2 - y^2\\) has a catastrophic cancellation because \\(x^2\\) and \\(y^2\\) both suffer from rounding error. However, this formula can be rearranged to \\((x ⊕ y) ⊗ (x ⊖ y)\\). The cancellation is now benign because \\(x\\) and \\(y\\) are presumably exact values without rounding error yet.
+Sometimes, we can rearrange formulas to have less or more benign cancellations. For example, the formula \\(x^2 - y^2\\) has a catastrophic cancellation because \\(x^2\\) and \\(y^2\\) both suffer from rounding error. However, this formula can be rearranged to \\((x \\oplus y) \\otimes (x \\ominus y)\\). The cancellation is now benign because \\(x\\) and \\(y\\) are presumably exact values without rounding error yet.
 
 > Notice that the operands in that formula are circled. This is a notation to indicate that these operations are performed by a computer and therefore may accrue rounding error, whereas the ordinary operands are used for exact calculations.
 

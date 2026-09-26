@@ -20,7 +20,7 @@ tags = ['Stochastic Calculus', 'Market Models', 'Girsanov']
 
 The Girsanov states that
 
-\(Z(t) = \exp \left(-\int_0^t \Theta(u) dW(u)\)
+\(Z(t) = \exp \left(-\int_0^t \Theta(u) dW(u)\right)\)
 
 The norm of a process is the Euclidean Norm:
 \(\|\Theta(t)\| = \sqrt{\sum_{j=1}^d \Theta_j^2(t)}\)
@@ -37,9 +37,9 @@ And this is true for each dimension of a Brownian motion.
 
 
 
-Once I’m in this fixed space, let’s take a martingale \(M(t)\). There is an adapted dimensional process \(\Gamm(u)\) such that
+Once I’m in this fixed space, let’s take a martingale \(M(t)\). There is an adapted dimensional process \(\Gamma(u)\) such that
 
-\(M(t) = M(0) + \int)^t \Gamma(u) dW(u)\)
+\(M(t) = M(0) + \int_0^t \Gamma(u)\,dW(u)\)
 
 nonrandom initial constant plus Ito integral
 
@@ -53,12 +53,12 @@ This is a representation of this model. We are going to assume we have \(m\) sto
 
 The value of Nintendo doesn’t care about fluctuations in the wood commodity. The coefficient of that source of noise would be 0.
 
-The drift α is applied to the stock, and then we will create the cov matrix based on the sources of noise which is applied to the stock.
+The drift \(\alpha\) is applied to the stock, and then we will create the cov matrix based on the sources of noise which is applied to the stock.
 
 \(dS_i(t) = \alpha_i(t)S_i(t) dt + S_i(t) \sum_{j=1}^d \sigma_{ij} (t) dW_j(t), i = 1, \ldots, m\)
 Are these Brownian motions independent? We can find their covariance by
 
-\(Cov(B_i, B_k) = \mathbb{E}[B_iB_k] - \mathbb{E}[B_k]\mathbb{E}[B_k]\)
+\(\operatorname{Cov}(B_i, B_k) = \mathbb{E}[B_iB_k] - \mathbb{E}[B_i]\mathbb{E}[B_k]\)
 
 We know that these are Brownian motions, so their expectation is 0.
 

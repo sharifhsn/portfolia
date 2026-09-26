@@ -25,7 +25,7 @@ The futures of EUR/USD tell us what people think the exchange rate will be at th
 
 We need to ensure that there is no arbitrage in this process.
 
-The intuition of risk-neutral that you will replace the μ in the GBM to the risk-free rate, because that’s the expected return. This keeps things consistent with no-arbitrage pricing.
+The intuition of risk-neutral is that you will replace the \(\mu\) in the GBM with the risk-free rate, because that’s the expected return. This keeps things consistent with no-arbitrage pricing.
 
 
 
@@ -39,7 +39,7 @@ The higher the dividend, the more I’m missing. So if the yield of my dividend 
 
 \(F_t(T) = S_t e^{(r-q)\tau}\)
 
-What do we do if the forward price is high? Remember, that’s how you acquire the asset through the contract, and then the S\_t formula is how you acquire it through the underlying. You want to short the contract and buy the underlying.
+What do we do if the forward price is high? Remember, that’s how you acquire the asset through the contract, and then the \(S_t\) formula is how you acquire it through the underlying. You want to short the contract and buy the underlying.
 
 #### Example Forward Dividend
 

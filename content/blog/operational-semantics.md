@@ -59,23 +59,23 @@ If all the hypotheses are true, then the conclusion is true. If there are no hyp
 
 Let's express those same rules about numeral self evaluation and sum expressions in rules of inference:
 
-$$\frac{e_1 ⇒ n_1 \quad e_2 => n_2 \quad n_3 \ \text{is} \ n_1 + n_2}{e_1 + e_2 ⇒ n_3}$$
+$$\frac{e_1 \\Rightarrow n_1 \quad e_2 => n_2 \quad n_3 \ \text{is} \ n_1 + n_2}{e_1 + e_2 \\Rightarrow n_3}$$
 
 We can similarly describe the more complicated rules of let expressions:
 
-$$\frac{e_1 ⇒ v1 \quad e_2\\{v_1/x\\} ⇒ v_2}{\text{let} \ x = e_1 \ \text{in} \ e_2 ⇒ v_2}$$
+$$\frac{e_1 \\Rightarrow v1 \quad e_2\\{v_1/x\\} \\Rightarrow v_2}{\text{let} \ x = e_1 \ \text{in} \ e_2 \\Rightarrow v_2}$$
 
 ## Derivations
 
 The **derivation** is a process in which we apply rules to an expression in succession. We take our conclusion, then break it up into its constituent rules. If any of the rules need more rules themselves, we break them up too. Think of it like a tree which expands out from the conclusion. Let's use `let x = 4 in x + 3 ⇒ 7` as an example.
 
-$$\frac{4 ⇒ 4 \quad \dfrac{4 ⇒ 4 \quad 3 ⇒ 3 \quad 7 \ \text{is}\ 4 + 3}{4 + 3 ⇒ 7}}{\text{let}\ x = 4 \ \text{in} \ x + 3 ⇒ 7}$$
+$$\frac{4 \\Rightarrow 4 \quad \dfrac{4 \\Rightarrow 4 \quad 3 \\Rightarrow 3 \quad 7 \ \text{is}\ 4 + 3}{4 + 3 \\Rightarrow 7}}{\text{let}\ x = 4 \ \text{in} \ x + 3 \\Rightarrow 7}$$
 
 Let's look at this derivation step by step. First, we start at our conclusion. We say that `x = 4` in the let expression. Because `4` is used an expression here, we need to generate the hypothesis that the expression `4` will evaluate to itself, which is true from our reflective axiom. Then, we need to show that the resulting expression `4 + 3 ⇒ 7` is valid, which requires the sum rule of inference. Knowing that `4` and `3` evaluate to themselves and that `7` is the sum of those two values, then we can confirm that hypothesis and therefore the conclusion!
 
 The way that we've written this derivation is recursive in nature. This is how definitional interpreters will evaluate expressions; they will search the expression for any constituent and evaluate them in turn in order to evaluate the entire expression.
 
-$$\frac{\text{eval Num } 4 ⇒ 4 \quad \text{Plus(Ident("x"), Num 3)}}{\text{eval Let("x", Num 4, Plus(Ident("x"), Num 3))}}$$
+$$\frac{\text{eval Num } 4 \\Rightarrow 4 \quad \text{Plus(Ident("x"), Num 3)}}{\text{eval Let("x", Num 4, Plus(Ident("x"), Num 3))}}$$
 
 All evaluation is mathematical proof. An expression `e` that provably evaluates to value `v` **is** `v`.
 

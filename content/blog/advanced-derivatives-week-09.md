@@ -12,13 +12,13 @@ tags = ["Credit","Hazard Rates","Recovery Rates","Credit Default Swaps"]
 
 ## Hazard Rate
 
-Lambda hazard rate is convenient to work with.
+\(\Lambda\), the hazard rate, is convenient to work with.
 
-If we integrate over it, we can get the survival probability V(t) at time t.
+If we integrate over it, we can get the survival probability \(V(t)\) at time \(t\).
 
 
 
-We can also get the probability of default Q(t) by doing 1 \- survival probability.
+We can also get the probability of default \(Q(t)\) by doing \(1-\) survival probability.
 
 
 
@@ -49,9 +49,9 @@ Merton’s model also (will discuss)
 
 Obviously, there is a relationship between default and bond price. We can approximate default intensity over life of bond as
 
-$$\\frac{s}{1-R}$$
+$$\frac{s}{1-R}$$
 
-where s is spread of bond’s yield over risk-free rate and R is recovery rate.
+where \(s\) is the spread of the bond’s yield over the risk-free rate and \(R\) is the recovery rate.
 
 
 
@@ -79,11 +79,11 @@ It’s a bootstrap process. You start with lower maturity bonds, then get higher
 
 Excess of n-bond yields of corporate bonds must equal CDS spread, otherwise there is arbitrage where you can either earn over the risk-free rate or borrow at less than the risk-free rate.
 
-The CDS bond basis is the spread \- the excess bond yield.
+The CDS bond basis is the spread minus the excess bond yield.
 
 From the arbitrage argument, the bond basis should be 0\.
 
-Historically, CDS bond basis \> 0\.
+Historically, CDS bond basis \(>0\).
 
 One leg is the protection buyer, the premium leg,
 

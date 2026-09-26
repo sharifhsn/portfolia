@@ -140,7 +140,7 @@ If we want to prove that a function is a density, we need to prove only positivi
 
 Let’s take a random vector X with density \(f_X\), and \(Y = \varphi(X)\) where this function is a multivariate function that transforms X. The density of Y is, in the most general case,
 
-\(f_Y(y) = f_X(\varphi^{-1}(y)) \left| det(J(\varphi^{-1}(y)))\right|\)
+\(f_Y(y) = f_X(\varphi^{-1}(y)) \left|\det(J(\varphi^{-1}(y)))\right|\)
 
 J the Jacobian is a matrix of partials, from
 
@@ -150,9 +150,9 @@ going left to right
 
 You’re kind of stacking these multivariate functions on top of each other:
 
-\(\varphi = (\varphi_1(x_1, \ldots, x_n) \ldots \varphi_n(x_1 \ldots x_n)\)
+\(\varphi=(\varphi_1(x_1,\ldots,x_n),\ldots,\varphi_n(x_1,\ldots,x_n))\)
 
-To get the inverse of varphi, you treat it as a system
+To get the inverse of \(\varphi\), you treat it as a system
 
 \(\begin{cases} u = xy \\ v = \tfrac{x}{y} \end{cases} \rightarrow uv = x^2 \rightarrow x = \sqrt{uv}, y = \sqrt{\tfrac{u}{v}}\)
 

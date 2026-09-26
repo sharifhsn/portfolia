@@ -14,7 +14,7 @@ Cubic Splines, you solve something that is like a tridiagonal system
 
 Artificial Neural Network multilayer perceptron…
 
-Copulas (useful for 680\)
+Copulas (useful for \(680\))
 
 ## American Option Valuation
 
@@ -22,9 +22,9 @@ page 192 of the QF book
 
 the whole point of this is that you can exercise this at any time.
 
-So when do we exercise, at time τ?
+So when do we exercise, at time \(\tau\)?
 
-$$\\tau \\in \[0, T\]$$
+$$\\tau \\in [0, T]$$
 
 There is a short, bad theorem that will help us.
 
@@ -48,17 +48,17 @@ $$C\_A(S, t) \\geq S\_t \- Ke^{-r(T-t)}$$
 
 Why? We can do another non-arbitrage argument. You can put some money in a bank and get that K term risk-free. If we take the opposite of this, we can buy the cheap thing and sell the expensive thing. You buy the call option and the K ZCB (which becomes negative when you move it to the other side).
 
-First you short sell 1 share of stock (S\_t)
+First you short sell 1 share of stock (\(S_t\))
 
-Then you borrow Kert and put it in a bank
+Then you borrow \(Ke^{-rt}\) and put it in a bank
 
 Then you buy 1 call
 
-Because of this inequality, I will receive S\_t, and take my portion of the money I get and after taking away the call premium and the Kert, I’m left with a positive quantity.
+Because of this inequality, I will receive \(S_t\), and take my portion of the money I get and after taking away the call premium and the \(Ke^{-rt}\), I’m left with a positive quantity.
 
 Everything with a minus is a liability, everything with a plus I have.
 
-At time T, my S becomes S\_T, which I have to give back because I short sold it. Then I will receive K and it will make up the balance
+At time \(T\), my \(S\) becomes \(S_T\), which I have to give back because I short sold it. Then I will receive \(K\) and it will make up the balance
 
 Note that Kert is less than K, because e is raised to a negative exponent. And therefore
 
@@ -98,7 +98,7 @@ There’s a theorem:
 
 $$\\frac{\\partial P\_A}{\\partial S}(S\_f, t) \= \-1$$
 
-The derivative right at the frontier is \-1. If you’re exercising at the frontier, the value you get is K \- S\_f, so you have take the derivative with respect to S\_f, it becomes \-1. There are a couple more steps in the actual proof because you need to say that it’s continuous and so on but this is the basic idea.
+The derivative right at the frontier is \(-1\). If you’re exercising at the frontier, the value you get is \(K-S_f\), so you have take the derivative with respect to \(S_f\), it becomes \(-1\). There are a couple more steps in the actual proof because you need to say that it’s continuous and so on but this is the basic idea.
 
 If $$S\_t \\leq S\_f$$, then we exercise and get immediately $$(K \- S\_t)\_+$$
 
@@ -110,7 +110,7 @@ and
 
 $$\\frac{\\partial P\_A}{\\partial S}(S\_f, t) \= \-1$$
 
-As opposed to the other boundary problem, where it’s at fixed T, and you don’t know what S\_f is.
+As opposed to the other boundary problem, where it’s at fixed \(T\), and you don’t know what \(S_f\) is.
 
 ### Linear Complementarity Problem (LCP)
 
@@ -132,11 +132,11 @@ Basically, we solve the LCP using finite difference.
 
 In this, there are a bunch of steps that are reducing the problem, mentioned in the book like logarithm transformation, time transformation, and then you get equation 7.4.1
 
-When you look at the finite difference method, you are looking backwards from the b\_i column at the end, and then u\_{i+1}
+When you look at the finite difference method, you are looking backwards from the \(b_i\) column at the end, and then \(u_{i+1}\)
 
 (however we are going forward not backward)
 
-And then you solve it with AUi+1 \= bi
+And then you solve it with \(AU_{i+1}=b_i\)
 
 But that’s for European. With American we get inequalities
 
@@ -160,7 +160,7 @@ Bishop had a million ML methods and didn’t explain how.
 
 $$U^{(k)} \= U^{(k \- 1)} \+ (U^{(k)} \- U^{(k \- 1)}$$
 
-This illustrates an innovation from an old thing to a new thing. This particular example does nothing. Let’s do this instead. Instead of moving all the way to U^k, let’s move a little bit with ω
+This illustrates an innovation from an old thing to a new thing. This particular example does nothing. Let’s do this instead. Instead of moving all the way to \(U^k\), let’s move a little bit with \(\omega\)
 
 $$U^{(k)} \= U^{(k-1)} \+ \\omega (U^{(k)} \- U^{(k-1)})$$
 
@@ -168,12 +168,12 @@ If you make it less than 1, than you’re moving a fraction or otherwise you’r
 
 Somehow that doesn’t make sense because we don't have U^(k) yet, so how do we do this?
 
-We’ll store the whole Jacobi expression into a single variable y\_j
+We’ll store the whole Jacobi expression into a single variable \(y_j\)
 
 Then you calculate
 
 $$U\_j^{(k)} \= U\_j^{(k-1)} \+ \\omega (y\_j \- u\_j^{(k-1)})$$
-So basically instead of moving all the way with y\_j, you preserve it a little bit, and you decide how much you move based on ω. You can also change ω at every step, but this is not generally done. This is the SOR method. This is used to solve American options.
+So basically instead of moving all the way with \(y_j\), you preserve it a little bit, and you decide how much you move based on \(\omega\). You can also change \(\omega\) at every step, but this is not generally done. This is the SOR method. This is used to solve American options.
 
 You don’t need to know the excruciating details, but you should know the big ideas.
 
@@ -181,7 +181,7 @@ You don’t need to know the excruciating details, but you should know the big i
 
 These were developed to approximate functions
 
-Let’s say we observe f: (a, b) \-\> R
+Let’s say we observe \(f:(a,b)\to\mathbb{R}\)
 
 You don’t know the value of the function, maybe it’s really complicated, you want to approximate it.
 
@@ -197,17 +197,17 @@ It doesn’t have to be a function. What if I have something that goes in circle
 
 This is the principle. I do an endpoint approximation. We want to approximate f with piecewise polynomials, different polynomials on each segment.
 
-We have n \+ 1 knots, these known points. It’s kind of like an anchor point to tie down your curve.
+We have \(n+1\) knots, these known points. It’s kind of like an anchor point to tie down your curve.
 
 In our process, we take
 
 $$t\_i \= a \+ \\frac{b-a}{n} i$$
 
-That fractional thing is our Δt.
+That fractional thing is our \(\Delta t\).
 
-They don’t have to be like this. In general, we can have t\_0, t\_1, … t\_n and it will work the same way.
+They don’t have to be like this. In general, we can have \(t_0,t_1,\ldots,t_n\) and it will work the same way.
 
-What is the condition? I want to make my curve smooth. I’m going to pick for each interval $$\[t\_i, t\_{i \+ 1}\]$$ we have $$f(t) \= P\_i(t)$$ polynomial
+What is the condition? I want to make my curve smooth. I’m going to pick for each interval $$[t\_i, t\_{i \+ 1}]$$ we have $$f(t) \= P\_i(t)$$ polynomial
 
 What are the conditions on this polynomial?
 
@@ -227,7 +227,7 @@ The realistic condition:
 
 $$\\frac{\\partial P\_0}{\\partial t} (t\_i) \= \\frac{\\partial P\_1}{\\partial t} (t\_1)$$
 
-You have 2n \- 2 equations
+You have \(2n-2\) equations
 
 So how do you interpolate?
 
@@ -235,7 +235,7 @@ You could take a linear polynomial
 
 $$P\_i(t) \= a\_i \+ b\_i t$$
 
-This will clearly not work. You have 2n unknowns and 4n \- 2 equations.
+This will clearly not work. You have \(2n\) unknowns and \(4n-2\) equations.
 
 The same is true for quadratic.
 
@@ -243,24 +243,24 @@ Cubic gives us
 
 $$P\_i(t) \= a\_i \+ b\_i \+ c\_i t^2 \+ d\_i t^3$$
 
-Now we have 4n unknowns and 4n \- 2 equations. So how do we fix this?
+Now we have \(4n\) unknowns and \(4n-2\) equations. So how do we fix this?
 
-There are n \+ 1 points.
+There are \(n+1\) points.
 
 There’s a very clear order unless you somehow define it. And that determines how you stitch the functions. There’s an infinite number of solutions by fixing the two missing equations.
 
 In traditinoal splines that come from statistics, the way it works is that there’s two possibilities.
 
-There can be a free boundary problem where the $$S\_0’’ t(0) \= S\_nn’’ t(n) \= 0$$
+There can be a free boundary problem where the $$S\_0'' t(0) \= S\_nn'' t(n) \= 0$$
 
 When you say the second derivative is 0, that’s the maximum of the first derivative.
 It starts with the largest slope possible,
 
 Then the second one is the clamped boundary
 
-$$S\_0’ (t\_0) \= f(t\_0)$$
+$$S\_0' (t\_0) \= f(t\_0)$$
 
-$$S\_n’ (t\_n) \= f’(t\_n)$$
+$$S\_n' (t\_n) \= f'(t\_n)$$
 
 Because you don’t know the derivative, you constrain the curve to have a certain fixed slope.
 
@@ -268,7 +268,7 @@ You constrain the first one to start at a certain angle.
 
 Then how do you solve this? It’s in terms of the functions and their derivatives.
 
-I plug in these points and gets an equations in a\_i, b\_i, c\_i, and d\_i, and then the next parameters.
+I plug in these points and gets an equations in \(a_i\), \(b_i\), \(c_i\), and \(d_i\), and then the next parameters.
 
 Basically I have four end parameters, and since these equations are relative to each other, it becomes a sparse system of equations.
 

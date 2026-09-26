@@ -22,7 +22,7 @@ What do we want to achieve?
 
 In general, the interpolation problem can be expressed in the following format:
 
-- given some data as a function of time t1, 2… tn and x1, x2.. xn known
+- given some data as a function of time \(t_1, t_2, \ldots, t_n\) and \(x_1, x_2, \ldots, x_n\) known
 - construct a continuous function \\(x(t)\\) that satisfies \\(x(t_i) = x_i\\) for \\(i = 1, 2, \\ldots, n\\)
 
 What does it mean that the function is continuous? It means that at all points, the limit on left and right is the same, and that it passes through all points.

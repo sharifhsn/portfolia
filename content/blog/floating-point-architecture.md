@@ -50,7 +50,7 @@ do {
 } while (ε + 1 > 1);
 ```
 
-will estimate \\(ε\\). However, a compiler might notice that `ε + 1 > 1` for integer math is equivalent to `ε > 0` and make that optimization, without considering that the expression \\(ε ⊕ 1\\) has a special meaning that is different for floating point numbers than a test for positivity.
+will estimate \\(\\epsilon\\). However, a compiler might notice that `ε + 1 > 1` for integer math is equivalent to `ε > 0` and make that optimization, without considering that the expression \\(\\epsilon \\oplus 1\\) has a special meaning that is different for floating point numbers than a test for positivity.
 
 In general, many algorithms with floating point will exhibit expressions that, upon first blush, seem to be redundant in integer math. Having consideration for the ways in which floating point math can change values is important.
 

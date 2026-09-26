@@ -94,7 +94,7 @@ We can have a **density function** \(f(x)\)
 
 which describes the distribution through its integral.
 
-The **probability mass function** tells us that a random variable \(X\) takes one of the values in a particular sequence with probability 1. You could imagine, for instance, if \(X = \omega^2\), there is a probability of 1 that \(X\) is one of the values in the sequence of squared numbers. Strictly, this is defined where \(p_i = \mathbb{P}\{X = x_i\}\) and \(\Sigma_i p_i = 1\).
+The **probability mass function** tells us that a random variable \(X\) takes one of the values in a particular sequence with probability 1. You could imagine, for instance, if \(X = \omega^2\), there is a probability of 1 that \(X\) is one of the values in the sequence of squared numbers. Strictly, this is defined where \(p_i = \mathbb{P}\{X = x_i\}\) and \(\sum_i p_i = 1\).
 
 The sequence of numbers \(x_1, x_2, \ldots\) is a Borel subset.
 
@@ -106,9 +106,9 @@ Let’s define the **standard normal density**:
 
 and the **cumulative normal distribution function** as
 
-\(N(x) \ \int_{-\infty}^x \varphi(\xi) d \xi\)
+\(N(x)=\int_{-\infty}^x \varphi(\xi)\,d\xi\)
 
-This function is strictly increasing and maps \(\mathbb{R}\) to \((0, 1)\) and has a strictly increasing inverse function \(N^{-1}(y)\). Let’s consider the uniformly distributed random variable \(Y\) on probability space \((\Omega, \mathcal{F}, \mathbb{P}\), and \(X = N^{-1}(Y)\).
+This function is strictly increasing and maps \(\mathbb{R}\) to \((0, 1)\) and has a strictly increasing inverse function \(N^{-1}(y)\). Let’s consider the uniformly distributed random variable \(Y\) on probability space \((\Omega, \mathcal{F}, \mathbb{P})\), and \(X = N^{-1}(Y)\).
 
 The distribution measure is the probability measure that \(X(\omega)\) is in the interval defined. The distribution measure of \(Y\omega\) therefore is \((N(a), N(b)\), which means that the distribution measure is \(N(b) - N(a)\) because \(Y\) is uniformly distributed, which is the same as
 
@@ -136,7 +136,7 @@ We have defined this as a Lebesgue sum, which is the sum of
 
 ### Lecture Notes
 
-#### σ-algebras
+#### \(\sigma\)-algebras
 
 The set of possible outcomes is the sample space \(\Omega\). If you flip a coin, the sample space is \(\{H, T\}\)
 
@@ -148,17 +148,17 @@ A fancier \(\sigma\)-algebra could be generated from a set \(A\) contained in it
 
 Trick question: if I have a set \(B\), what is it? It’s actually the same just with \(B\)
 
-A different question is \(\sigma(A, B))\). This would start with generators \(\{\emptyset, \Omega, A, B, A^c, B^c, A \cup B, (A \cup B)^c\}\)
+A different question is \(\sigma(A, B)\). This would start with generators \(\{\emptyset, \Omega, A, B, A^c, B^c, A \cup B, (A \cup B)^c\}\)
 
 The number of elements in \(\sigma\)-algebra can be found as 2 to the power of the number of distinct regions. For disjoint \(A\) and \(B\), this is 3.
 
 What about joint \(A\) and \(B\) like a Venn diagram. There’s the area outside of \(A\) and \(B\), the area just in \(A\), the area just in \(B\), and the area shared by \(A\) and \(B\), so 4, which means 16 elements.
 
-\(\sigma(A, B) = \{\emptyset, \Omega, A, B, A^c, B^c, A \cup B, (A \cup B)^c, (A \cup B)^c, A \cup B^c\)
+\(\sigma(A, B) = \{\emptyset, \Omega, A, B, A^c, B^c, A \cup B, (A \cup B)^c,\)
 
-\(, (A \cup B^c)^c = A^c \cap B = B/A, B \cup A^c, (B \cup A^c)^c = A/B, A^c \cup B^c, (A^c \cup B^c)^c = A \cap B,\)
+\(A \cup B^c, (A \cup B^c)^c = A^c \cap B = B\setminus A, B \cup A^c, (B \cup A^c)^c = A\setminus B, A^c \cup B^c, (A^c \cup B^c)^c = A \cap B,\)
 
-\((B \cup A^c)^c \cup (A \cup B^c)^c, \}\)
+\((B \cup A^c)^c \cup (A \cup B^c)^c\}\)
 
 **Open question:** draw out a venn diagram of what each of these mean
 

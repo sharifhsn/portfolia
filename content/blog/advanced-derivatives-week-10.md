@@ -32,7 +32,7 @@ Let’s review a little bit what we did last time.
 
 
 
-We defined the present value of $1 to be paid at t\_m which cancels with zero recovery on default before t\_m
+We defined the present value of $1 to be paid at \(t_m\), which cancels with zero recovery on default before \(t_m\)
 
 This is a *risky* ZCB as opposed to riskless.
 
@@ -70,7 +70,7 @@ This is the expected payment.
 
 Another component of the premium leg is the premium accrued.
 
-The amount of premium accrued at default is *contingent*. The price today of $1 paid at default which occurs at \[s, s+ds\] is given by
+The amount of premium accrued at default is *contingent*. The price today of $1 paid at default which occurs at \([s, s+ds]\) is given by
 
 $$
 P(t, s)[-dQ(t, s)]
@@ -94,7 +94,7 @@ $$
 \\text{Accrual} = S_0 \\Delta (t_{n-1}, s)
 $$
 
-Then the expected present value of premium accrued due to a default in \[s, s \+ ds\] in the nth premium period is…
+Then the expected present value of premium accrued due to a default in \([s, s + ds]\) in the nth premium period is…
 
 The amount is
 

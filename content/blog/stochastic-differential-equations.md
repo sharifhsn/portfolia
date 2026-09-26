@@ -20,7 +20,7 @@ A SDE is of the form
 
 \(dX(u) = \beta(u, X(u)) du + \gamma (u, X(u)) dW(u)\)
 
-where β is the drift and γ is the diffusion.
+where \(\beta\) is the drift and \(\gamma\) is the diffusion.
 
 Diffeqs always need a boundary condition, given by
 

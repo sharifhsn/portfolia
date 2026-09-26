@@ -42,17 +42,17 @@ We discussed SABR earlier, so this is a reminder. It looks like
 
 $$dS\_t \= rS\_t dt \+ \\sigma\_t S\_t^\\beta dW\_t$$
 
-This is the most general form of the process, most that you see in practice have r \= 0 because they are created by physicists who don’t like complicated models.
+This is the most general form of the process, most that you see in practice have \(r = 0\) because they are created by physicists who don’t like complicated models.
 
-The sigma is the stochastic process, which has the process
+The \(\sigma\) is the stochastic process, which has the process
 
 $$d\\sigma\_t \= \\alpha \\sigma\_t dZ\_t$$
 
-The W and Z are two Brownian motions which can be correlated with rho.
+The \(W\) and \(Z\) are two Brownian motions which can be correlated with \(\rho\).
 
-This is also called the stochastic alpha beta rho model (SABR) for the three parameters and the stochastic volatility.
+This is also called the stochastic \(\alpha\)-\(\beta\)-\(\rho\) model (SABR) for the three parameters and the stochastic volatility.
 
-The authors of this made it so that once you calculate sigma, you can plug it into Black-Scholes and reuse all your old code.
+The authors of this made it so that once you calculate \(\sigma\), you can plug it into Black-Scholes and reuse all your old code.
 
 ### Constant elasticity of variance (CEV)
 
@@ -60,7 +60,7 @@ Pioneered by Peter Carr (friend of the show) and Madan.
 
 $$dS\_t \= rS\_t dt \+ \\sigma S\_t^{\\frac{\\beta}{2}} dW\_t$$
 
-If you think about this in terms of stochastic models. This beta is strictly less than 2, and sigma is greater than 0\. You ca write this as
+If you think about this in terms of stochastic models. This \(\beta\) is strictly less than \(2\), and \(\sigma\) is greater than \(0\). You can write this as
 
 $$\\sigma S\_t S\_t^{\\frac{\\beta \- 2}{2}}$$
 
@@ -68,7 +68,7 @@ Which means that the last term is the actual stochastic volatility.
 
 That’s literally driven by the price evolution. This is inversely proportional to the value of the stock.
 
-If you Ito this with log S\_t, you get
+If you Itô this with \(\log S_t\), you get
 
 $$dX\_t \= \\left(r-\\frac{\\sigma^2 S\_t^{\\frac{\\beta-2}{2}}}{2}\\right) dt \+ \\sigma S\_t^{\\frac{\\beta-2}{2}} dW\_t$$
 
@@ -80,7 +80,7 @@ $$\\mathbb{V} \= \\sigma^2 S\_t^{\\beta \- 2}$$
 
 If you compute the derivative the change in the variance with respect to stock.
 
-$$\\frac{\\partial \\mathbb{V}}{\\partial S} \= \\sigma^2 (\\beta \- 2\) S\_t^{\\beta \- 3}$$
+$$\\frac{\\partial \\mathbb{V}}{\\partial S} \= \\sigma^2 (\\beta \- 2) S\_t^{\\beta \- 3}$$
 
 You can rewrite this as
 
@@ -98,9 +98,9 @@ The change in variance is proportional to the change of stock.
 
 The variance move elastically, proportional to the way the stock moves.
 
-And they change inversely, because beta is less than 2\.
+And they change inversely, because \(\beta\) is less than \(2\).
 
-And actually, if beta \= 2, then you get GBM in the formula.
+And actually, if \(\beta = 2\), then you get GBM in the formula.
 
 $$dS\_t \= rS\_t dt \+ \\sigma S\_t dW\_t$$
 
@@ -108,7 +108,7 @@ Which makes sense because that assumes constant volatility, where
 
 $$\\frac{\\partial \\mathbb{V}}{\\mathbb{V}} \= 0$$
 
-When beta \= 1, you get CIR
+When \(\beta = 1\), you get CIR
 
 $$dS\_t \= rS\_t dt \+ \\sigma \\sqrt{S\_t} dW\_t$$
 
@@ -124,7 +124,7 @@ Basically, $$N \\in \\{0, 1, \\ldots \\}$$
 
 where at time t, $$N\_t \\sim Poisson(\\lambda t)$$
 
-Lambda quantifies the expected number of values for when t \= 1\.
+\(\lambda\) quantifies the expected number of values for when \(t = 1\).
 
 That’s how you scale it.
 
@@ -138,9 +138,9 @@ I suggest you pirate my book because the publishers are thieves.
 
 Method 1:
 
-If $$X\_1, X\_2, X\_3, \\ldots X\_n$$ are iid Exp(1/lambda)
+If $$X_1, X_2, X_3, \ldots, X_n$$ are iid \(\operatorname{Exp}(1/\lambda)\)
 
-Basically the expected amount over lifetime is 1/lambda.
+Basically the expected amount over lifetime is \(1/\lambda\).
 
 Then we let
 
@@ -174,7 +174,7 @@ How is this useful?
 
 In two lectures, we will learn about Monte Carlo simulations. These typically don’t have jumps. But if you add jumps to them, you get a jump process.
 
-You will get your T\_1, T\_2, and T\_3 etc.
+You will get your \(T_1\), \(T_2\), and \(T_3\), etc.
 
 You will be going up and down by random quantities at those times.
 
@@ -184,7 +184,7 @@ Trump announces tariffs at each time T, and it goes up and down based on what co
 
 There is some process which is not Jumpy, looks more like a Brownian motion. To introduce the jumps, you simply shift the value by the value of the random variable.
 
-The exponential distribution starts at 1/lambda at t \= 0 and then goes down. for Exp(1/lambda)
+The exponential distribution starts at \(1/\lambda\) at \(t = 0\) and then goes down, for \(\operatorname{Exp}(1/\lambda)\).
 
 Most of the times, you get a small value.
 
@@ -192,29 +192,29 @@ Secret: if you play video games, and play whatever discrete events that happen i
 
 Method 2 is based on the following two results.
 
-If we look at interval \[0, t), the number of events is distributed as Poisson(lambda t)
+If we look at interval \([0, t)\), the number of events is distributed as \(\operatorname{Poisson}(\lambda t)\).
 
 Let’s say you have events that happen once a day. Trump issues things once per day. (I’m a Republican so don’t pick on me)
 
-If you want to generate how many things this guy says this week, you make a random variable with parameter t \= 7, lambda \= 1\.
+If you want to generate how many things this guy says this week, you make a random variable with parameter \(t = 7\), \(\lambda = 1\).
 
 This Poisson random variable.
 
-Given there are N events in the interval \[0, t) that I’m generating, the times of the events (and this is proven in the book), are the order statistic from N uniform \[0, t\] random variables.
+Given there are \(N\) events in the interval \([0, t)\) that I’m generating, the times of the events (and this is proven in the book), are the order statistic from \(N\) uniform \([0, t]\) random variables.
 
 That sounds fancy, but basically it says…
 
-An **order statistic**. If you have n random variables iid, and you take them X\_1, X\_2, X\_n,
+An **order statistic**. If you have \(n\) random variables iid, and you take them \(X_1, X_2, \ldots, X_n\),
 
 the order statistics ordered like
 
-$$X\_{(1)} \\leq X\_{(2)} \\leq … X\_{(n)}$$
+$$X\_{(1)} \\leq X\_{(2)} \\leq \\ldots X\_{(n)}$$
 
 and this is just an ordered list. So the first order statistic is the smallest number. The order statistics have a distribution which depends on the original distribution, and it’s actually quite simple to work with them.
 
-Then generate random variable $$N \\sim Poisson(\\lambda t)$$
+Then generate random variable $$N \sim \operatorname{Poisson}(\lambda t)$$
 
-Then generate random $$N \\sim Uniform\[0, t\]$$
+Then generate random $$N \sim \operatorname{Uniform}[0, t]$$
 
 Let’s say Poisosn happesnt ob e 10\.
 
@@ -226,7 +226,7 @@ Let’s say it’s 1.1. It took Trump 1.1 days to say the first stupid things. T
 
 These are the times, then the magnitudes come from them.
 
-rpois(1, 7\)
+`rpois(1, 7)`
 
 for example, gives you 6
 
@@ -234,7 +234,7 @@ N=rpois(1,7)
 
 Now you generate seven uniforms
 
-runif(N, 0, 7\)
+`runif(N, 0, 7)`
 
 This gives you the times, which are unsorted.
 
@@ -264,11 +264,11 @@ $$= \\int\_{-\\infty}^\\infty e^{tx} f(x) dx$$
 
 This was invented by Laplace, but he invented it in physics, for functions that were positive support, from 0 to infinity. So it’s a little different. The mgf is called so because if you take the derivative of the function with respect to t, you get the moments. (You need to prove that the derivative commutes with the integral, not that difficult).
 
-$$M’(t) \= \\frac{dM\_X(t)}{dt} \= \\int\_{-\\infty}^\\infty xe^{tx} f(x) dx \= \\mathbb{E}\[Xe^{tx}\]$$
+$$M'(t) \= \\frac{dM\_X(t)}{dt} \= \\int\_{-\\infty}^\\infty xe^{tx} f(x) dx \= \\mathbb{E}\[Xe^{tx}\]$$
 
 And then
 
-$$M’(0) \= \\mathbb{E}\[X\]$$
+$$M'(0) \= \\mathbb{E}\[X\]$$
 
 The P\&SP book will cover this in more detail.
 
@@ -290,7 +290,7 @@ This limit exists only for certain Lf(t), and even if it exists it’s ugly. So 
 
 Stanford uses t and s, Florescu uses x and t.
 
-This is useful because if you take the derivative of the function, and apply the Laplace transform, it becomes a polynomial. It becomes tF(t) \- f(0)
+This is useful because if you take the derivative of the function, and apply the Laplace transform, it becomes a polynomial. It becomes \(tF(t) - f(0)\).
 
 If you take the nth derivative, you get a bunch of derivatives evaluated at 0\. It makes it easier to solve. It’s very useful for solving diffeqs.
 
@@ -329,7 +329,7 @@ The minus doesn’t mean anything, really.
 What is the connection between the characteristic and the moment?
 We can calculate moments from characteristic function.
 
-$$\\varphi\_x’(t)\\frac{d}{dt} \\varphi\_X(t)$$
+$$\\varphi\_x'(t)\\frac{d}{dt} \\varphi\_X(t)$$
 
 You have to prove this works, and then take the complex function, which is not that hard.
 
@@ -339,11 +339,11 @@ It’s kind of like you go inside and take the derivative as normal.
 
 But if you take this
 
-$$\\varphi\_x’(0) \= i\\mathbb{E}\[X\]$$
+$$\\varphi\_x'(0) \= i\\mathbb{E}\[X\]$$
 
 This becomes slightly more complicated, because you get the powers
 
-$$\\varphi\_x’’(0) \= i^2 \\mathbb{E}\[X^2\]$$
+$$\\varphi\_x''(0) \= i^2 \\mathbb{E}\[X^2\]$$
 
 And this continues in general.
 
@@ -379,7 +379,7 @@ $$dS\_t \= S\_t(r dt \+ \\sqrt{V\_t} dW\_t)$$
 
 $$dV\_t \= K(\\theta \- V\_t) dt \+ \\sigma \\sqrt{V\_t} dZ\_t$$
 
-W and Z can be correlated with rho.
+\(W\) and \(Z\) can be correlated with \(\rho\).
 
 Original Heston model is uncorrelated, there is an extension by Wiggins which is correlated.
 
@@ -413,7 +413,7 @@ We used to solve things as $$ t \\in \[0, T\]$$, $$S \\in (0, infty)$$, $$\\math
 
 Now we solve this equation with respect to three parameters.
 
-Call option \= $$\\mathbb{E}^Q \[e^{-r(T \- t)} (S\_T \- K)\_+ | \\mathcal{F}\_t\]$$
+Call option = $$\\mathbb{E}^Q \[e^{-r(T \- t)} (S\_T \- K)\_+ | \\mathcal{F}\_t\]$$
 
 This is the general formula.
 
@@ -429,11 +429,11 @@ Then we can take out the e term because it’s just a number,
 
 $$= e^{-r(T-t)} \\mathbb{E}\[S\_T \\mathbb{I}\_{\\{S\_T \- K\\}} | \\mathcal{F}\_t\] \+ Ke^{-r(T-t)}\\ldots$$
 
-Then this first term will be considered P1(t, S, V), and the second term is P2(t, S, V).
+Then this first term will be considered \(P_1(t, S, V)\), and the second term is \(P_2(t, S, V)\).
 
 What he said is if you notice the very first property of the Fourier transform is that it is linear.
 
-So both P1 and P2 must solve the Heston PDE.
+So both \(P_1\) and \(P_2\) must solve the Heston PDE.
 
 Then let’s apply the Fourier transform to the original Heston PDE.
 

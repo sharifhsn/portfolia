@@ -185,7 +185,7 @@ Now let’s consider \(C\)
 
 \(\mathbb{E}[\Delta(t_j) (W(t_{j+1}) - W(t_j)) | \mathcal{F}(s)]\)
 
-We know that the Brownian motion part is independent, but the delta isn’t. And none of this is measurable. We can use iterated conditioning, though. For \(\mathcal{F}(s) \subseteq \mathcal{F}(t)\)
+We know that the Brownian motion part is independent, but the \(\Delta\) isn’t. And none of this is measurable. We can use iterated conditioning, though. For \(\mathcal{F}(s) \subseteq \mathcal{F}(t)\)
 
 \(\mathbb{E}[\mathbb{E}[X|\mathcal{F}(t)] | \mathcal{F}(s)] = \mathbb{E}[X|\mathcal{F}(s)]\)
 
@@ -355,7 +355,7 @@ Then I can define my Ito integral as
 
 If you can pull all this off, you get these properties:
 
-1. Continuity. The integral is continuous. Brownian motion is continuous, and the integral over the short interval \[s,t\] goes to zero as \(t\) approaches \(s\). Thus a discontinuity in the adapted integrand does not create a jump in the integral.
+1. Continuity. The integral is continuous. Brownian motion is continuous, and the integral over the short interval \([s,t]\) goes to zero as \(t\) approaches \(s\). Thus a discontinuity in the adapted integrand does not create a jump in the integral.
 2. Adaptivity: every piece is measurable
 3. Linearity: these are all just summations, so you can apply all linearity properties
 4. Martingale (proven)

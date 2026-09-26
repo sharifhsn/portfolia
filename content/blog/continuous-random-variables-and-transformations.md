@@ -171,7 +171,7 @@ This is one way to solve this, or you could separate it into cdf up to ¾ and ¼
 
 The next thing is the exponential distribution, definition 5.17. We introduce the auxiliary parameter \(\lambda > 0\), then
 
-\(f(x) = \lambda e^{-\lambda x}, x > 0, X \sim Exp(\lambda)\)
+\(f(x) = \lambda e^{-\lambda x},\ x > 0,\ X\sim\operatorname{Exp}(\lambda)\)
 
 That is what is meant when we are given a distribution. How do we verify that this result is a pdf? Proposition 5.18 says
 

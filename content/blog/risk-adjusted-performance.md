@@ -26,7 +26,7 @@ For relative risk, the **information ratio** (IR) is the ratio in excess of the 
 
 \(IR = \frac{[\mu(R_P) - \mu(R_B)]}{\sigma(R_P - R_B)}\)
 
-An illustrative example is that you could have a portfolio with \(R_f = 3%\), \(\mu(R_P) = -6%\), and \(\sigma(R_P) = 25%\), which is negative and terrible. But if the benchmark has a return of -10% and TEV of 8%, then the IR is \([(-6%) - (-10%)]/8% = 0.50\) which is positive and therefore good. So even though the absolute performance is bad, the relative performance is good.
+An illustrative example is that you could have a portfolio with \(R_f = 3\%\), \(\mu(R_P) = -6\%\), and \(\sigma(R_P) = 25\%\), which is negative and terrible. But if the benchmark has a return of -10% and TEV of 8%, then the IR is \([(-6\%) - (-10\%)]/8\% = 0.50\) which is positive and therefore good. So even though the absolute performance is bad, the relative performance is good.
 
 You can calculate TEV from \(\sigma_P\) and \(\sigma_B\), in addition to correlation \(\rho\):
 
@@ -220,7 +220,7 @@ Portfolio volatility (\(\sigma_p^2\)) is what we are concerned with.
 
 \(\sigma_p^2 = \sigma^2_m \frac{1}{N} \overline{\beta_p} + \frac{1}{N} \sum_{i=1}^N \sigma_\epsilon^2\)
 
-If our number of stocks goes to infinity, the epsilon shrinks to 0, and we get rid of idiosyncratic risk, which is part of the wisdom of diversification.
+If our number of stocks goes to infinity, the \(\epsilon\) shrinks to 0, and we get rid of idiosyncratic risk, which is part of the wisdom of diversification.
 
 #### Relative Performance Measures
 
@@ -241,7 +241,7 @@ Decomposing the return of the portfolio.
 
 \(\alpha_p = \mu_p - \beta_p \mu_M\)
 
-The Jensen’s alpha
+The Jensen’s \(\alpha\)
 
 Let’s consider excess returns \(\tilde{R} = R - R_f\). The ratio is
 

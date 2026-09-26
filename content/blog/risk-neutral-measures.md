@@ -26,16 +26,16 @@ A bookie is collecting bets. He rounds up 40 people to bet on the game. Half bet
 
 If Team A wins, then the $400 collected will be paid out to the 20 individuals for the value they should get
 
-\(400 - 20 ($12.50) = $150\)
+\(400 - 20 \times \$12.50 = \$150\)
 
 The bookie will make $150 if A wins. If B wins, then
 
-\(400 - 20($50) = -$600\)
+\(400 - 20 \times \$50 = -\$600\)
 The bookie will lose $650 if B wins.
 
 Let this amount be \(X\). What is \(\mathbb{E}[X]\)?
 
-\(\mathbb{E}[X] = \frac{4}{5}($150) + \frac{1}{5}(-$600)\)
+\(\mathbb{E}[X] = \frac{4}{5}(\$150) + \frac{1}{5}(-\$600)\)
 
 \(= 0\)
 This would be what would happen if the bookie was doing this out of the goodness of their heart. What if they took 1% of the winnings (still generous)? That’s calculated out of the winnings, so 50 cents for A winning, and $8 for B winning.

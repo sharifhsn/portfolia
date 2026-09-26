@@ -68,21 +68,21 @@ A **coupon paying bond** is a contract that pays a fixed coupon at future times.
 
 #### Example
 
-Let’s say we have a bond that pays 5% annual coupon with T \= 5 years until maturity.
+Let’s say we have a bond that pays 5% annual coupon with \(T = 5\) years until maturity.
 
-Let’s assume that the principal P \= $100. The cash flow diagram is very simple, with cash flows of $5 at each year after year 0, and then the max cash flow at the end.
+Let’s assume that the principal \(P = 100\). The cash flow diagram is very simple, with cash flows of $5 at each year after year 0, and then the max cash flow at the end.
 
 
 
-The **zero coupon bond** for a maturity t guarantees the payment of one unit at maturity. This is important because we use this extensively. The price of a zero coupon bond paying $1 at maturity t is called the **discount factor**, d(t) or P(t, T), the price of a bond maturing at T at time t.
+The **zero coupon bond** for a maturity \(t\) guarantees the payment of one unit at maturity. This is important because we use this extensively. The price of a zero coupon bond paying $1 at maturity \(t\) is called the **discount factor**, \(d(t)\) or \(P(t, T)\), the price of a bond maturing at \(T\) at time \(t\).
 
 In general, the price of zero coupon is less than 1\. As the maturity of the contract increases, its value decreases. If you take
 
 $$\\frac{\\partial P(t, T)}{\\partial T} \< 0$$
 
-A **par coupon bond** is worth par, 100% of the notional. This is c(t).
+A **par coupon bond** is worth par, 100% of the notional. This is \(c(t)\).
 
-A **forward rate agreement** is a commitment to lend money at a specified future rate for a specified period time. The rate of a forward loan is called forward rate. The forward rate is f(t) from t \- 1 to t.
+A **forward rate agreement** is a commitment to lend money at a specified future rate for a specified period time. The rate of a forward loan is called forward rate. The forward rate is \(f(t)\) from \(t - 1\) to \(t\).
 
 A **floating rate note** is a contract ensuring payment of a floating rate at future dates and pays a last cash flow reimbursing the notional at T.
 
@@ -99,17 +99,17 @@ The constant discount rate represents the yield of the bond.
 #### Example
 
 Consider a coupon bond with 4 years to maturity at 10% annual coupon rate. Assume current bond price is $90. What is YTM?
-By definition, price is PV \= 90\. Typically you take the notional in these to be $100. Therefore the price is
+By definition, price is \(PV = 90\). Typically you take the notional in these to be $100. Therefore the price is
 
 $$90 \= \\frac{10}{1+y} \+ \\frac{10}{(1+y)^2} \+ \\frac{10}{(1+y)^3} \+ \\frac{10}{(1+y)^4} \+ \\frac{100}{(1+y)^4}$$
 
-Solve for y \= 0.1338 \= 13.38%
+Solve for \(y = 0.1338 = 13.38\%\).
 
 This would be the yield of this bond. If the bond price is equal to the principal then what is the yield?
 
 $$100 \= \\frac{10}{1+y}...$$
 
-Then y \= 0.10 \= 10%. So then the yield is the same as the coupon rate when the bond is par.
+Then \(y = 0.10 = 10\%\). So then the yield is the same as the coupon rate when the bond is par.
 
 ### Clean/Dirty
 
@@ -121,9 +121,9 @@ Dirty price, also known as cash price, is the price of a bond which includes the
 
 Consider buying a 3-year 12% annual coupon bond. (30/360 day count convention), 360 days and 30 days in a month, within one month from the first coupon. What is the YTM?
 
-The coupon value is c. Then the final cash flow is 100 \+ c.
+The coupon value is \(c\). Then the final cash flow is \(100 + c\).
 
-Let’s say you buy at time t which is before t1, one month before t1 the first coupon payment. There is some accrued interest at time t. The formula is the same, with the cash flows discounted to the time t. What is the accrual in this case? It’s of 11 months, which by our convention is 330/360 \* c. The coupon is 12% of the principal 100, therefore 12, so 330/360 \* 12 \= 11\.
+Let’s say you buy at time \(t\), which is before \(t_1\), one month before the first coupon payment. There is some accrued interest at time \(t\). The formula is the same, with the cash flows discounted to time \(t\). What is the accrual in this case? It’s of 11 months, which by our convention is \(330/360 \times c\). The coupon is 12% of the principal 100, therefore 12, so \(330/360 \times 12 = 11\).
 
 We can say as a general formula that
 
@@ -131,13 +131,13 @@ $$Dirty Price \= Clean Price \+ Accrued Interest$$
 
 $$100 \+ 11 \= \\frac{12}{(1+y)^{\\tfrac{30}{360}}} \+ \\frac{12}{(1+y)^{\\tfrac{390}{360}}} \+ \\frac{112}{(1+y)^{\\tfrac{750}{360}}}$$
 
-Using a solver, you can find that y \= 11.97%.
+Using a solver, you can find that \(y = 11.97\%\).
 
 The quotations would have to adjust continuously. Dirty prices can be reported but they are not typically quoted.
 
 ### Sensitivity to Yield
 
-Consider a fixed income instrument with price P and yield Y.
+Consider a fixed income instrument with price \(P\) and yield \(Y\).
 
 We will define DV01 as the dollar value of one basis point.
 
@@ -159,7 +159,7 @@ You can approximate the rate of change of the price of a bond as being dependent
 
 #### Example 1
 
-Consider a 1-year zero coupon bond with annual yield y. What is the relationship between P and y?
+Consider a 1-year zero coupon bond with annual yield \(y\). What is the relationship between \(P\) and \(y\)?
 
 $$P \= \\frac{1}{1+y}$$
 
@@ -170,5 +170,3 @@ $$DV01 \= \-\\frac{1}{10,000} \\frac{dP}{dY}$$
 We can use the quotient rule (or chain rule\!) to take the derivative, which results in
 
 $$= \\frac{1}{10,000(1+y)^2}$$
-
-

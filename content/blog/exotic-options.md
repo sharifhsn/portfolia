@@ -24,7 +24,7 @@ We’re going to be pricing exotic options. We are focusing on two types.
 
 Barrier options can be in vs out.
 
-Let’s say we have a stock process that starts at S\_0 and evolves, where we generate a path via Brownian motion. In the past, we have only been concerned with the strike price, which is the line that determines whether an option will be exercised. We’re going to institute a new variable B. The relationship of the barrier is to the stock price is governed by up vs down. If the barrier is lower , it’s down. And whether it’s a knock in instrument, then your option starts worthless. It will remain worthless unless your stock **touches** the barrier. Then it could potentially be exercised at time of maturity. But it’s worthless until it’s out. That’s Frankestien’s monster that comes alive.
+Let’s say we have a stock process that starts at \(S_0\) and evolves, where we generate a path via Brownian motion. In the past, we have only been concerned with the strike price, which is the line that determines whether an option will be exercised. We’re going to institute a new variable \(B\). The relationship of the barrier is to the stock price is governed by up vs down. If the barrier is lower, it’s down. And whether it’s a knock in instrument, then your option starts worthless. It will remain worthless unless your stock **touches** the barrier. Then it could potentially be exercised at time of maturity. But it’s worthless until it’s out. That’s Frankestien’s monster that comes alive.
 
 Down and out would be a normal person and an electric fence. You walk into it and you die.
 

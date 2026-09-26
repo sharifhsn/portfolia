@@ -108,9 +108,7 @@ writing out the first few terms, this is
 
 \(= f(a) + f'(a)(x-1) + \frac{1}{2}f''(a)(x-a)^2 + \frac{1}{6}f'''(a)(x-a)^3 \ldots\)
 
-So, I have that
-
-\(f(x) - f(a) =\) all of this stuff
+So, I have that \(f(x) - f(a)\) equals all of this stuff
 
 This is true for any function that we can do the Taylor approximation on. We’re going to keep this in mind and then I want to talk about **telescoping sums**. For a sequence \(\{X_i\}_{i \in \{1, \ldots, n\}}\) what can you tell me about this/
 
@@ -153,7 +151,7 @@ Let \(f(t, x)\) be a function for which the partial derivatives  etc.
 
 I would strongly suggest that you use a different form of the Ito formula.
 
-\(f(a, b)\) is some function such that \(f_a\), f\_b\(, and\)f\_bbbb exist.
+\(f(a,b)\) is some function such that \(f_a\), \(f_b\), and \(f_{bbbb}\) exist.
 
 \(f(t, W(t)) = f(0, W(0)) + \int_0^t f_a(u, W(u))du + \int_0^t f_b(u, W(u))dW(u) + \frac{1}{2}\int_0^t f_{bb}(u, W(u)) d[W, W] du\)
 
@@ -298,7 +296,7 @@ We can now define an Ito integral with respect to an Ito process.
 
 Your stock process would follow some stochastic process, and this reprseents a trading strategy
 
-We can now find, where delta is a simple process that dictates how we choose stocks,
+We can now find, where \(\Delta\) is a simple process that dictates how we choose stocks,
 
 \(\int_0^t \Delta(w)dS(w)\)
 
@@ -335,7 +333,7 @@ or, written slightly differently,
 
 \(\frac{dS(t)}{S(t)} = \alpha dt + \sigma dW(t)\)
 
-Now we can see why we’re looking at GBM. When Black-Scholes were looking for a way to model the stock prices. They looked at this instantaneous drift alpha and the sigma that is the diffusion. The problem is that this is nonsense because you can have negative stocks in that model. So now they look at proportional changes in the stock processes, which is sort of like instantaneous return. This is what this dynamic is showing us. We have drift and diffusion.
+Now we can see why we’re looking at GBM. When Black-Scholes were looking for a way to model the stock prices. They looked at this instantaneous drift \(\alpha\) and the \(\sigma\) that is the diffusion. The problem is that this is nonsense because you can have negative stocks in that model. So now they look at proportional changes in the stock processes, which is sort of like instantaneous return. This is what this dynamic is showing us. We have drift and diffusion.
 
 That means that our original integral for choosing stocks is
 

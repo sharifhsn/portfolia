@@ -14,9 +14,9 @@ tags = ['FX', 'Greeks', 'Discrete Hedging']
 
 The syllabus labels this class “Black-Scholes shortcomings: discrete hedging; volatility uncertainty.” The source workbook expresses the risk measures as functions. It does not contain a separate prose lecture summary, so the functions are kept here as the primary note.
 
-### Delta, theta, gamma, vega, and rho
+### \(\Delta\), \(\theta\), \(\Gamma\), vega, and \(\rho\)
 
-The functions below are transcribed from the workbook. BSDailyTheta uses a one-day change; BSVega uses a 0.01 volatility bump; the two rho functions use a one-basis-point domestic or foreign-rate bump.
+The functions below are transcribed from the workbook. BSDailyTheta uses a one-day change; BSVega uses a 0.01 volatility bump; the two \(\rho\) functions use a one-basis-point domestic or foreign-rate bump.
 
 ~~~vb
 ' Calculate the FX Delta of the option

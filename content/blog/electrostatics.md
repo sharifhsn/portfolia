@@ -17,7 +17,7 @@ What is electricity, and how does it work?
 
 ## Electrons
 
-Fundamentally, the negative charge comes from the **electron**, a subatomic particle. The positive charge comes from **protons**, also in the atom. The unit of the charge is the **Coulomb** (\\(C\\)). An electron has a charge of \\(-1.60×10^{-16} C\\), and a proton has the same charge but positive. However, the proton is much heavier than an electron, being about 1836 times as massive. This means that electrons are easy to displace, which is why their movement is the fundamental concept behind electricity.
+Fundamentally, the negative charge comes from the **electron**, a subatomic particle. The positive charge comes from **protons**, also in the atom. The unit of the charge is the **Coulomb** (\\(C\\)). An electron has a charge of \\(-1.60\\times10^{-16} C\\), and a proton has the same charge but positive. However, the proton is much heavier than an electron, being about 1836 times as massive. This means that electrons are easy to displace, which is why their movement is the fundamental concept behind electricity.
 
 The way that electric charge is generated is by rubbing two materials together in a way that transfers electrons between the two. For example, if you rub your clothes against a shag carpet, it will transfer electrons to your clothes.
 
@@ -43,21 +43,21 @@ This can even occur in materials like plastic which are insulating. Although the
 
 $$ F = k\frac{|q_1||q_2|}{r^2} $$
 
-**where \\(k\\) is a proportionality constant: \\(k = 8.99 × 10^9 N \cdot m^2/C^2\\) in SI units.**
+**where \\(k\\) is a proportionality constant: \\(k = 8.99 \\times 10^9 N \cdot m^2/C^2\\) in SI units.**
 
 So what does this law mean? Crucially, this law gives no mention of direction. The magnitude of the force is the same regardless of whether the charges attract or repel, so we don't need to worry about that.
 
-> The constant \\(k\\) is sometimes written as \\(k = 1/(4πε_0)\\) where \\(ε_0\\) is the *permittivity of free space* with the value \\(8.85 × 10^{-12} C^2/N \cdot m^2\\).
+> The constant \\(k\\) is sometimes written as \\(k = 1/(4\\pi\\epsilon_0)\\) where \\(\\epsilon_0\\) is the *permittivity of free space* with the value \\(8.85 \\times 10^{-12} C^2/N \cdot m^2\\).
 
-A Coulomb is an absolutely massive amount of charge that is typically only found in situations like lightning. It is far more common to encounter microcoulombs expressed as \\(μC\\) which are \\(10^{-6} C\\).
+A Coulomb is an absolutely massive amount of charge that is typically only found in situations like lightning. It is far more common to encounter microcoulombs expressed as \\(\\mu C\\) which are \\(10^{-6} C\\).
 
 This is a situation that is expressed between only two point charges. What happens when we have multiple point charges? We have to calculate the *vector sum* of all these forces.
 
 This is easiest when all the charges are in a line, as this is simply a matter of adding and subtracting the forces depending on whether they are attractive or negative. We must calculate Coulomb's law for each pair and then combine those as appropriate.
 
-When we have points on a plane, things get a little more complicated. The easiest way to handle this is by separating each force into its \\(x\\) and \\(y\\) components. Pick one point to be set at the angle 0° degrees with respect to the point we are calculating for, then set the \\(θ\\) for each other point with respect to that line. Then, get \\(F_x\\) and \\(F_y\\) through \\(\cos{θ}\\) and \\(\sin{θ}\\), respectively. The point with 0° will only have an \\(x\\) component.
+When we have points on a plane, things get a little more complicated. The easiest way to handle this is by separating each force into its \\(x\\) and \\(y\\) components. Pick one point to be set at the angle 0° degrees with respect to the point we are calculating for, then set the \\(\\theta\\) for each other point with respect to that line. Then, get \\(F_x\\) and \\(F_y\\) through \\(\cos{\\theta}\\) and \\(\sin{\\theta}\\), respectively. The point with 0° will only have an \\(x\\) component.
 
-Then, once you have the \\(F_x\\) and \\(F_y\\) all parcelled out according to positives and negatives, get the total \\(F\\) by applying the Pythagorean theorem to them. The answer \\(θ\\) is given by \\(\tan^{-1}{\frac{F_y}{F_x}}\\).
+Then, once you have the \\(F_x\\) and \\(F_y\\) all parcelled out according to positives and negatives, get the total \\(F\\) by applying the Pythagorean theorem to them. The answer \\(\\theta\\) is given by \\(\tan^{-1}{\frac{F_y}{F_x}}\\).
 
 ## The Electric Field
 
@@ -75,9 +75,9 @@ Notice how \\(q_0\\) the test charge is not included in this equation. Since thi
 
 An additionally useful equation relates to **parallel plate capacitors**. These are two parallel plates of opposite charge that have an electric field directed from the positive plate to the negative plate. The equation for this electric field is
 
-$$E = \frac{q}{ε_0A} = \frac{σ}{ε_0}$$
+$$E = \frac{q}{\\epsilon_0A} = \frac{\\sigma}{\\epsilon_0}$$
 
-As you can see in this equation, the symbol \\(σ\\) denotes \\(q/A\\) and is sometimes called *charge density*. Importantly, the distance between the plates is actually totally irrelevant to the electric field, unlike with point charges.
+As you can see in this equation, the symbol \\(\\sigma\\) denotes \\(q/A\\) and is sometimes called *charge density*. Importantly, the distance between the plates is actually totally irrelevant to the electric field, unlike with point charges.
 
 ## Electric Field Lines
 
@@ -101,18 +101,18 @@ We have so far discussed electric fields created by point charges. In fact, an e
 
 We can think of flux on a high level as similar to a vector, with a direction and magnitude, but with the additional dimension of area. This concept will be important when discussing magnets.
 
-We can consider the formula for a point charge as a special form of **Gauss' Law** which describes electric fields in general. Remember how we can substitute \\(1/(4πε_0)\\) for \\(k\\)? This means that our new equation is \\(E = q/4(πε_0r^2)\\). If we multiply both sides by \\(A\\) which is \\(4πr^2\\) for a sphere, then we get
+We can consider the formula for a point charge as a special form of **Gauss' Law** which describes electric fields in general. Remember how we can substitute \\(1/(4\\pi\\epsilon_0)\\) for \\(k\\)? This means that our new equation is \\(E = q/4(\\pi\\epsilon_0r^2)\\). If we multiply both sides by \\(A\\) which is \\(4\\pi r^2\\) for a sphere, then we get
 
-$$EA = \frac{q}{ε_0}$$
+$$EA = \frac{q}{\\epsilon_0}$$
 
-where \\(EA\\) is electric flux, also known as \\(Φ_E\\).
+where \\(EA\\) is electric flux, also known as \\(\\Phi_E\\).
 
-However, we don't always have a nice, neat distribution of charge like in a sphere. A Gaussian surface can be arbitrarily shaped. We have to think of this similarly to how we think about integrals in calculus. If we take an arbitrarily small area \\(ΔA\\), it has an electric field that is essentially constant in magnitude and direction. The surface has a *normal* which is a line perpendicular to the surface. The angle \\(ϕ\\) is between the electric field vector and the normal. With all these variables, Gauss' Law is expressed as so:
+However, we don't always have a nice, neat distribution of charge like in a sphere. A Gaussian surface can be arbitrarily shaped. We have to think of this similarly to how we think about integrals in calculus. If we take an arbitrarily small area \\(\\Delta A\\), it has an electric field that is essentially constant in magnitude and direction. The surface has a *normal* which is a line perpendicular to the surface. The angle \\(\\varphi\\) is between the electric field vector and the normal. With all these variables, Gauss' Law is expressed as so:
 
-**The electric flux \\(Φ_E\\) through a Gaussian surface is equal to the net charge \\(Q\\) enclosed by the surface divided by \\(ε_0\\), the permittivity of free space:**
+**The electric flux \\(\\Phi_E\\) through a Gaussian surface is equal to the net charge \\(Q\\) enclosed by the surface divided by \\(\\epsilon_0\\), the permittivity of free space:**
 
-$$Σ(E \cos{ϕ})ΔA = \frac{Q}{ε_0}$$
+$$\\Sigma(E \cos{\\varphi})\\Delta A = \frac{Q}{\\epsilon_0}$$
 
-**with the left side being \\(Φ_E\\) in \\(N \cdot m^2/C\\).**
+**with the left side being \\(\\Phi_E\\) in \\(N \cdot m^2/C\\).**
 
 The flux has the same sign as \\(Q\\).

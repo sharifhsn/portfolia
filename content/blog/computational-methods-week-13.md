@@ -28,7 +28,7 @@ Today we will describe just a single layer, but I’m going to explain how it wo
 
 At the core, you have $$x \\in \\mathbb{R}^d$$. This is the number. You cannot do any of this with qualitative values. This is why LLMs are built on embeddings, which are numbers. And you also have $$y \\in \\mathbb{R}^k$$.
 
-You observe x and y, and you want to know the connection. If I input x, how do I get y? The oldest problem: I have some function y \= f(x), and I want to know what it is.
+You observe \(x\) and \(y\), and you want to know the connection. If I input \(x\), how do I get \(y\)? The oldest problem: I have some function \(y = f(x)\), and I want to know what it is.
 
 This is the one variable description. With multiple variables, you start talking about regressions, ANOVA, etc. These are all functions that relate x to y. But all of these things in typical regression are linear, which means f is a linear function.
 
@@ -42,7 +42,7 @@ where A is a matrix $$A \\in M\_{k \\times d}$$ times the x vector $$d \\times 1
 
 The whole problem here is to find the A that will give me the output y.
 
-This is distinct from an **affine** function. This linear function is constrained so that x \= 0 always gives me 0, (0, 0\) is valid.
+This is distinct from an **affine** function. This linear function is constrained so that \(x = 0\) always gives me 0, \((0, 0)\) is valid.
 
 In general, affine looks like
 
@@ -50,9 +50,9 @@ $$f(x) \= Ax \+ b$$
 
 This b makes it affine. Instead of estimating A matrix and b vector, I estimate both. This is regression, nothing fancy here, I’m just making it look complicated, but it’s really nothing. There is a point in me doing this. These are the building blocks for the neural network.
 
-The next question in the 50s was this. What is the idea? I am going to somehow measure the distance between my output y and the predicted thing $$\\hat{A}x \+ \\hat{b}$$. This is kind of like a difference for y\_observed \- Ax \+ b, where A and b are observed. I somehow want to minimize this distance. What does that mean? The simplest thing is Euclidean distance. These are all points in $$\\mathbb{R}^k$$, so you can take the sum of squares. You can also take absolute values, but it doesn’t work that well because it’s not differentiable. The minimization happens when you take the derivative equal to 0\. Once I have the minimization, I can obtain the value Ahat and bhat. In statistics we take least squares regression, that’s what this is.
+The next question in the 50s was this. What is the idea? I am going to somehow measure the distance between my output \(y\) and the predicted thing $$\hat{A}x + \hat{b}$$. This is kind of like a difference for \(y_{\text{observed}} - Ax + b\), where \(A\) and \(b\) are observed. I somehow want to minimize this distance. What does that mean? The simplest thing is Euclidean distance. These are all points in $$\mathbb{R}^k$$, so you can take the sum of squares. You can also take absolute values, but it doesn’t work that well because it’s not differentiable. The minimization happens when you take the derivative equal to 0. Once I have the minimization, I can obtain the value \(\hat{A}\) and \(\hat{b}\). In statistics we take least squares regression, that’s what this is.
 
-Remember that Ax \+ b is f(x). I am literally taking the difference between y and f and finding out f. But what if the function f is nonlinear? Then I’m screwed. The least squares is very simple to derive because the other term will disappear when you take the derivative of a particular term.
+Remember that \(Ax + b\) is \(f(x)\). I am literally taking the difference between \(y\) and \(f\) and finding out \(f\). But what if the function \(f\) is nonlinear? Then I’m screwed. The least squares is very simple to derive because the other term will disappear when you take the derivative of a particular term.
 
 The advantage in the 80s was to come up with this function.
 
@@ -78,35 +78,35 @@ The question is, how do we relate x to y? This is howt he neural network works.
 
 Let me take the components
 
-x1… xd
+\(x_1, \ldots, x_d\)
 
 This is for a generic input. We talk about random variables in financial engineering. These are observations. We are making a relationship between the random variables in the input and the output
 
-y1 … yk.
+\(y_1, \ldots, y_k\).
 
 How do you make this connection? We are going to form this hidden layer. In the simplest case, just one layer. We will call it
 
-h1… he.
+\(h_1, \ldots, h_e\).
 
-I’m going to make a nonlinear activation function. I’ll combine all of the xs into a nonlinear relationship with the hs. Then I’ll combine these hs in a nonlinear relationship with the ys. How do you do this? First you take for every h\_i, you consider the function g\_1. The difference between linear and affine, we will construct an affine relationship. I will add an x\_0 \= 1 here. This is a free term, this constant. I will add some weights which connect these xs to the hidden layers.
+I’m going to make a nonlinear activation function. I’ll combine all of the \(x\)s into a nonlinear relationship with the \(h\)s. Then I’ll combine these \(h\)s in a nonlinear relationship with the \(y\)s. How do you do this? First you take for every \(h_i\), you consider the function \(g_1\). The difference between linear and affine, we will construct an affine relationship. I will add an \(x_0 = 1\) here. This is a free term, this constant. I will add some weights which connect these \(x\)s to the hidden layers.
 
-w\_01^1, w\_11^1, … w\_d1^1.
+\(w_{01}^1, w_{11}^1, \ldots, w_{d1}^1\).
 
-This h\_i will be a function of
+This \(h_i\) will be a function of
 
 $$h\_i \= g\_1(\\sum\_{j=0}^d w\_{ji}^1 x\_j)$$
 
-This relationship is really not important. I am literally taking a linear relationship, this function g\_1, and I’m applying the affine to it
+This relationship is really not important. I am literally taking a linear relationship, this function \(g_1\), and I’m applying the affine to it
 
 $$= g\_1(w\_{0j} \+ w\_{ij}x\_1 \+ \\ldots \+ w\_{dj} x\_d$$
 
 I’m taking all of the inputs times this weight. And that’s just for one node.
 
-I need to do it for all layers because I will combine them when I reach y.
+I need to do it for all layers because I will combine them when I reach \(y\).
 
-The y will be another function g\_2.
+The \(y\) will be another function \(g_2\).
 
-We will add another h\_0 \= 1 at the top, a constant. So that this function will be
+We will add another \(h_0 = 1\) at the top, a constant. So that this function will be
 
 $$y\_k \= g\_2(w\_{0k}^2 \+ w\_{1k}^2 h\_1 \+ \\ldots \+ w\_{ek}^2 h\_e$$
 
@@ -116,7 +116,7 @@ So what do we do next?
 
 ## Activation Functions
 
-We mentioned g\_1 and g\_2. What are those? These are called **activation functions**. If you’ve taken statistics, or FA590, at the end of the class, you do something called logistic regression. You are associating real numbers with probability. Because you need to map them continuous to continuous, since you can’t really map from continuous to discrete. Instead of mapping x into the outcome, I will map x into something which maps into \[0, 1\], this reduced region. The typical activation functions are the following. Technically you can use anything, but you will usually depend on one of seven fundamental functions, something every math student learns.
+We mentioned \(g_1\) and \(g_2\). What are those? These are called **activation functions**. If you’ve taken statistics, or FA590, at the end of the class, you do something called logistic regression. You are associating real numbers with probability. Because you need to map them continuous to continuous, since you can’t really map from continuous to discrete. Instead of mapping \(x\) into the outcome, I will map \(x\) into something which maps into \([0, 1]\), this reduced region. The typical activation functions are the following. Technically you can use anything, but you will usually depend on one of seven fundamental functions, something every math student learns.
 
 Exponential, tirgonometric, polynomial, etc.
 
@@ -125,12 +125,12 @@ Exponential, tirgonometric, polynomial, etc.
 Examples include:
 
 - hyperbolic tangent: $$g(x) \= \\tanh(x) \= \\frac{e^x \- e^{-x}}{e^x \+ e^{-x}}$$
-  This maps into \[-1, 1\]
+  This maps into \([-1, 1]\)
   If x is multidimensional, then replace this with something multidimensional
   You can’t use cosine because it will explode at some values.
   This is what these things are trying to do. If you have x in the left region, it maps into a negative value, and the right is positive. So you can literally by playing with the weights, you can make your resulting point, which is a linear combination of inputs times weights, you can make it be either left or right. You can guide your output to y to be more positive or more negative.
 - logistic: $$g(x) \= \\frac{1}{1+e^{-x}}$$
-  It’s kinda similar to tanh, but the difference is that it goes into \[0, 1\].
+  It’s kinda similar to tanh, but the difference is that it goes into \([0, 1]\).
   The reason it’s called logistic and it’s used in logistic regression, because you’re mapping real numbers into probabilities, and this is the correct domain for probabilities.
 - Rectified Linear Unit **ReLU**: $$g(x) \= \\max (x, 0\) \= x\_+$$
   This is used in machine learning quite extensively.
@@ -139,17 +139,17 @@ Examples include:
 - Softplus: $$g(x) \= \\log(1 \+ e^x)$$
   ReLU is called xplus. But it has a problem at 0, where it’s not derivable. So this makes it smooth. It’s nonzero everywhere and derivable, but it has the same general form.
 
-This is the activated function, you can use it in both places, construct it however you like. It’s really important that you don’t do it with trial and error. People fire up pytorch and use defaults, and think it’s good. Obviously each of these activation functions have their own meanings. You need to know when to use one or the other.
+This is the activated function, you can use it in both places, construct it however you like. It’s really important that you don’t do it with trial and error. People fire up PyTorch and use defaults, and think it’s good. Obviously each of these activation functions have their own meanings. You need to know when to use one or the other.
 
 Typically, the probability stuff uses logistic for the y. Typically, you want to predict some kind of number. Sometimes SoftReLU is used, sometimes regular ReLU, I don’t know which one is better. Depends on the output’s relationship with the input.
 
 ## The Weights
 
-How many weights, and how do estimate them?
+How many weights, and how do we estimate them?
 
-How many weights is pretty simple. I have d input, and k output. In that case, it depends on this internal layer. We’ll say the hidden layer has e nodes. Then I have d \+ 1 inputs (adding the affine part). Each of those d \+ 1, I weight each of them to connect to each of the e nodes. That’s (d \+ 1)e. That’s just for w\_1. Now I have to do the same thing to connect with k output ys. e \+ 1 affine term, and k of it. w\_2 has (e \+ 1)k terms. So it’s total
+How many weights is pretty simple. I have \(d\) input, and \(k\) output. In that case, it depends on this internal layer. We’ll say the hidden layer has \(e\) nodes. Then I have \(d + 1\) inputs (adding the affine part). Each of those \(d + 1\), I weight each of them to connect to each of the \(e\) nodes. That’s \((d + 1)e\). That’s just for \(w_1\). Now I have to do the same thing to connect with \(k\) output \(y\)s. \(e + 1\) affine term, and \(k\) of it. \(w_2\) has \((e + 1)k\) terms. So it’s total
 
-(e \+ 1)k
+\((e + 1)k\)
 
 We’ll say x is 20 dimensional, we have 20 parameters, and y is one dimensional, with one output.
 
@@ -175,13 +175,13 @@ Squared error loss is good if it’s continuous:
 
 $$\\sum\_{i=1}^n (y\_i \- \\hat{y\_i})^2$$
 
-yhat\_i is the output of the neural network.
+\(\hat{y}_i\) is the output of the neural network.
 
 $$\\sum\_1^ |y\_i \- g\_2|\\sum w\_i^1 g\_1(\\sum w^2 x))^2$$
 
 This function contains all 1000 observations, and minimizes it.
 
-The backpropagation does not minimize all the 1000\. It minimizes w2 first, then it minimizes w1 with respect to that, propagating the weights backwards, and then doing it again.
+The backpropagation does not minimize all the 1000. It minimizes \(w_2\) first, then it minimizes \(w_1\) with respect to that, propagating the weights backwards, and then doing it again.
 
 This is the simple part. The complicated part…
 
@@ -193,7 +193,7 @@ They use something called Cross-Entropy which is bullshit. The loss function for
 
 So first I will explain something simpler.
 
-If we have discrete, we are going to output either male or female. We’re going to create two nodes. We will have probability of one, and 1 \- probability of the other. If you have multiple outputs, you use a hot-cold encoder, which maps this into a multi-dimensional space. The upshot is that you have to compare the observed discrete distribution and what you output, which is going to be probability. The function mapping is of numbers. In any of these ML techniques, you will take those numbers and calculate the probability distribution out of them.
+If we have discrete, we are going to output either male or female. We’re going to create two nodes. We will have the probability of one and one minus the probability of the other. If you have multiple outputs, you use a hot-cold encoder, which maps this into a multi-dimensional space. The upshot is that you have to compare the observed discrete distribution and what you output, which is going to be probability. The function mapping is of numbers. In any of these ML techniques, you will take those numbers and calculate the probability distribution out of them.
 
 Then how do you compare this probability distribution from the model, with the true probability distribution. Let’s say I have three outputs, green yellow red. If my object that I have is a combination of them, I will write down the combination. That’s the distribution I’m looking for. Most of the time, the categorial thing I’m outputting is one of them. 30s, 20s, teens. When I’m looking at one picture, the actual observed will be 0 0 1 0 0\. The probability distribution is 1 that belongs to this category and 0 to not others. So we nee dto calculate the difference between the output and this distribution.
 
@@ -215,7 +215,7 @@ $$\\mathbb{E}^P(\\log\\frac{P}{Q}) \= \\sum\_{i=1}^k \\log \\frac{p\_i}{q\_i} p\
 
 IT’s pretty much the same thing as entropy in practice. The first term is only in p, which is typically a constant, it’s what I know.
 
-This is simple to understand. If p\_i is close to q\_i, this is close to 1\. The logarithm of 1 is 0\. So it’s basically it’s a bunch of small parts of 0.This looks likeaa distance between p and q. But it’s a divergence, not a distance.
+This is simple to understand. If \(p_i\) is close to \(q_i\), this is close to 1. The logarithm of 1 is 0. So it’s basically it’s a bunch of small parts of 0. This looks like a distance between \(p\) and \(q\). But it’s a divergence, not a distance.
 
 Distance has three properties. distance should be commutative, reflexive, and additive (triangle inequality). This only follows the first two. If something is equal to 0, then the two are the same. But, if something is tiny different from 0, and in other experiment you have the same tiny number, you cannot say that this cross function is the same. The distance itself is meaningless. Distance, I can measure 300 km here, 300 km in Romania, which is the same. Divergence, hell no. ou measure something here, the Trump tariff will be different than in Romania, because that’s not a distance.
 
@@ -231,13 +231,13 @@ The way that it’s done is the same as it’s done with this, except you’re u
 
 ## Logistic Regression
 
-q\_i is the output of th efunction you get from the node.
+\(q_i\) is the output of the function you get from the node.
 
 $$q\_i \= \\frac{1}{q \+ e^{-w^ix}}$$
 
-If you’re going directly from x to y without a hidden layer in between. There are weights that correspond exactly to this particular outcome.
+If you’re going directly from \(x\) to \(y\) without a hidden layer in between. There are weights that correspond exactly to this particular outcome.
 
-Typically you take q\_i as
+Typically you take \(q_i\) as
 
 $$q\_i \= g\_1(q\_1, \\ldots)$$
 
@@ -289,9 +289,9 @@ We set up with 5 input features, one output .
 
 Hyperparameters we set up ourselves. There are two hidden layers with 64 nodes in each layer, ReLU is used.
 
-Hidden layer can choose different activation functions. ReLU is common. For output layer, I used ReLU because Volatility is always positive, and can be \>1.
+Hidden layer can choose different activation functions. ReLU is common. For output layer, I used ReLU because volatility is always positive, and can be \(>1\).
 
-The W1 and b1 parameters are the initialized parameters, which will be updated during training.
+The \(W_1\) and \(b_1\) parameters are the initialized parameters, which will be updated during training.
 
 Defining PyTorch neural network is done by extending nn.Module in a class.
 
@@ -324,4 +324,4 @@ Use an evaluation set during training. If training loss and evaluation loss dive
 Ways to deal:
 
 * Early stopping. Orange line stays, but blue line is decreasing. Then stop the epochs as the point when the blue line passes the orange line.
-* Regularization. Penalize large weights. If the model is very complex, it has the space to learn the noise and random fluctuations rather than general pattern. Adam has (, weight\_decay=1e-5)
+* Regularization. Penalize large weights. If the model is very complex, it has the space to learn the noise and random fluctuations rather than general pattern. Adam has (`weight_decay=1e-5`)

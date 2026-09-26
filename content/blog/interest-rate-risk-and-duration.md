@@ -167,13 +167,13 @@ Second order sensitivity for bond price is **convexity**. Duration is expected v
 
 
 
-Convexity has w\_t, which is scaled by the discount factor squared. It gives you an approximation for the true value of the price.
+Convexity has \(w_t\), which is scaled by the discount factor squared. It gives you an approximation for the true value of the price.
 
 #### Portfolio Duration and Convexity
 
 I want to meet certain duration targets in my portfolio.
 
-The market is expecting the interest rate to drop by 25 bps. That means you want to increase your duration, which is your exposure to the yield. If you work with modified duration, it’s the same as a beta, it’s a weight for each asset, in terms of exposure.
+The market is expecting the interest rate to drop by 25 bps. That means you want to increase your duration, which is your exposure to the yield. If you work with modified duration, it’s the same as a \(\beta\), it’s a weight for each asset, in terms of exposure.
 Portfolio duration (modified duration) is just the average of the duration of each of your bonds, modified by their weights.
 
 The way you solve the bond portfolio problem is by defining it as a matrix multiplication, where the matrix of the bond durations is inverted and multiplied by the intended portfolio duration, and the resultant vector should be the weights.

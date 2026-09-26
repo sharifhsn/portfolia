@@ -34,11 +34,11 @@ Described by 5.4.5
 
 Gamma distribution is defined under the gamma function. We will need a two variable beta function. The intermediate function is defined as
 
-\(\Beta(a, b) := \int_0^1 x^{a-1} (1-x)^{b-1} dx\)
+\(\mathrm{B}(a,b) := \int_0^1 x^{a-1}(1-x)^{b-1}\,dx\)
 
 The integral is univariate. There’s an apparent symmetry. If we do a change of variable of \(y = 1-x\) then
 
-\(\Beta(b, a) = \int_0^1 x^{b-1}y^{a-1}dx\)
+\(\mathrm{B}(b,a) = \int_0^1 x^{b-1}y^{a-1}\,dx\)
 
 and
 
@@ -46,17 +46,17 @@ and
 
 Which when you cancel out the negative, they end up being equal. And in fact it can be shown that
 
-\(\Beta(a, b) = \Beta(b, a)\)
+\(\mathrm{B}(a,b) = \mathrm{B}(b,a)\)
 
 and a more useful result proposition 5.39, which is that
 
-\(\beta(a, b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}\)
+\(\mathrm{B}(a,b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}\)
 
 this will be very useful later. Proving this is very tedious calculus.
 
 We can now introduce the beta distribution through definition 5.40. If \(x\) has the following pdf
 
-\(f_{a,b}(x) = \frac{x^{a-1}(1-x)^{b-a}}{\beta(a, b)} I_{[0, 1]} (x)\)
+\(f_{a,b}(x) = \frac{x^{a-1}(1-x)^{b-a}}{\mathrm{B}(a,b)} I_{[0,1]}(x)\)
 
 then it’s in the beta distribution.
 
@@ -71,11 +71,11 @@ To prove this, we take the definition of the expectation
 
 \(\mathbb{E}[X] = \int_0^1 xf_{a,b}(x)dx\)
 
-\(= \frac{1}{\beta(a, b)} \int_0^1 x^a(1-x)^{b-1}dx\)
+\(= \frac{1}{\mathrm{B}(a,b)} \int_0^1 x^a(1-x)^{b-1}\,dx\)
 
 We can then adjust the \(a\) to make it agree with the beta function
 
-\(= \frac{1}{\beta(a, b)} \beta(a + 1, b)\)
+\(= \frac{\mathrm{B}(a+1,b)}{\mathrm{B}(a,b)}\)
 
 Now I can adjust it to be the gamma function instead.
 
@@ -87,11 +87,11 @@ We can cancel out some things, and then utilize the property of the gamma functi
 
 Then for variance, skipping some steps, we can show that
 
-\(\mathbb{E}[X^2] = \frac{1}{\beta(a, b)} \int_0^1 x^{a+1} (1-x)^{b-1} dx\)
+\(\mathbb{E}[X^2] = \frac{1}{\mathrm{B}(a,b)} \int_0^1 x^{a+1}(1-x)^{b-1}\,dx\)
 
 Using a similar method, we can rewrite this as
 
-\(= \frac{\beta(a+2, b)}{\beta(a, b)}\)
+\(= \frac{\mathrm{B}(a+2,b)}{\mathrm{B}(a,b)}\)
 
 Now we have from gamma
 

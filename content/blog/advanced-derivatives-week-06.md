@@ -20,7 +20,7 @@ What is the difference between interest rate risk and stock price risk?
 
 One of the most important differences is that the discount rate will vary from node to node. We will look at an example:
 
-We’ll assume that the payoff of a derivative is 100(r-0.11)\_+
+We’ll assume that the payoff of a derivative is \(100(r - 0.11)_+\)
 
 
 

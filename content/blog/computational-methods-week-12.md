@@ -24,37 +24,37 @@ $$dX\_t \= \\alpha(X\_t) dt \+ \\beta(X\_t) dW\_t$$
 
 These coefficients are not functions of time, so they are homogeneous.
 
-The idea is to use Itô for bothα and β. They are functions of stochastic process X\_t. Therefore I can use Itô for both.
+The idea is to use Itô for both \(\alpha\) and \(\beta\). They are functions of stochastic process \(X_t\). Therefore I can use Itô for both.
 
 I get
 
-$$d\\alpha(X\_t) \= \\alpha’ (X\_t) dX\_t \+ \\frac{1}{2} \\alpha’’ (X\_t)(dX\_t)^2$$
+$$d\\alpha(X\_t) \= \\alpha' (X\_t) dX\_t \+ \\frac{1}{2} \\alpha'' (X\_t)(dX\_t)^2$$
 
 This is Itô, so we are lacking the dt, that term would screw up our calculations.
 
-Now we substitute X\_t here, so we get
+Now we substitute \(X_t\) here, so we get
 
 The dX^2 gets eliminated
 
-$$= \\alpha’(X\_t) \\alpha(X\_t) dt \+ \\alpha’(X\_t) \\beta(X\_t) dW\_t \+ \\frac{1}{2} \\alpha’’(X\_t) \\beta^2(X\_t) dt$$
+$$= \\alpha'(X\_t) \\alpha(X\_t) dt \+ \\alpha'(X\_t) \\beta(X\_t) dW\_t \+ \\frac{1}{2} \\alpha''(X\_t) \\beta^2(X\_t) dt$$
 
-If I just group these terms and drop X\_t all over the place to make it easier to write:
+If I just group these terms and drop \(X_t\) all over the place to make it easier to write:
 
-$$=(\\alpha’ \\alpha \+ \\frac{1}{2}\\alpha’’ \\beta^2)dt \+ \\alpha’ \\beta dW\_t$$
+$$=(\\alpha' \\alpha \+ \\frac{1}{2}\\alpha'' \\beta^2)dt \+ \\alpha' \\beta dW\_t$$
 
-Now, if we do the same calculation/derivation for the β, then we basically get something very similar. We’re not going to go through the entire calculation. You can derive this yourself,
+Now, if we do the same calculation/derivation for \(\beta\), then we basically get something very similar. We’re not going to go through the entire calculation. You can derive this yourself,
 
 $$d\\beta(X\_t) \= (\\ldots) dt \+ \\ldots \+ dW\_t$$
 
 Writing in integral from,
 
-Now we substitute α and β from the same formula. So there are two integrals:
+Now we substitute \(\alpha\) and \(\beta\) from the same formula. So there are two integrals:
 
 ~~~text
 X\_{t+\\Delta t} \- X\_t \= \\int\_t^{t+\\Delta t}
 ~~~
 
-When we substitute, we will get four terms, two terms for α and β each.
+When we substitute, we will get four terms, two terms for \(\alpha\) and \(\beta\) each.
 
 We will get terms such as
 
@@ -64,7 +64,7 @@ We will change the letters to make sure they’re right, based on what our dummy
 
 $$dsdW\_u \\approx dudW\_s \\sim O(\\Delta t^{\\tfrac{3}{2}})$$
 
-Because ds is order Δt, and dW\_t is order √Δt
+Because \(ds\) is order \(\Delta t\), and \(dW_t\) is order \(\sqrt{\Delta t}\)
 
 Then there is
 
@@ -80,25 +80,25 @@ $$ds$$
 
 The existing equation then simplifies a lot
 
-$$X\_{t+\\Delta t} \= X\_t \+ \\alpha (X\_t) \\Delta t \+ \\beta (X\_t) \\Delta W\_t \+ \\int\_t^{t+\\Delta t}\\int\_t^u \\beta\_s’ \\beta\_s dW\_s dW\_u $$
+$$X\_{t+\\Delta t} \= X\_t \+ \\alpha (X\_t) \\Delta t \+ \\beta (X\_t) \\Delta W\_t \+ \\int\_t^{t+\\Delta t}\\int\_t^u \\beta\_s' \\beta\_s dW\_s dW\_u $$
 
 And there’s another integral term you can see here.
 
 You need to take the increments of Brownian motion and such, but then you can show that the integral term is equal to the
 
-$$= \\beta\_t’ \\beta\_t \\frac{1}{2}(\\Delta W\_t \- \\Delta t)$$
+$$= \\beta\_t' \\beta\_t \\frac{1}{2}(\\Delta W\_t \- \\Delta t)$$
 
 This gives the Euler Milstein scheme.
 
-The X\_t+Δt is what you’re approximating. The first part is the regular Euler, and then the integrals are the Milstein part.
+The \(X_{t+\Delta t}\) is what you’re approximating. The first part is the regular Euler, and then the integrals are the Milstein part.
 
 If the model $$dX\_t \= \\alpha(X\_t) dt \+ \\beta(X\_t) dW\_t$$, then the Euler Milstein scheme is
 
-$$X\_{t+\\Delta t} \= X\_t \+ \\alpha(X\_t) \\Delta t+ \\beta(X\_t) \\Delta W\_t \+ \\frac{1}{2}\\beta’(X\_t) \\beta(X\_t) (\\Delta W\_t^2 \- \\Delta t)$$
+$$X\_{t+\\Delta t} \= X\_t \+ \\alpha(X\_t) \\Delta t+ \\beta(X\_t) \\Delta W\_t \+ \\frac{1}{2}\\beta'(X\_t) \\beta(X\_t) (\\Delta W\_t^2 \- \\Delta t)$$
 
-And by W you introduce a normal variable multiplied by $$Z \\sim N(0, 1)$$. The ΔW is created by $$Z\\sqrt{\\Delta t}$$. The other one is $$(Z^2 \- 1)\\Delta t$$ when the thing factors. For the same increment, you put it in two places, not just one places.
+And by \(W\) you introduce a normal variable multiplied by $$Z \sim N(0, 1)$$. The \(\Delta W\) is created by $$Z\sqrt{\Delta t}$$. The other one is $$(Z^2 - 1)\Delta t$$ when the thing factors. For the same increment, you put it in two places, not just one places.
 
-However, there is a possible issue, which might be the derivative. If the β function, the volatility part, if it’s complicated, how do you calculate the derivative? That might be hard. There’s another way to deal with this, a scheme called Runge-Kutta, a generalization where you calculate the euler part, and plug it into the beta, then you calculate the finite difference as an approximation of the derivative.
+However, there is a possible issue, which might be the derivative. If the \(\beta\) function, the volatility part, if it’s complicated, how do you calculate the derivative? That might be hard. There’s another way to deal with this, a scheme called Runge-Kutta, a generalization where you calculate the Euler part, and plug it into the \(\beta\), then you calculate the finite difference as an approximation of the derivative.
 
 One more thing to mention. Which I shouldn’t, because it’s from the homework. Let’s have an example.
 
@@ -112,19 +112,19 @@ In this process, I have my
 
 $$\\alpha(x) \= \\kappa(\\bar{Y} \- x)$$
 
-Then you have beta
+Then you have \(\beta\)
 
 $$\\beta(x) = \\sigma \\sqrt{x}$$
 
 If we now substitute in this formula, we have to calculate the derivative.
 
-$$\\beta’(x) \= \\frac{\\sigma}{2\\sqrt{x}}$$
+$$\\beta'(x) \= \\frac{\\sigma}{2\\sqrt{x}}$$
 
 Now if we do Euler Milstein:
 
 $$Y\_{t+\\Delta t} \= Y\_t \+ \\kappa(\\bar{Y} \- Y\_t) \\Delta t \+ \\sigma \\sqrt{Y\_t} \\Delta W\_t \+ \\text{ milstein correction: } \\sigma \\sqrt{Y\_t} \\frac{\\sigma}{2\\sqrt{Y\_t}} (\\Delta W\_t^2 \- \\Delta t)$$
 
-Here, the two sqrtY\_t cancels, so it becomes sig^2/2.
+Here, the two \(\sqrt{Y_t}\) terms cancel, so it becomes \(\sigma^2/2\).
 
 The other thing to show is that if you look for example, this process.
 
@@ -136,7 +136,7 @@ $$\\beta(X\_t) \= 0.7$$
 
 So
 
-$$\\beta’(X\_t) \= 0$$
+$$\\beta'(X\_t) \= 0$$
 
 Therefore there is no Euler-Milstein correction, because it relies on multiplication by the derivative. Like for example in GBM.
 
@@ -154,7 +154,7 @@ However, this is more complicated than that.
 
 We also need to consider the time to generate paths. If you have a Monte Carlo technique with less variability, but it takes one minute to generate a path, then it could be that another method with much higher variability that can generate 1 per second, is better, just by raw brute force. The paper mentioned is really good, the basis of the Monte Carlo book, which expands on the paper. Boyle is a Canadian professor from University of Waterloo, in 1997 they met, he did a summer school. He was drunk all the time in the morning lectures. Glasserman is a friend of the show as well. Third guy Brodie sucks.
 
-If method 1 has variance σ\_1^2, and b\_1, they have a term called “work”, which could be time, but could be other stuff, b\_1 is the work to generate one replication of the final parameter, the one you’re trying to estimate, then we need to look at
+If method 1 has variance \(\sigma_1^2\), and \(b_1\), they have a term called “work”, which could be time, but could be other stuff, \(b_1\) is the work to generate one replication of the final parameter, the one you’re trying to estimate, then we need to look at
 
 $$\\sigma\_1^2 b\_1 \< \\sigma\_2^2 b\_2$$
 
@@ -188,9 +188,9 @@ But this one will show less than it really is.
 
 Glasserman’s explanation is better than mine, I will follow him.
 
-The one with delta hedging and Asian option. There’s nothing wrong with delta hedging or Asian option, it’s just that it needs to be explained where it’s coming from.
+The one with \(\Delta\)-hedging and Asian option. There’s nothing wrong with \(\Delta\)-hedging or Asian option, it’s just that it needs to be explained where it’s coming from.
 
-The control variate for Monte Carlo, what it does, it should be called “use what you know”. You know, for example, that the option that delta hedges, you’re using the concept that if you do this very fast, the two values should be the same.
+The control variate for Monte Carlo, what it does, it should be called “use what you know”. You know, for example, that the option that \(\Delta\)-hedges, you’re using the concept that if you do this very fast, the two values should be the same.
 
 Similarly, for the Asian option, we’re using what we know.
 
@@ -198,9 +198,9 @@ $$P\_A$$ is the price of an Asian option based on Arithmetic average, which is w
 
 $$P\_G$$ is geometric.
 
-This P\_G has a formula, and for any variation on Asian options it’s very easy to get a geometric formula.
+This \(P_G\) has a formula, and for any variation on Asian options it’s very easy to get a geometric formula.
 
-We’ll say we have a formula, if you give me characteristics and μ and σ, you get an exact number.
+We’ll say we have a formula, if you give me characteristics and \(\mu\) and \(\sigma\), you get an exact number.
 
 With this, let
 
@@ -255,13 +255,13 @@ $$\\mathbb{V}\[\\hat{P\_A}^{cv}\] \= \\mathbb{V}\[\\hat{P\_A}\] \+ \\mathbb{V}\[
 
 Everything after the first term should be negative to give me a better variance. The covariance should be greater than the variance. It’s only worth it if the covariance is large.
 
-This brings the next idea. This is the original term plus this term. I can control the size of the difference, which puts a β on the coefficient. That β allows me to make the thing smaller. This is all specific to the Asian option, where there is this arithmetic and geometric thing. But there is no assumption about the stochastic model.
+This brings the next idea. This is the original term plus this term. I can control the size of the difference, which puts a \(\beta\) on the coefficient. That \(\beta\) allows me to make the thing smaller. This is all specific to the Asian option, where there is this arithmetic and geometric thing. But there is no assumption about the stochastic model.
 
-β means I’m going to parameterize this:
+\(\beta\) means I’m going to parameterize this:
 
 $$\\hat{P\_A}^\\beta \= \\hat{P\_A} \+ \\beta(P\_G \- \\hat{P\_G})$$
 
-I can play around with β in such a way that the resulting variance is the smallest. What is that? We can do the same exact calculation, and minimize the result with respect to β.
+I can play around with \(\beta\) in such a way that the resulting variance is the smallest. What is that? We can do the same exact calculation, and minimize the result with respect to \(\beta\).
 
 $$\\mathbb{V}\[\\hat{P\_A}^\\beta\] \=  \\mathbb{V}\[\\hat{P\_A}\] \+ \\beta^2 \\mathbb{V}\[\\hat{P\_G}\] \- 2 \\beta \\text{Cov}(\\hat{P\_A}, \\hat{P\_G})$$
 
@@ -277,9 +277,9 @@ This cancels to:
 
 $$= \\frac{\\text{Cov}(\\hat{P\_A}, \\hat{P\_G})}{\\mathbb{V}\[\\hat{P\_G}\]}$$
 
-If you have two variables, the regression is the covariance divided by the variance, so this is the formula for market beta/regression.
+If you have two variables, the regression is the covariance divided by the variance, so this is the formula for market \(\beta\)/regression.
 
-So if we regress $$\\hat{P\_A} \= \\alpha \+ \\beta \\hat{P\_G} \+ \\epsilon$$, the β is the β.
+So if we regress $$\hat{P_A} = \alpha + \beta \hat{P_G} + \epsilon$$, the \(\beta\) is the \(\beta\).
 
 Last week, we learned this was true, but now we know how to get it.
 
@@ -289,9 +289,9 @@ $$\\hat{P\_A}^\\beta \= \\hat{P\_A} \+ \\hat{\\beta} (P\_G \- \\hat{P\_G})$$
 
 Now we have another problem.
 
-This is kinda screwed up. Because you’re using the same paths to estimate β, and the same path to estimate the value of the option. That introduces a bias, and this is calculated in the Glasserman paper.
+This is kinda screwed up. Because you’re using the same paths to estimate \(\beta\), and the same path to estimate the value of the option. That introduces a bias, and this is calculated in the Glasserman paper.
 
-Typically you have n paths, and you set n\_1 paths out to do regression. Then you use n \- n\_1 paths for calculation.
+Typically you have \(n\) paths, and you set \(n_1\) paths out to do regression. Then you use \(n - n_1\) paths for calculation.
 
 The advantage here is to do a proper regression, you don’t need a lot of observations, 100 would be plenty. But for Monte Carlo, you need hundreds of thousands.
 
@@ -305,23 +305,23 @@ Under risk-neutral equivalent martingale measure, we have
 
 $$S\_0 \= \\mathbb{E}^Q\[S\_T e^{-rT}\]$$
 
-If you take the stock price as a martingale, and discount it back, you should get S\_0. Nothing new.
+If you take the stock price as a martingale, and discount it back, you should get \(S_0\). Nothing new.
 
 This brings up another way to control.
 
-We use the following, with β\_1 being our original control variate.
+We use the following, with \(\beta_1\) being our original control variate.
 
 $$\\hat{P\_A}^{cv} \= \\hat{P\_A} \+ \\beta\_1(P\_G \- \\hat{P\_G}) \+ \\beta\_2 (S\_0 \- \\hat{S\_T} e^{-rT})$$
 
-Now you have the path, you know what S\_T is, and S\_0 is a constant.
+Now you have the path, you know what \(S_T\) is, and \(S_0\) is a constant.
 
 You have the same kind of regression of
 
 $$\\hat{P\_A} \= \\alpha \+ \\beta\_1 \\hat{P\_G} \+ \\beta\_2 \\hat{S\_T} \+ \\epsilon$$
 
-The constants don’t matter because you’re doing a regression, it just changes the y-intercept, doesn’t impact the β.
+The constants don’t matter because you’re doing a regression, it just changes the y-intercept, doesn’t impact the \(\beta\).
 
-Technically, it’s σ√t, which is the confidence interval size, the diffusion size. It’s an estimate, work could refer to other things.
+Technically, it’s \(\sigma\sqrt{t}\), which is the confidence interval size, the diffusion size. It’s an estimate, work could refer to other things.
 
 ## Moment Matching Method
 
@@ -353,7 +353,7 @@ Confidence intervals are hard to obtain.
 
 This is the first order moment matching. You can also do second order moment matching. Say we want to create $$N(\\mu\_Z, \\sigma\_Z^2)$$ I’m trying to create numbers that are normal with this particular target. The usual thing to do here is
 
-$$Z\_i \\sim N(0, 1\) \\rightarrow \\sigma\_Z Z\_i \+ \\u Z$$
+$$Z\_i \\sim N(0, 1) \\rightarrow \\sigma\_Z Z\_i \+ \\mu\_Z$$
 
 Multiply to create the desired distribution.
 
@@ -361,7 +361,7 @@ But the numbers in the sample will have their own sample mean and stdev. So you 
 
 $$\\tilde{Z\_i} \= \\frac{\\sigma\_Z}{S\_Z}(Z\_i \- \\bar{Z}) \+ \\mu\_Z$$
 
-Each number is modified by these two numbers S\_Z and Zbar, where S\_Z is the sample stdev.
+Each number is modified by these two numbers \(S_Z\) and \(\bar{Z}\), where \(S_Z\) is the sample stdev.
 
 $$S\_Z \= \\sqrt{\\frac{1}{n-1}\\sum (Z\_i \- \\bar{Z})^2}$$
 
@@ -369,7 +369,7 @@ For the random variables in the sample, they will have the desired distribution.
 
 Like I said, this is a method from the 90s. I never liked it because it’s slower. All these modifications…
 
-And in order to estimate the sample mu and stdev, I have to do all of the simulations first, then calculate the samples, then plug them back, so it’s SLOWER than doing it all at once.
+And in order to estimate the sample \(\mu\) and stdev, I have to do all of the simulations first, then calculate the samples, then plug them back, so it’s SLOWER than doing it all at once.
 
 And generally, from my experience, improvement is marginal, it’s not particularly useful.
 
@@ -393,7 +393,7 @@ Briefly:
 
 when you start generating one dimensional random variables, we’ll say for a uniform distribution, we can use testers to see if the numbers are actually uniform.
 
-Then you can generate pairs, two at a time (X\_1, X\_2) and plot them. You should definitely do this experiment with a random number generator. It would not look uniform at all. Human mind when you say uniform, thinks that it’s perfectly spread out. The point of the quasi generator is to spread out on purpose, to get a perfect uniform distribution. It’s okay as an exhaustive search method. But if you need more points, you have to quadruple them to have the same spread everywhere. The more detail you want, the finer quasi becomes, and it gets a lot slower.
+Then you can generate pairs, two at a time \((X_1, X_2)\) and plot them. You should definitely do this experiment with a random number generator. It would not look uniform at all. Human mind when you say uniform, thinks that it’s perfectly spread out. The point of the quasi generator is to spread out on purpose, to get a perfect uniform distribution. It’s okay as an exhaustive search method. But if you need more points, you have to quadruple them to have the same spread everywhere. The more detail you want, the finer quasi becomes, and it gets a lot slower.
 
 But there are circumstances in which this is useful, and people in engineering that don’t understand randomness like this thing.
 
@@ -455,18 +455,18 @@ $$dY\_t \= \\alpha(\\bar{Y} \- Y\_t) dt \+ \\sigma \\sqrt{Y\_t} dW^2\_t$$
 
 If I want to simulate this, which is part of homework, how would you do this?
 
-Generate two random numbers which are correlated with ρ.
+Generate two random numbers which are correlated with \(\rho\).
 
 For two, it’s very simple.
 
 We need $$X\_1, X\_2 \\sim N(0, 1)$$, such that $$\\text{Corr}(X\_1, X\_2) \= \\rho$$
 
-Then we can multiply by √Δt and everything will work.
+Then we can multiply by \(\sqrt{\Delta t}\) and everything will work.
 
-We will start with uncorrelated Z\_1, Z\_2 N(0, 1\)
-I’ll take X\_1 \= Z\_1.
+We will start with uncorrelated \(Z_1, Z_2 \sim N(0, 1)\).
+I’ll take \(X_1 = Z_1\).
 
-Then, I’ll take X\_2 \= ρZ\_1. We can do this because the variance of Z\_1 is 1, and covariance of Z\_1 and Z\_2 \= 0;
+Then, I’ll take \(X_2 = \rho Z_1\). We can do this because the variance of \(Z_1\) is 1, and covariance of \(Z_1\) and \(Z_2 = 0\);
 
 The combination has to have variance of 1, and if we’re combining linear combinations, then it’s normal.
 
@@ -474,7 +474,7 @@ So total value is
 
 $$X\_2 \= \\rho Z\_1 \+ \\sqrt{1-\\rho^2} Z\_2$$
 
-If you understand the principle, what do I do when I want to do three? X\_1, X\_2, X\_3
+If you understand the principle, what do I do when I want to do three? \(X_1, X_2, X_3\)
 
 Take the same idea
 
@@ -488,15 +488,15 @@ It becomes tricky. So is there a method to do this?
 
 There is\! You should know where this is coming from
 
-We have a vector X which is a lot of Xs. We are interested in covariance, which is distinct from correlation. Our covariance matrix will be one diagonal, where we multiply by √Δt. The values on the diagonal of the matrix are the variance, and the rest are covariance.
+We have a vector \(X\) which is a lot of \(X\)s. We are interested in covariance, which is distinct from correlation. Our covariance matrix will be one diagonal, where we multiply by \(\sqrt{\Delta t}\). The values on the diagonal of the matrix are the variance, and the rest are covariance.
 
 So how do I generate a vector with this covariance structure? Here is the idea.
 
-If X is a random vector, (more details you could talk about in 540\) with mean μ, componentwise for each element in vector, then
+If \(X\) is a random vector, (more details you could talk about in 540) with mean \(\mu\), componentwise for each element in vector, then
 
 $$\\text{Cov}(X) \= \\mathbb{E}\[(X-\\mu) (X-\\mu)^T\]$$
 
-Take Y \= AX. A is a matrix, but it can be ANY DIMENSION nxd. We can transform 4 components into 15 components with different linear combinations.
+Take \(Y = AX\). \(A\) is a matrix, but it can be ANY DIMENSION \(n \times d\). We can transform 4 components into 15 components with different linear combinations.
 
 The basis of the whole method is this:
 
@@ -524,7 +524,7 @@ $$= A \\Sigma A^T$$
 
 **CHOLESKY DECOMPOSITION**
 
-Take the Z vector if iid normals, which are N(0, I\_d). On the diagonal, you have 1 correlation.
+Take the \(Z\) vector of iid normals, which are \(N(0, I_d)\). On the diagonal, you have 1 correlation.
 
 Find a matrix A such that $$AA^T \= \\Sigma$$, the desired covariance.
 

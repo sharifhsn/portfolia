@@ -107,9 +107,9 @@ We could write a standard Ito process as
 
 \(X(t) = X(0) + \int_0^t \Delta (u) dW(u) + \int_0^t \Theta (u) du\)
 
-But now my delta and W are both vectors, and we take the dot product of these, which is a scalar vector multiplication
+But now my \(\Delta\) and \(W\) are both vectors, and we take the dot product of these, which is a scalar vector multiplication
 
-Why don’t we have a dot product with the thetas? Can you have multi-dimensional time? No. We don’t want multidimensional time, so we don’t have multidimensional theta. Theta could depend on the process, but you wouldn’t decompose with reference to different aspects of movements in time.
+Why don’t we have a dot product with the \(\Theta\)s? Can you have multi-dimensional time? No. We don’t want multidimensional time, so we don’t have multidimensional \(\Theta\). \(\Theta\) could depend on the process, but you wouldn’t decompose with reference to different aspects of movements in time.
 
 What if we take the differential?
 
@@ -120,9 +120,9 @@ Now what if we square it? Too long to write out, but it follows all the rules of
 \(= \left(\sigma_1^2(t) + \sigma_2^2(t)\right)dt\)
 I can use this result. I know that this is a handy way to get the quadratic variation of an Ito process by integrating this differential.
 
-\([X, X](t) = \int_0^t \sigma_1^2(u) + \sigma_2^2(u) du\)
+\([X,X](t) = \int_0^t \left(\sigma_1^2(u)+\sigma_2^2(u)\right)\,du\)
 
-There’s a lot of different ways to do this. Sigma is just standing in here for any adapted stochastic process. We are going to define X(t) by its own Ito process. These multidimensional Ito processes have the nonrandom constant, d Ito integrals, and then the Riemann of time.
+There’s a lot of different ways to do this. \(\Sigma\) is just standing in here for any adapted stochastic process. We are going to define \(X(t)\) by its own Ito process. These multidimensional Ito processes have the nonrandom constant, d Ito integrals, and then the Riemann of time.
 
 Let’s say we have two well-defined multidimensional Ito processes in this way. Defined as such, what is
 
@@ -130,7 +130,7 @@ Let’s say we have two well-defined multidimensional Ito processes in this way.
 
 Let’s not write out all these terms. We know that dW multiplied by any differential except itself is 0, and dt multiplied by any differential is 0. So we get the terms
 
-\(= (\sigma_{X,1} + \sigma_{X,2})(\sigma_{Y,1}+\sigma{Y,2})\)
+\(= (\sigma_{X,1}+\sigma_{X,2})(\sigma_{Y,1}+\sigma_{Y,2})\)
 
 This is all to build up to the concept of the two dimensional Ito formula. We are going to use the Taylor series expansion with *three* variables now. That would say that
 
@@ -238,9 +238,9 @@ Let’s say you have two stock prices and you don’t want them to be independen
 
 \(dS_2 = \alpha_2S_2dt + \sigma_2S_2\left(\rho dW_1 + \sqrt{1 - \rho^2} dW_2\right)\)
 
-We can all agree that S\_1 follows Brownian motion, so we know its closed form solution.
+We can all agree that \(S_1\) follows Brownian motion, so we know its closed form solution.
 
-S\_2 is only a Brownian motion if that big term on the right is a Brownian motion.
+\(S_2\) is only a Brownian motion if that big term on the right is a Brownian motion.
 
 Let’s think abstractly. We have a Brownian motion
 
@@ -297,19 +297,19 @@ We have Ito integral with respect to martingale, so that becomes 0
 
 Therefore the covariance is
 
-\(\frac{Cov(B_1, B_2)}{\sqrt{\mathbb{V}[B_1]} \sqrt{\mathbb{V}[B_2]}} = \rho\)
+\(\frac{\operatorname{Cov}(B_1,B_2)}{\sqrt{\mathbb{V}[B_1]}\sqrt{\mathbb{V}[B_2]}} = \rho\)
 
 This is the Kolesky decomposition of these two correlated Brownian motion into independent Brownian motions.
 
-What is the correlation of my two stocks given by these processes? We get this through the original equation that S\_ 1 follows GBM, and we know that structure
+What is the correlation of my two stocks given by these processes? We get this through the original equation that \(S_1\) follows GBM, and we know that structure
 
-\(\mathbb{E}[S_1] = \mathbb{E}\left[S_1(0) e^{(\alpha_1 - \tfrac{\sigma_1^2}{2})t + \sigma_1 B_1)}\right]\)
+\(\mathbb{E}[S_1] = \mathbb{E}\left[S_1(0)e^{(\alpha_1-\tfrac{\sigma_1^2}{2})t+\sigma_1 B_1}\right]\)
 
 Skipping some steps,
 
 \(= S_1(0)e^{\alpha_1t}\)
 
-How do we get the variance of S\_1?
+How do we get the variance of \(S_1\)?
 
 \(\mathbb{V}[S_1] = \mathbb{E}[S_1^2] - \mathbb{E}[S_1]^2\)
 
@@ -317,7 +317,7 @@ This would be
 
 \(= S_1^2(0) e^{2\alpha_1t+\sigma_1^2t} - S_1^2(0) e^{2\alpha t}\)
 
-We would then take the square root of this to get the standard deviation, so in order to plug this in we need to know the covariance between S\_1 and S\_2, which is
+We would then take the square root of this to get the standard deviation, so in order to plug this in we need to know the covariance between \(S_1\) and \(S_2\), which is
 
 \(\mathbb{E}[S_1S_2] - \mathbb{E}[S_1]\mathbb{E}[S_2]\)
 

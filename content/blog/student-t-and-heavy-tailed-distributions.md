@@ -20,9 +20,9 @@ then X is a Student t-distribution with degrees of freedom \(t_n\).
 
 Proposition 5.48 will tell us all the moments, which are not easy to prove.
 
-\(\mathbb{E}[X] = 0\) if n \> 1, and
+\(\mathbb{E}[X] = 0\) if \(n > 1\), and
 
-\(\mathbb{V}[X] = \frac{n}{n-2}\) if n \> 2
+\(\mathbb{V}[X] = \frac{n}{n-2}\) if \(n > 2\)
 
 This distribution has a heavier tail than normal, but not as heavy as the next
 
@@ -46,7 +46,7 @@ There is a link between the Pareto and exponential distribution. This is proposi
 
 If you have a exponential distribution
 
-\(Z \sim Exp(a)\), then for a \(b > 0\), then
+\(Z\sim\operatorname{Exp}(a)\), then for a \(b > 0\), then
 
 \(X = b \cdot e^Z\) is a Pareto distribution \(P(a, b)\).
 
@@ -60,7 +60,7 @@ It’s called log normal because the log of it is normal
 
 \(f(x) = \frac{1}{x\sigma \sqrt{2\pi}} e^{-\frac{(\ln x - \mu)^2}{2\sigma^2}}I_{(0, \infty)} (x)\)
 
-then \(X \sim Log N(\mu, \sigma^2)\)
+then \(X\sim\operatorname{LogNormal}(\mu,\sigma^2)\)
 
 We can also describe the cdf of the distribution:
 
@@ -130,9 +130,9 @@ For expectation, the proof is done by u-substitution for x^2 + 1, and then you c
 
 ##### 5.2
 
-If \(X \sim Uni[0, 1]\), show that \(X^2 \sim Beta(\tfrac{1}{2}, 1)\)
+If \(X \sim \operatorname{Unif}[0,1]\), show that \(X^2 \sim \operatorname{Beta}(\tfrac{1}{2},1)\)
 
-We will use theorem 5.10 for solving for pdf in order to get \(X^2\) from the uniform. We can use x^2 as our function because under the interval \[0, 1\] it’s monotonic increasing.
+We will use theorem 5.10 for solving for pdf in order to get \(X^2\) from the uniform. We can use \(x^2\) as our function because under the interval \([0, 1]\) it’s monotonic increasing.
 
 We need to find the inverse of our function, and the derivative of our function. That’s
 
@@ -239,7 +239,7 @@ Typical example: we are given the density and are asked to solve for the moments
 
 \(f(x) = \frac{27}{490} (ex^2 - 2x), \frac{2}{3} < x < 3\)
 
-\(\mathbb{E}[X] = \int_{-\tfrac{2}{3}}^\3 x \cdot \frac{27}{490} (3x^2 - 2x) dx\)
+\(\mathbb{E}[X] = \int_{-\tfrac{2}{3}}^3 x \cdot \frac{27}{490} (3x^2 - 2x)\,dx\)
 
 We can solve this integral which should give us the answer 283/120. Left as exercise to reader.
 

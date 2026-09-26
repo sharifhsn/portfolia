@@ -22,7 +22,7 @@ The symmetric random walk is given by a fair coin which goes up 1 on heads and d
 
 #### Brownian Motion
 
-A Brownian motion is a continuous function where the increments at time $t$ are independent and each of the increments is normally distributed with expectation 0 (martingale) and variance \(t_{i+1} - t_i\). The difference between this and the scaled walk is that the scaled walk is linear between each time step, but Brownian motion is never linear. You can think of it as an infinitely scaled walk.
+A Brownian motion is a continuous function where the increments at time \(t\) are independent and each of the increments is normally distributed with expectation 0 (martingale) and variance \(t_{i+1} - t_i\). The difference between this and the scaled walk is that the scaled walk is linear between each time step, but Brownian motion is never linear. You can think of it as an infinitely scaled walk.
 
 The \(\omega\) in this case is the path of the Brownian motion.
 
@@ -48,7 +48,7 @@ We are defining the differential of Brownian motion as \(dW(t)\). Let’s point 
 
 \(d[W, W](t) = \lim_{\delta \rightarrow 0^+} ([W, W](t + \delta) - [W, W](t))\)
 
-I’m looking at this second order variation up until time t + delta, then time t, so I just end up with the change between t and t + delta
+I’m looking at this second order variation up until time \(t + \delta\), then time \(t\), so I just end up with the change between \(t\) and \(t + \delta\).
 
 \(= \lim_{\delta \rightarrow 0^+}(t + \delta - t)\)
 
@@ -64,7 +64,7 @@ and if you want to do quadratic variation over this region, it would be
 
 \(\lim_{\|\Pi\| \rightarrow 0} \sum_{j=0}^{n-1} (W(t_{j+1}) - W(t_j))^2\)
 
-(formula for second order variation) but if delta goes to 0, the norm must go to 0, right?
+(formula for second order variation) but if \(\delta\) goes to 0, the norm must go to 0, right?
 
 I could have just said it’s the limit
 
@@ -318,7 +318,7 @@ We could also write this as
 
 All of this was necessary to do the right limit.
 
-There are two cases. If we consider finite \(\tau_m\), then we can disregard (t) and say that it’s equal to (e^{\sigma m}).
+There are two cases. If we consider finite \(\tau_m\), then we can disregard \(t\) and say that it’s equal to \(e^{\sigma m}\).
 
 My process will always be less than \(e^\sigma m\) if \(\tau_m\) is infinite because instead we disregard \(\tau_m\) and look at \(t\), because that means the stopping point is never reached.
 
@@ -340,7 +340,7 @@ An interesting thing is, given this expression, and I took the derivative of bot
 
 \(\mathbb{E}[\tau_m e^{-\alpha \tau_m}] = \frac{|m|\sqrt{2}}{2} \alpha^{-\tfrac{1}{2}} e^{-|m| \sqrt{2\alpha}}\)
 
-If we look at alpha going to 0, we get
+If we look at \(\alpha\) going to 0, we get
 
 \(\lim_{\alpha \rightarrow 0^+} \mathbb{E}[\tau_m e^{-\alpha \tau_m}] = \lim_{\alpha \rightarrow 0^+} \frac{|m|\sqrt{2}}{2} \alpha^{-\tfrac{1}{2}} e^{-|m| \sqrt{2\alpha}}\)
 

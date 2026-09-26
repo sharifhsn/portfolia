@@ -50,7 +50,7 @@ the bond can get more expensive if it has appetizers like this
 
 it also reduces duration risk (look this up)
 
-In futures hedging on equities, you can invest in treasury bonds in order to make your portfolio beta neutral
+In futures hedging on equities, you can invest in treasury bonds in order to make your portfolio \(\beta\)-neutral
 
 And the same idea will lead you to having a bond portfolio duration neutral
 

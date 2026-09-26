@@ -73,7 +73,7 @@ Block ciphers have a 1-to-1 mapping of certain blocks of \\(k\\) bits to other b
 
 The **Data Encryption Standard** is the US encryption standard. It uses a 56-bit symmetric key for 64-bit plaintext input, and it is a block cipher. It is fairly secure for small attacks, but it can be brute force decrypted in less than a day. Its advantage is that there is no analytic exploit in the standard.
 
-In order to make DES more secure, we can increase the number of keys to 3, making **3DES**. The message is encrypted, decrypted, then encrypted again when run through all three keys. Effectively, there are \\(56 × 3 = 168\\) bits to crack, which is much stronger than 56.
+In order to make DES more secure, we can increase the number of keys to 3, making **3DES**. The message is encrypted, decrypted, then encrypted again when run through all three keys. Effectively, there are \\(56 \\times 3 = 168\\) bits to crack, which is much stronger than 56.
 
 ## Replay Attacks
 

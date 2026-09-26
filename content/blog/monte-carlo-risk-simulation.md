@@ -36,7 +36,7 @@ R has apply function for functional programming
 
 
 
-**Open question:** Regress mu\_p on sigma\_p, what’s going to be the alpha, the beta?
+**Open question:** Regress \(\mu_p\) on \(\sigma_p\), what’s going to be the \(\alpha\), the \(\beta\)?
 
 You have this market representative agent who picks the most efficient portfolio with a high Sharpe ratio and says you don’t need to do something else. It’s the same with picking a pensions, dictates how you allocate your money, higher risk equity if you’re younger.
 
@@ -171,11 +171,11 @@ If the current stock price is $100, the stock goes beyond $110 next month, you g
 
 We need the return to be above 9.53% (because of interest rates it’s not 10%), so our option price is
 
-\(\mathbb{P}(R_1 > 9.53%).\)
+\(\mathbb{P}(R_1 > 9.53\%).\)
 
 If we know that returns are normally distributed on \(R_1 ~ N(0.02, 0.04^2)\), then
 
-\(\mathbb{P}(R_1 > 0.0953) = 1 - \phi \left(\frac{0.0953 - 0.02}{0.04}\right) = 1 - 0.9701 \approx 3%\)
+\(\mathbb{P}(R_1 > 0.0953) = 1 - \phi \left(\frac{0.0953 - 0.02}{0.04}\right) = 1 - 0.9701 \approx 3\%\)
 
 based on the formula
 

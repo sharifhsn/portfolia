@@ -75,7 +75,7 @@ For relative risk, the **information ratio** (IR) is the ratio in excess of the 
 
 \(IR = \frac{[\mu(R_P) - \mu(R_B)]}{\sigma(R_P - R_B)}\)
 
-An illustrative example is that you could have a portfolio with \(R_f = 3%\), \(\mu(R_P) = -6%\), and \(\sigma(R_P) = 25%\), which is negative and terrible. But if the benchmark has a return of -10% and TEV of 8%, then the IR is \([(-6%) - (-10%)]/8% = 0.50\) which is positive and therefore good. So even though the absolute performance is bad, the relative performance is good.
+An illustrative example is that you could have a portfolio with \(R_f = 3\%\), \(\mu(R_P) = -6\%\), and \(\sigma(R_P) = 25\%\), which is negative and terrible. But if the benchmark has a return of -10% and TEV of 8%, then the IR is \([(-6\%) - (-10\%)]/8\% = 0.50\) which is positive and therefore good. So even though the absolute performance is bad, the relative performance is good.
 
 You can calculate TEV from \(\sigma_P\) and \(\sigma_B\), in addition to correlation \(\rho\):
 

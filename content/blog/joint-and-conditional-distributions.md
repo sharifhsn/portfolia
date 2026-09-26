@@ -18,9 +18,9 @@ tags = ['Probability Theory', 'Conditional Distributions', 'Covariance']
 
 ##### (a)
 
-Keep in mind that you can’t separate ε out from Y because they are not necessarily independent.
+Keep in mind that you can’t separate \(\epsilon\) out from \(Y\) because they are not necessarily independent.
 
-We can use the fact that ε is complementary to divide up what X means.
+We can use the fact that \(\epsilon\) is complementary to divide up what \(X\) means.
 
 \(\mathbb{P}(X \leq x)\mathbb{P}(\epsilon = 1) + \mathbb{P}(-X \leq x)\mathbb{P}(\epsilon = -1)\)
 

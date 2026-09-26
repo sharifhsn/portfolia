@@ -62,7 +62,7 @@ Every time you use derivatives, you are estimating under Q.
 The reason we are using BS and implied volatility is because there is a formula for this. You should know the formula. C the option price is a function of both S and t, the observed stock price and the time. However each price depends on other stuff, like K the strike price, r the interest rate, and T the time to maturity, and σ the volatility. It looks like there are six things in this equation, but it actually only depends on time to maturity, so there are five things.
 
 $$
-C(S, T - t, K, r, σ) = SN(d_1) - Ke^{-r(T-t)} N(d_2)
+C(S, T - t, K, r, \\sigma) = SN(d_1) - Ke^{-r(T-t)} N(d_2)
 $$
 
 Where
@@ -334,7 +334,7 @@ $$
 
 Now we can integrate to give us the solution.
 
-\[I can’t see the solution from where I’m sitting, check the textbook for this\]
+I can’t see the solution from where I’m sitting, check the textbook for this
 
 The trick is literally useful when you can get some nice mean here in terms of prices. If you can say that, if the stochastic part was deterministic, then it would be easy to solve.
 
@@ -428,7 +428,7 @@ None of this requires the BS formula, you just need a way to get the option valu
 
 A couple of issues with this:
 
-- Interval \[a, b\] needs to contain the root. There cannot be two roots. The option price is increasing in terms of σ, and this is monotonically increasing, so there is only one root. The root is always positive, we know that IV is always positive, so you can always use a \= 0\. Idiots tell you IV is always less than 1 because it’s a percentage. But the IV depends on the actual Call option price. If the price is way weird, then it’s not. The bid might not have been traded in a while, and the ask price moved with the stock price, so the spread is now huge. So now the average is way off. If you consistently get the root to be a or b for certain options, it is usually a problem with your data. IV is usually not huge, although it is possible when stock price moves a lot but option prices don’t. If you use \[0, 1\], you won’t capture that. The fix is simple, to use \[0, 10\], or \[0, 4\]. In two steps, you’re at \[0, 1\].
+- Interval \([a, b]\) needs to contain the root. There cannot be two roots. The option price is increasing in terms of \(\sigma\), and this is monotonically increasing, so there is only one root. The root is always positive, we know that IV is always positive, so you can always use \(a = 0\). Idiots tell you IV is always less than 1 because it’s a percentage. But the IV depends on the actual Call option price. If the price is way weird, then it’s not. The bid might not have been traded in a while, and the ask price moved with the stock price, so the spread is now huge. So now the average is way off. If you consistently get the root to be \(a\) or \(b\) for certain options, it is usually a problem with your data. IV is usually not huge, although it is possible when stock price moves a lot but option prices don’t. If you use \([0, 1]\), you won’t capture that. The fix is simple, to use \([0, 10]\), or \([0, 4]\). In two steps, you’re at \([0, 1]\).
 - This only works for R → R. You need to map into R to do comparisons of greater or less than, like Euclidean distance.
 
 ### Newton Method

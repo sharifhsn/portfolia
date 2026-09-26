@@ -64,15 +64,15 @@ Now, you might be wondering about how the sign of each value affects these equat
 If you put a straw in your water, the straw will strangely seem to bend at the water's edge and go at an angle. The reason for this is **refraction**: light will change direction when it passes through a medium. The change in angle is described by Snell's Law:
 
 $$
-n_1\sin{θ_1} = n_2\sin{θ_2}
+n_1\sin{\\theta_1} = n_2\sin{\\theta_2}
 $$
 
-where \\(θ_1\\) is the *angle of incidence*, \\(θ_2\\) is the *angle of refraction*, and \\(n_1\\) and \\(n_2\\) are the *indices of refraction* for the corresponding media. The index of refraction is expressed as the ratio between \\(c\\) and the speed of light in the material. If light is very fast in the material, \\(n\\) will be close to 1.
+where \\(\\theta_1\\) is the *angle of incidence*, \\(\\theta_2\\) is the *angle of refraction*, and \\(n_1\\) and \\(n_2\\) are the *indices of refraction* for the corresponding media. The index of refraction is expressed as the ratio between \\(c\\) and the speed of light in the material. If light is very fast in the material, \\(n\\) will be close to 1.
 
-When light passes from a medium with a higher index of refraction to a lower one, there's an angle at which the refracted light will be parallel to the media edge, known as the *critical angle* \\(θ_c\\):
+When light passes from a medium with a higher index of refraction to a lower one, there's an angle at which the refracted light will be parallel to the media edge, known as the *critical angle* \\(\\theta_c\\):
 
 $$
-\sin{θ_c} = \frac{n_2}{n_1}
+\sin{\\theta_c} = \frac{n_2}{n_1}
 $$
 
 At any angle greater than the critical angle, all the light will be reflected and none will be refracted.
@@ -82,14 +82,14 @@ At any angle greater than the critical angle, all the light will be reflected an
 > What would happen if we tried to find the angle of refraction based on Snell's Law if the incident angle is 50°, so greater than the critical angle?
 > 
 > $$
-> 1.33 \cdot \sin{50°} = 1.00 \cdot \sin{θ_2}
+> 1.33 \cdot \sin{50^\\circ} = 1.00 \cdot \sin{\\theta_2}
 > $$
 > 
 > $$
-> \sin{θ_2} = 1.33 \cdot \sin{50°} = 1.019
+> \sin{\\theta_2} = 1.33 \cdot \sin{50^\\circ} = 1.019
 > $$
 > 
-> But there's a problem here! The function \\(\sin^{-1}{}\\) is not defined for \\(θ\\) greater than 1, so the angle does not exist. This means that refraction does not occur, the light is only reflected.
+> But there's a problem here! The function \\(\sin^{-1}{}\\) is not defined for \\(\\theta\\) greater than 1, so the angle does not exist. This means that refraction does not occur, the light is only reflected.
 
 ## Lens
 

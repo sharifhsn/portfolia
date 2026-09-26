@@ -383,6 +383,6 @@ Because I have these nice boundary constraints on the strike price, it’s more 
 
 There’s not always a real-world analogue in a mathematical construct, like for quadratic variation.
 
-N\_D+ is the number you would use to create the replicating portfolio, but there’s no intuitive reason why it would do this.
+\(N_{D+}\) is the number you would use to create the replicating portfolio, but there’s no intuitive reason why it would do this.
 
 Midterm will cover everything we’ve discussed in the first four chapters, including multidimensional stochastic differential equations.

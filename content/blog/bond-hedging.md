@@ -24,7 +24,7 @@ The forward contract you sleep for a year, wake up, and they honor an agreement.
 
 #### Hedging Bonds
 
-The beta on bonds is the duration.
+The \(\beta\) on bonds is the duration.
 
 If we zoom in very far, we can see the earth is flat and get the slope (derivative).
 

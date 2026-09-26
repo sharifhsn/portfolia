@@ -36,7 +36,7 @@ There’s **limitations on the one-factor correlation structure**.
 
 
 
-In one-factor, we have a number of correlation parameters N\_c. Recall that the correlation between two credits i and j is beta\_ij. We have the constraint that the absolute value of each correlation parameter is less than or equal to 1\.
+In one-factor, we have a number of correlation parameters \\(N_c\\). Recall that the correlation between two credits \\(i\\) and \\(j\\) is \\(\\beta_{ij}\\). We have the constraint that the absolute value of each correlation parameter is less than or equal to \\(1\\).
 
 
 
@@ -48,7 +48,7 @@ The question we can ask: Does one factor structure prevent the modeling of group
 
 
 
-We can look at some examples. Consider a simple portfolio of 4 credits grouped in two sectors. How can we represent such groups? We could take beta\_1 \= beta\_2 \= beta\_a. These two stocks will have the same exposure to the market variable z, and vice versa for the other sector beta\_3 \= beta\_4 \= beta\_b.
+We can look at some examples. Consider a simple portfolio of \\(4\\) credits grouped in two sectors. How can we represent such groups? We could take \\(\\beta_1=\\beta_2=\\beta_a\\). These two stocks will have the same exposure to the market variable \\(z\\), and vice versa for the other sector \\(\\beta_3=\\beta_4=\\beta_b\\).
 
 
 

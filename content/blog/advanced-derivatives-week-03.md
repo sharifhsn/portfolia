@@ -52,7 +52,7 @@ We will revisit Black’s model.
 
 Consider a European call on an asset with strike K and maturity T. Define P(t, T) as the price at time t of a zero-coupon bond expiring at time T paying $1.
 
-Sidebar: A martingale is a zero-drift stochastic process. In general, we can say that a variable θ follows a martingale if dθ \= σdW where dW is the Wiener process. In this case, σ may be stochastic.
+Sidebar: A martingale is a zero-drift stochastic process. In general, we can say that a variable \(\theta\) follows a martingale if \(d\theta = \sigma\,dW\) where \(dW\) is the Wiener process. In this case, \(\sigma\) may be stochastic.
 
 Then you have the martingale property defined as
 
@@ -60,7 +60,7 @@ $$
 \\mathbb{E}[\\theta_T] = \\theta_0
 $$
 
-We can obtain an equivalent martingale result. Assume that f and g are prices of traded securities. We will assume that these prices are dependent on a single source of uncertainty. Furthermore, let’s define the ratio φ \= f/g. In this case, we’re going to call g the **numeraire**. φ will be the relative price of f with respect to g, the numeraire. We are expressing f in terms of units of g. That’s why the security price of g is the numeraire.
+We can obtain an equivalent martingale result. Assume that \(f\) and \(g\) are prices of traded securities. We will assume that these prices are dependent on a single source of uncertainty. Furthermore, let’s define the ratio \(\phi = f/g\). In this case, we’re going to call \(g\) the **numeraire**. \(\phi\) will be the relative price of \(f\) with respect to \(g\), the numeraire. We are expressing \(f\) in terms of units of \(g\). That’s why the security price of \(g\) is the numeraire.
 
 Let’s assume also that we have volatilities for f and g. Assume the volatilities \\(\\sigma_f\\) and \\(\\sigma_g\\) in a world where the market price of risk is \\(\\sigma_g\\). We can see that the market price of risk is the volatility of g, then the ratio f/g is a martingale for all security prices.
 
@@ -72,9 +72,9 @@ $$
 df = (r + \\sigma_g \\sigma_f) dt + \\sigma_f f dW
 $$
 
-In general, the process followed by the derivative f can be rewritten as df \= μ f dt \+ σ f dW, aka GBM. The value of μ depends on risk preferences. If the market price of risk is 0, then you have df \= r f dt \+ σ f dW.
+In general, the process followed by the derivative \(f\) can be rewritten as \(df = \mu f\,dt + \sigma f\,dW\), aka GBM. The value of \(\mu\) depends on risk preferences. If the market price of risk is 0, then you have \(df = r f\,dt + \sigma f\,dW\).
 
-By taking μ \= r \+ λσ, where λ is the market price of risk, or \\(\\sigma_g\\). Then you will end up with the same relationship as before.
+By taking \(\mu = r + \lambda\sigma\), where \(\lambda\) is the market price of risk, or \(\sigma_g\). Then you will end up with the same relationship as before.
 
 $$
 df = (r + \\sigma_g \\sigma_f) f dt + \\sigma_f f dW
@@ -130,12 +130,12 @@ $$
 
 Now we can go back to the zero coupon bond price.
 
-Let E\_T \= expectation in a world that is forward risk neutral with respect T(t, T)
+Let \(E_T\) = expectation in a world that is forward risk neutral with respect \(T(t, T)\).
 
 What can we say about some of these values?
-g is the numeraire, so g\_T \= p(T, T) \= 1, The price of a ZCB at maturity.
+\(g\) is the numeraire, so \(g_T = p(T, T) = 1\), the price of a ZCB at maturity.
 
-g\_0 \= p(0, T)
+\(g_0 = p(0, T)\)
 
 Then
 
@@ -143,13 +143,13 @@ $$
 f_0 = p(0, T) \\mathbb{E}_T[f_T]
 $$
 
-Furthermore, for a European call option, with strike K maturity T, the price of such option will be given by c.
+Furthermore, for a European call option, with strike \(K\) and maturity \(T\), the price of such option will be given by \(c\).
 
 $$
 c = p(0, T)\\mathbb{E}_T[(S_T - K)_+]
 $$
 
-where S\_T is the asset price at time T.
+where \(S_T\) is the asset price at time \(T\).
 
 Furthermore, let’s define F\_0 and F\_T as the forward price of an asset at times 0 and T.
 
@@ -183,7 +183,7 @@ Let’s consider a 10-month European call option on a 9.75 years bond with a fac
 
 In order to solve this, we can just apply Black’s model.
 
-The value we need to calculate is the forward bond price F\_B, the expected value of the bond at some time in the future.
+The value we need to calculate is the forward bond price \(F_B\), the expected value of the bond at some time in the future.
 
 At some time in the future, you might have some coupons that are no longer considered in the calculations. Therefore the forward bond price is
 
@@ -292,27 +292,27 @@ So what is the value of the cap?
 
 At each reset date that is happening during the life of the cap, the floating rate is observed.
 
-If the floating rate is ≤4%, which is smaller than the cap rate, then there is no payoff from the cap. Furthermore, if it’s \>4%, then the payoff is the excess rate applied to the principal.
+If the floating rate is \(\le 4\%\), which is smaller than the cap rate, then there is no payoff from the cap. Furthermore, if it’s \(>4\%\), then the payoff is the excess rate applied to the principal.
 
-In this case, we have 19 reset dates (5 years \* 4 tenors per year \- 1 initial tenor), at times 0.25, 0.5, …, 4.75 years. There are 19 payoffs, which occur a tenor after, so at times 0.5, 0.75, …, 5 years.
+In this case, we have 19 reset dates (5 years, \(4\) tenors per year \(- 1\) initial tenor), at times 0.25, 0.5, …, 4.75 years. There are 19 payoffs, which occur a tenor after, so at times 0.5, 0.75, …, 5 years.
 
 ## Portfolio of Interest Rate Options
 
 **The cap can be expressed as a portfolio of call options** **on a reference floating rate** (LIBOR maybe?).
 
-Consider a cap with a total life T, principal L, and cap rate R\_K.
+Consider a cap with a total life \(T\), principal \(L\), and cap rate \(R_K\).
 
-The reset dates are t\_1, t\_2, \\ldots t\_n and t\_{n+1} \= T.
+The reset dates are \(t_1, t_2, \ldots, t_n\) and \(t_{n+1} = T\).
 
-We will define R\_k as the floating interest rate for a period between t\_k and t\_{k+1} observed at time t\_k. The small k can take values 1 ≤ k ≤ n.
+We will define \(R_k\) as the floating interest rate for a period between \(t_k\) and \(t_{k+1}\) observed at time \(t_k\). The small \(k\) can take values \(1 \le k \le n\).
 
-The cap leads to a payoff at time t\_{k+1}, based on the tenor. The payoff depends on the realization of the floating interest rate.
+The cap leads to a payoff at time \(t_{k+1}\), based on the tenor. The payoff depends on the realization of the floating interest rate.
 
 $$
 \\delta_k L(R_k - R_K)_+
 $$
 
-This is applied to the principal. It’s annual, quarterly compounding, so this particular payoff will be applied for the period corresponding to the tenor, which we can mark with the delta.
+This is applied to the principal. It’s annual, quarterly compounding, so this particular payoff will be applied for the period corresponding to the tenor, which we can mark with the \(\delta\).
 
 $$
 \\delta_k = t_{k+1} - t_k
@@ -322,9 +322,9 @@ You may assume that tenors are equal, even if that’s not necessarily the case.
 
 
 
-We can also consider it as a portfolio of puttable bond options, where the ZCB has payoff occurring at time t\_k.
+We can also consider it as a portfolio of puttable bond options, where the ZCB has payoff occurring at time \(t_k\).
 
-The previous payoff at time t\_{k+1} is equivalent to
+The previous payoff at time \(t_{k+1}\) is equivalent to
 
 $$
 \\frac{\\delta_k L}{1 + R_k S_k} (R_k - R_K)_+
@@ -336,11 +336,11 @@ $$
 \\left(L - \\frac{L(1 + R_K \\delta_k)}{1+R_k \\delta_k}\\right)_+
 $$
 
-Therefore the denominator is equivalent to the value at time t\_k of a ZCB that pays L(1+R\_k δ\_k) at time t\_{k+1}.
+Therefore the denominator is equivalent to the value at time \(t_k\) of a ZCB that pays \(L(1+R_k\delta_k)\) at time \(t_{k+1}\).
 
 
 
-The floor is just the reverse of this, using put options, and R\_K \- R\_k.
+The floor is just the reverse of this, using put options, and \(R_K - R_k\).
 
 
 
@@ -360,11 +360,11 @@ $$
 
 using the standard d1 and d2 for option valuation.
 
-Where F\_k is the forward interest rate for a period between t\_k and t\_{k+1}
+Where \(F_k\) is the forward interest rate for a period between \(t_k\) and \(t_{k+1}\)
 
 In addition, we have to take some assumptions or make some estimates about the volatility of the forward interest rates
 
-σ\_k \= volatility of the forward interest rate
+\(\sigma_k\) = volatility of the forward interest rate
 
 Here you value all the caplets in order to determine the value of a cap.
 
@@ -416,7 +416,7 @@ or one volatility, where it’s flat and the same for each cap.
 
 The swaption or swap option gives the holder the right to enter into an interest rate swap in the future.
 
-There are two kinds, the **right to pay** a fixed rate and receive LIBOR, or the **right to receive** fixed rate and pay LIBOR. (LIBOR \= floating)
+There are two kinds, the **right to pay** a fixed rate and receive LIBOR, or the **right to receive** fixed rate and pay LIBOR. (LIBOR = floating)
 
 
 
@@ -430,15 +430,15 @@ $$
 
 where
 
-L \= principal
+\(L\) = principal
 
-m \= frequency per year
+\(m\) = frequency per year
 
-S\_K \= swap rate
+\(S_K\) = swap rate
 
-S\_T \= swap rate at time T
+\(S_T\) = swap rate at time \(T\)
 
-The value of the swaption on the swap rate with repeated payoffs where the holder has right to pay S\_k.
+The value of the swaption on the swap rate with repeated payoffs where the holder has right to pay \(S_k\).
 
 Each of these payoffs will be discounted to the present.
 
@@ -446,7 +446,7 @@ $$
 \\sum_{i=1}^{mn} \\frac{L}{m} p(0, T_i) [S_0 N(d_1) - S_K N(d_2)]
 $$
 
-S\_0 is the swap rate at time 0\.
+\(S_0\) is the swap rate at time 0.
 
 This is a natural extension of Black’s model, just with more discount factors.
 
@@ -456,7 +456,7 @@ $$
 \\sum_{i=1}^{mn} p(0, T_i)
 $$
 
-We can define A as the value of a contract that pays 1/m at times T\_i (1 ≤ i ≤ mn)
+We can define \(A\) as the value of a contract that pays \(1/m\) at times \(T_i\) (\(1 \le i \le mn\))
 
 With this notation, the value of the swaption will become
 
@@ -476,7 +476,7 @@ $$
 A = \\frac{1}{2}(e^{-0.06 \\times 5.5} + e^{-0.06 \\times 6} + \\ldots + e^{-0.06 \\times 8} = 8
 $$
 
-We also need S\_0, the forward swap rate.
+We also need \(S_0\), the forward swap rate.
 
 \[...skips some steps, forgot to pay attention)
 
@@ -486,13 +486,13 @@ $$
 
 Therefore
 
-S\_0 \= 0.0609
+\(S_0 = 0.0609\)
 
-S\_K \= 0.062
+\(S_K = 0.062\)
 
-T \= 5
+\(T = 5\)
 
-σ \= 0.2
+\(\sigma = 0.2\)
 
 $$
 100M \\cdot 2.0035[0.0609 N(0.1836) - 0.063 N(-0.2636)] = \\$2.07M

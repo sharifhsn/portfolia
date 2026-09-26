@@ -22,7 +22,7 @@ Risk management starts with asset pricing. Seems to make sense. We can look at t
 
 If you have a friend that wants to give you $100, it’s better to get it now than to get it five years from now.
 
-We think about duration as having the beta when it comes to bonds. We have a linear risk exposure, and it tells us how much risk there is.
+We think about duration as having the \(\beta\) when it comes to bonds. We have a linear risk exposure, and it tells us how much risk there is.
 
 What is a bond? It’s a debt. We have the borrower and the lender. The lender gives the money to the borrower, and the borrower returns the money plus interest. If there is a chance that your money will not come back, you will not lend your money to anybody, so interest rates compensate for that. Let’s assume that there’s no credit risk. I’ll lend money for a year. What if I didn’t lend that money? What else could I do with it? I could invest it in a risk-free investment and would get some interest. So why would I lend that money unless the return was at least that good?
 

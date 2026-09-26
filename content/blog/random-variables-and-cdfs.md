@@ -48,13 +48,13 @@ A **Borel function** is a measurable function that maps from \(\mathbb{R}\) into
 
 #### CDF
 
-\(F:\mathbb{R} \rightarrow [0, 1]\) with \(F(x) := P_X((-∞, x]) = P_X(B)\), where \(B = (-\infty, x]\)
+\(F:\mathbb{R}\to[0,1]\) with \(F(x):=P_X((-\infty,x])=P_X(B)\), where \(B=(-\infty,x]\)
 
 These are equivalent ways of writing a cdf. This counts the accumulated probability less than or equal to x.
 
 More interestingly, the cdf has these properties: increasing
 
-The increasing property is fairly intuitive. Rigorously, you can show that for y \>= x, \((\infty, x] \subset (-\infty, y]\). The interval from x to y must be 0 or greater, so then the cdf to y must be greater than the cdf to x.
+The increasing property is fairly intuitive. Rigorously, you can show that for \(y \geq x\), \((-\infty, x] \subseteq (-\infty, y]\). The interval from x to y must be 0 or greater, so then the cdf to y must be greater than the cdf to x.
 
 You can also show that it’s right continuous, proof is beyond the scope, involves monotone class
 
@@ -66,11 +66,11 @@ Let’s examine the first quadrant of an equation. We have \(x\) . If we imagine
 
 We can prove this by showing that
 
-\(\lim_{x \rightarrow -\infty} F(x) = 0 = \lim_{x \rightarrow -\infty} P_X(-\infty, x] = P_X(\emptyset) = 0\)
+\(\lim_{x\to-\infty}F(x)=0=\lim_{x\to-\infty}P_X((-\infty,x])=P_X(\emptyset)=0\)
 
 Why is this empty set? Because if you have the interval \((-\infty, \infty]\), left open interval says I don’t have it, right says I do, because they conflict then there must be an empty set.
 
-\(\lim_{x \rightarrow -\infty} F(x) = 1 = P_X(-\infty, \infty] = P_X(\mathbb{R}) = 1\)
+\(\lim_{x\to\infty}F(x)=1=P_X((-\infty,\infty])=P_X(\mathbb{R})=1\)
 
 This just becomes the probability measure of the sample space which is definitionally 1.
 

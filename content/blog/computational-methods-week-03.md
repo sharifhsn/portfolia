@@ -28,7 +28,7 @@ This is an exponential of a normal, it’s called **lognormal**. This distributi
 
 The tree approximation says that the idea that this is continuous is bullshit. So let me do something else. Instead of something that goes all over the place, I’ll start at \\(S_0\\) and approximate the path by discrete intervals. At each step, the distribution should approximate the log-normal thing. It’s the same at each slice.
 
-How is this working if the tree is discrete? But as the Δt shrinks, you will have more and more points, you take the interval to be smaller. Each point will have a certain probability, which will reflect the target distribution.
+How is this working if the tree is discrete? But as the \(\Delta t\) shrinks, you will have more and more points, you take the interval to be smaller. Each point will have a certain probability, which will reflect the target distribution.
 
 ### Kolmogorov
 

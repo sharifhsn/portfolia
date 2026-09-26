@@ -23,9 +23,9 @@ Brevity is key. If there are two rules that do the same thing, or one rule that 
 
 ## Abstract Interpreter
 
-**A substitution \\(σ\\) is a finite set of pairs of terms \\(\\{X_1/t_1, ..., X_n/t_n\\}\\) where each \\(t_i\\) is a term and each \\(X_i\\) is a variable such that \\(X_i ≠ t_i\\) and \\(X_i ≠ X_j\\) if \\(i ≠ j\\).**
+**A substitution \\(\\sigma\\) is a finite set of pairs of terms \\(\\{X_1/t_1, ..., X_n/t_n\\}\\) where each \\(t_i\\) is a term and each \\(X_i\\) is a variable such that \\(X_i \\neq t_i\\) and \\(X_i \\neq X_j\\) if \\(i \\neq j\\).**
 
-An empty substitution is denoted by the letter \\(ε\\).
+An empty substitution is denoted by the letter \\(\\epsilon\\).
 
 Some important rules:
 
@@ -33,11 +33,11 @@ Some important rules:
 
 - Only a variable can be substituted e.g. \\(m/n\\) is illegal because \\(m\\) is an atom.
 
-The meaning of applying a term to a substitution is that every occurrence of \\(X_i\\) in the compound term is replaced with the corresponding substituent in \\(σ\\) simultaneously. This application is known as **instantiation**, and that new compound term \\(Eσ\\) is an **instance**.
+The meaning of applying a term to a substitution is that every occurrence of \\(X_i\\) in the compound term is replaced with the corresponding substituent in \\(\\sigma\\) simultaneously. This application is known as **instantiation**, and that new compound term \\(E\\sigma\\) is an **instance**.
 
 Bringing back the earlier rules about unification, you can see how unification is derived from substitution. Variables can unify with anything, so they are the term that is substituted in Prolog. There is an exception to this, which is known as the **occurs check**.
 
-We can use a substitution \\(σ\\) as a **unifier** for two terms if the application of \\(σ\\) to those terms makes them *syntactically equal*. This is distinct from *semantic* equality. When we talk about unifiers, we are only talking about the actual letters, not the meaning of the term. For \\(S = f(X,Y)\\) and \\(T=f(g(Z),Z)\\), if we have a \\(σ = \\{X/g(Z),Y/Z\\}\\) then \\(S\\) and \\(T\\) will be unified. Since the unification only cares about syntax, more than one unifier may exist for two terms. We could have just as well substituted the other way and it would still be a unifier.
+We can use a substitution \\(\\sigma\\) as a **unifier** for two terms if the application of \\(\\sigma\\) to those terms makes them *syntactically equal*. This is distinct from *semantic* equality. When we talk about unifiers, we are only talking about the actual letters, not the meaning of the term. For \\(S = f(X,Y)\\) and \\(T=f(g(Z),Z)\\), if we have a \\(\\sigma = \\{X/g(Z),Y/Z\\}\\) then \\(S\\) and \\(T\\) will be unified. Since the unification only cares about syntax, more than one unifier may exist for two terms. We could have just as well substituted the other way and it would still be a unifier.
 
 ## Unifier Computation
 

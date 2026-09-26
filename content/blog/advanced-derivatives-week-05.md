@@ -36,7 +36,7 @@ Furthermore, if we assume that we have reset dates \\(t_0, t_1, t_2 \\ldots\\)
 
 And payment dates: \\(t_1, t_2, t_3 \\ldots\\)
 
-We will also consider L \= notional principal
+We will also consider \(L\) = notional principal
 
 What is going to be the floating payment? At \\(t_{i+1}\\), this would be the
 

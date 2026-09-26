@@ -39,7 +39,7 @@ To visualize the second rule, imagine the magnetic force like a buffeting wind a
 
 The magnitude \\(B\\) of a magnetic field is defined in teslas \\(T\\) by
 
-$$B = \frac{F}{|q_0|(v \sin{θ})}$$
+$$B = \frac{F}{|q_0|(v \sin{\\theta})}$$
 
 where \\(F\\) is the magnitude of the magnetic force on test charge \\(q_0\\) with velocity \\(v\\\).
 
@@ -57,11 +57,11 @@ $$F_c = \frac{mv^2}{r} or\ r = \frac{mv}{|q|B}$$
 
 We've discussed charges moving through a magnetic field; what about a current? A current is just a collection of moving charges, after all. If we have a wire with a current running through it placed between two magnets, then we can consider the direction of the current as the charge direction in RHR1 to calculate the direction of the magnetic force.
 
-We can use a bit of a trick to get the calculation of magnetic force for a current. We can rearrange the earlier equation for a magnetic field to get the equation for force. Current is the same thing as charge over time, so \\(\frac{Δq}{Δt}\\). Length of the current is the same thing as velocity multiplied by time \\((\frac{m}{s} \cdot s)\\). If we multiply these, the \\(Δt\\) will cancel out and we will be left with the same expression as \\\(|q_0|v\\)! Our new equation for force is:
+We can use a bit of a trick to get the calculation of magnetic force for a current. We can rearrange the earlier equation for a magnetic field to get the equation for force. Current is the same thing as charge over time, so \\(\frac{\\Delta q}{\\Delta t}\\). Length of the current is the same thing as velocity multiplied by time \\((\frac{m}{s} \cdot s)\\). If we multiply these, the \\(\\Delta t\\) will cancel out and we will be left with the same expression as \\\(|q_0|v\\)! Our new equation for force is:
 
-$$F = ILB \sin{θ}$$
+$$F = ILB \sin{\\theta}$$
 
-The angle \\(θ\\) here maximizes current when perpendicular and is zero when parallel, just as with a single charge.
+The angle \\(\\theta\\) here maximizes current when perpendicular and is zero when parallel, just as with a single charge.
 
 ## Torque
 
@@ -69,7 +69,7 @@ As a refresher, **torque** describes the rate of change of the angular momentum 
 
 To calculate the torque, we get the force of each side of the loop turning, which is half the width and so half the force. Summed together we get:
 
-$$τ = NIAB \sin{θ}$$
+$$\\tau = NIAB \sin{\\theta}$$
 
 \\(N\\) here is the number of loops in the wire and \\(A\\) is the area that the loops make. When the loop is parallel with the magnetic field it experiences the greatest torque, and when it is perpendicular it experiences none.
 
@@ -85,15 +85,15 @@ Current-carrying wires create their own kinds of magnetic fields.
 
 The magnetic field magnitude is given by the following equation:
 
-$$B = \frac{μ_0I}{2πr}$$
+$$B = \frac{\\mu_0I}{2\\pi r}$$
 
-with \\(μ_0\\) representing the *permeability of free space* with the value \\(μ_0 = 4π × 10^{-7} T \cdot m/A\\).  This equation is for an infinitely long, straight wire, which is not necessarily the case.
+with \\(\\mu_0\\) representing the *permeability of free space* with the value \\(\\mu_0 = 4\\pi \\times 10^{-7} T \cdot m/A\\).  This equation is for an infinitely long, straight wire, which is not necessarily the case.
 
 Because of this property, currents can affect each other magnetically. Currents in the same direction are attrated to each other.
 
 Currents in a loop have a slightly different magnetic field equation to the straight wire:
 
-$$B = N\frac{μ_0I}{2R}$$
+$$B = N\frac{\\mu_0I}{2R}$$
 
 in the center of the loop, where the field is strongest.
 
@@ -103,6 +103,6 @@ A useful visual for the magnetic field of a current loop is a bar magnet placed 
 
 **For any current geometry that produces a magnetic field that does not change in time,**
 
-$$ΣB_{||}Δl = μ_0I$$
+$$\\Sigma B_{||}\\Delta l = \\mu_0I$$
 
-**where \\(Δl\\) is a small segment of length along a closed path of arbitrary shape around the current, \\(B_{||}\\) is the component of the magnetic field parallel to \\(Δl\\), \\(I\\) is the net current passing through the surface bounded by the path, and the \\(μ_0\\) is the permeability of free space. The symbol \\(Σ\\) indicates the sum of all \\(B_{||}Δl\\) terms must be taken around the closed path.**
+**where \\(\\Delta l\\) is a small segment of length along a closed path of arbitrary shape around the current, \\(B_{||}\\) is the component of the magnetic field parallel to \\(\\Delta l\\), \\(I\\) is the net current passing through the surface bounded by the path, and the \\(\\mu_0\\) is the permeability of free space. The symbol \\(\\Sigma\\) indicates the sum of all \\(B_{||}\\Delta l\\) terms must be taken around the closed path.**
