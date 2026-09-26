@@ -19,16 +19,11 @@ HTTP stands for HyperText Transfer Protocol. It defines the structure of message
 
 - #strong[URL] - address consisting of the following parts:
 
-#figure(
-  align(center)[#table(
-    columns: 3,
-    align: (center,center,center,),
-    table.header([protocol], [hostname], [path name],),
-    table.hline(),
-    [http:/\/], [www.someSchool.edu], [/someDepartment/picture.gif],
-  )]
-  , kind: table
-  )
+An example URL is split into these parts:
+
+- #strong[Protocol]: `http://`
+- #strong[Hostname]: `www.someSchool.edu`
+- #strong[Path name]: `/someDepartment/picture.gif`
 
 - #strong[Web browser] - an application such as Firefox or Chrome that acts as the client in HTTP
 

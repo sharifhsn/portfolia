@@ -34,18 +34,11 @@ Routers must also have input and output buffers. The input buffer is needed beca
 <forwarding-engine>
 Let's examine the forwarding table in a little more detail. The forwarding table is a simple table that looks like this:
 
-#figure(
-  align(center)[#table(
-    columns: 2,
-    align: (auto,auto,),
-    table.header([Dest-network], [Port],),
-    table.hline(),
-    [65.0.0.0/8], [3],
-    [128.9.0.0/16], [1],
-    [149.12.0.0/19], [7],
-  )]
-  , kind: table
-  )
+Forwarding table entries map destination networks to outgoing ports:
+
+- `65.0.0.0/8` → port 3
+- `128.9.0.0/16` → port 1
+- `149.12.0.0/19` → port 7
 
 It is a simple path from networks, remembering which port to send packets.
 

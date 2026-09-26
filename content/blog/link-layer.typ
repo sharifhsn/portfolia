@@ -90,15 +90,7 @@ Ethernet is a wired multiple access protocol defined by IEEE 802.3. As previousl
 
 Ethernet frames have a preamble full of special information, as well as the source/destination MAC addresses already mentioned. The header will also say the type of protocol being used, whether it is IPv4, IPv6, ARP, RARP, etc. Finally, at the end, a checksum will be stored so that we can check if corruption has occurred.
 
-#figure(
-  align(center)[#table(
-    columns: 6,
-    align: (auto,auto,auto,auto,auto,auto,),
-    table.header([Preamble], [Source MAC], [Dest. MAC], [Type], [Data], [Checksum],),
-    table.hline(),
-  )]
-  , kind: table
-  )
+The Ethernet frame fields, in order, are preamble, source MAC address, destination MAC address, type, data, and checksum.
 
 == Multiple Access Channel Partitioning
 <multiple-access-channel-partitioning>

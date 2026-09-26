@@ -216,7 +216,7 @@ Monthly volatility of SPY is 4%. TSLA has a lot of idiosyncratic risk at 20% (re
 
 Portfolio volatility ($sigma_p^2$) is what we are concerned with.
 
-$sigma_p^2 = sigma_m^2 1 / N overline(beta_p) + 1 / N sum_(i = 1)^N sigma_epsilon.alt^2$
+$sigma_p^2 = sigma_m^2 / N times upright("avg")(beta_p) + 1 / N sum_(i = 1)^N sigma_epsilon.alt^2$
 
 If our number of stocks goes to infinity, the $epsilon.alt$ shrinks to 0, and we get rid of idiosyncratic risk, which is part of the wisdom of diversification.
 

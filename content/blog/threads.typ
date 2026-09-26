@@ -133,7 +133,7 @@ However, there is a problem here. The `Cond_signal` function signal is extremely
 
 We need to have #emph[multiple] conditional variables:
 
-```c,hl_lines=5
+```c
 void *producer(void *arg) {
     for (Int i = 0; i < loops; i++) {
         Mutex_lock(&m); // lock the mutex

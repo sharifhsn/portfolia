@@ -42,7 +42,7 @@ where the first part is the significand, the base of the exponent is the base, a
 
 == Imprecision
 <imprecision>
-I mentioned bits of precision, which is finite. Some decimal numbers can't be represented by a finite amount of precision. For example, the number $0.3$ is finitely representable in base 10, but becomes $overline(1.001) times 2^(- 2)$ in binary. This number will #emph[never] be perfectly represented in binary, so we have to have approximations.
+I mentioned bits of precision, which is finite. Some decimal numbers can't be represented by a finite amount of precision. For example, the number $0.3$ is finitely representable in base 10, but becomes $1.001100110011 dots.h times 2^(- 2)$ in binary. This number will #emph[never] be perfectly represented in binary, so we have to have approximations.
 
 In order to understand how much error we encounter, we must be able to measure it. There are two techniques to measure error in floating point: `ulps` or "units in the last place" and #emph[relative error].
 
