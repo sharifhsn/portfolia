@@ -21,14 +21,15 @@ authentication. `/.well-known/agent.json` is the compact discovery manifest;
 6. `GET /api/projects.json` for the structured project summaries.
 7. `GET /api/profile.json` for the public profile, canonical image, source
    repository, social links, resume downloads, and discovery URLs.
-8. `GET /llms-full.txt` when a plain-Markdown corpus is more useful than JSON.
+8. `GET /llms-full.txt` when an exported text corpus is more useful than JSON.
 9. `GET /sitemap.xml`, `/feed.xml`, or `/feed.json` when a crawler/feed
    consumer needs the canonical URL inventory.
 10. `GET /manifest.webmanifest` for browser-facing application metadata, or
     `GET /.well-known/security.txt` for the vulnerability reporting policy.
 
-All of these endpoints are generated from the same `content/blog/*.md` source
-files, so their article counts and canonical URLs should agree.
+All of these endpoints are generated from the same `content/blog/*.md` and
+`content/blog/*.typ` sources, so their article counts and canonical URLs should
+agree.
 
 ## JSON contract
 
@@ -57,10 +58,12 @@ files, so their article counts and canonical URLs should agree.
 }
 ```
 
-The per-article URL returns the same item fields plus `contentMarkdown` and
-`contentHtml`, with `version` and `site` at the top level. `url` is the human
-canonical page; `dataUrl` is its machine-readable companion. Consumers should
-not infer a different page URL from the data endpoint.
+The per-article URL returns the same item fields plus `contentHtml` and the
+source field named by `contentSourceFormat`: `contentMarkdown` for Markdown or
+`contentTypst` for Typst. It also includes `version` and `site` at the top
+level. `url` is the human canonical page; `dataUrl` is its machine-readable
+companion. Consumers should not infer a different page URL from the data
+endpoint.
 
 `date` is the public calendar date used for display and ordering. `datePublished`
 uses an exact public publication timestamp when the source provides one and
@@ -79,8 +82,9 @@ article link and summary is present in the initial HTML.
 
 The Atom and JSON feeds include the same canonical article URLs, dates, authors,
 topics, summaries, and public source links. `llms-full.txt` contains the same
-articles as Markdown with title, URL, date, topics, source, and source-link
-metadata. `/projects/` is populated from `content/projects.toml`, and its JSON
+articles with title, URL, date, topics, source, and source-link metadata. It
+uses Markdown source for Markdown posts and rendered HTML/MathML for Typst
+posts. `/projects/` is populated from `content/projects.toml`, and its JSON
 endpoint and `CreativeWork`/`ItemList` JSON-LD use the same source. Machine
 endpoints and feeds advertise `Access-Control-Allow-Origin: *` in the static
 Cloudflare export for cross-origin read access. The export also sends a strict
@@ -93,7 +97,7 @@ does not require an inline-script exception.
 - Runtime and export: `src/main.rs`, `src/static_export.rs`
 - Active templates: `templates/site.html`, `templates/blog.html`,
   `templates/article.html`
-- Article source: `content/blog/*.md`
+- Article sources: `content/blog/*.md`, `content/blog/*.typ`
 - Current resume: `content/resume-current.md`
 - Public styling and progressive enhancement: `static/css/site.css`,
   `static/js/blog-filter.js`, `static/js/math-render.js`

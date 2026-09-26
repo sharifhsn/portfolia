@@ -10,7 +10,7 @@ reading-first Rust/Axum/Askama portfolio with a static Cloudflare Pages export.
 - [`llms.txt`](https://sharifhsn.dev/llms.txt) — concise site map and article
   descriptions.
 - [`llms-full.txt`](https://sharifhsn.dev/llms-full.txt) — the public writing
-  corpus in Markdown.
+  corpus with Markdown sources and rendered Typst articles.
 - [`feed.json`](https://sharifhsn.dev/feed.json) and
   [`feed.xml`](https://sharifhsn.dev/feed.xml) — machine-readable feeds.
 - [`api/posts.json`](https://sharifhsn.dev/api/posts.json) — stable article
@@ -30,6 +30,9 @@ reading-first Rust/Axum/Askama portfolio with a static Cloudflare Pages export.
   [`SECURITY.md`](SECURITY.md).
 - [`sitemap.xml`](https://sharifhsn.dev/sitemap.xml) — canonical URL inventory.
 
+Typst HTML export is experimental upstream. The site includes one Typst article
+as a pilot and renders its equations as MathML.
+
 The machine-readable contract and source-of-truth rules are in
 [`context/AI_AGENTS.md`](context/AI_AGENTS.md). The active architecture is in
 [`context/APPLICATION.md`](context/APPLICATION.md), and the deployment record is
@@ -48,6 +51,8 @@ just pages-preview
 ```
 
 The active page templates are `templates/site.html`, `templates/blog.html`,
-and `templates/article.html`. Blog source is `content/blog/*.md`; the current
-resume source is `content/resume-current.md`. Do not use the retired templates
-or historical context files as runtime sources.
+and `templates/article.html`. Blog sources are `content/blog/*.md` and
+`content/blog/*.typ`; Typst CLI 0.15.1 is required for preview and static export
+when Typst posts are present. GitHub Actions installs the pinned CLI for
+deployment. The current resume source is `content/resume-current.md`. Do not
+use the retired templates or historical context files as runtime sources.

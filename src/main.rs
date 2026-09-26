@@ -13,6 +13,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
     path::Path as FilePath,
+    process::Command,
     sync::Arc,
 };
 use toml::Value as TomlValue;
@@ -48,6 +49,21 @@ struct Site<'a> {
     photo_available: bool,
 }
 
+#[derive(Clone, Copy)]
+enum ArticleSourceFormat {
+    Markdown,
+    Typst,
+}
+
+impl ArticleSourceFormat {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Markdown => "markdown",
+            Self::Typst => "typst",
+        }
+    }
+}
+
 #[derive(Clone)]
 struct BlogPost {
     slug: String,
@@ -64,10 +80,12 @@ struct BlogPost {
     search_text: String,
     source: String,
     source_url: String,
-    body_markdown: String,
+    body_source: String,
     body_html: String,
+    source_format: ArticleSourceFormat,
     word_count: usize,
     has_math: bool,
+    has_typst: bool,
     sort_key: String,
 }
 
@@ -552,7 +570,7 @@ fn llms_txt(posts: &[BlogPost]) -> String {
 
 fn llms_full_txt(posts: &[BlogPost]) -> String {
     let mut text = String::from(
-        "# Sharif Haason — full writing corpus\n\nThis is the complete public writing archive in Markdown. The canonical page for each article and its structured JSON representation are included in the metadata block.\n\n",
+        "# Sharif Haason — full writing corpus\n\nThis is the complete public writing archive. Markdown articles are included in Markdown, while Typst-authored articles are included as rendered HTML fragments so their MathML remains intact. The canonical page for each article and its structured JSON representation are included in the metadata block.\n\n",
     );
     for post in posts {
         let published = post.published_at.as_deref().unwrap_or(&post.date);
@@ -566,8 +584,12 @@ fn llms_full_txt(posts: &[BlogPost]) -> String {
         } else {
             post.source_url.clone()
         };
+        let content = match post.source_format {
+            ArticleSourceFormat::Markdown => post.body_source.trim().to_owned(),
+            ArticleSourceFormat::Typst => post.body_html.clone(),
+        };
         text.push_str(&format!(
-            "## {}\n\n- URL: {}\n- Structured data: {}\n- Description: {}\n- Date: {}\n- Exact published timestamp: {}\n- Topics: {}\n- Categories: {}\n- Source: {}\n- Source URL: {}\n\n{}\n\n",
+            "## {}\n\n- URL: {}\n- Structured data: {}\n- Description: {}\n- Date: {}\n- Exact published timestamp: {}\n- Topics: {}\n- Categories: {}\n- Source: {}\n- Source URL: {}\n- Content source format: {}\n\n{}\n\n",
             clean_inline_text(&post.title),
             site_url(&format!("/blog/{}", post.slug)),
             site_url(&format!("/api/posts/{}.json", post.slug)),
@@ -582,7 +604,8 @@ fn llms_full_txt(posts: &[BlogPost]) -> String {
             categories,
             clean_inline_text(&post.source),
             source_url,
-            post.body_markdown.trim()
+            post.source_format.as_str(),
+            content
         ));
     }
     text
@@ -600,6 +623,7 @@ fn post_summary_json(post: &BlogPost) -> serde_json::Value {
         "tags": post.tags,
         "categories": post.categories,
         "source": post.source,
+        "contentSourceFormat": post.source_format.as_str(),
         "sourceUrl": if post.source_url.is_empty() { serde_json::Value::Null } else { serde_json::Value::String(post.source_url.clone()) },
         "wordCount": post.word_count,
     });
@@ -615,8 +639,15 @@ fn post_summary_json(post: &BlogPost) -> serde_json::Value {
 
 fn post_json(post: &BlogPost) -> serde_json::Value {
     let mut value = post_summary_json(post);
-    value["contentMarkdown"] = serde_json::Value::String(post.body_markdown.clone());
     value["contentHtml"] = serde_json::Value::String(post.body_html.clone());
+    match post.source_format {
+        ArticleSourceFormat::Markdown => {
+            value["contentMarkdown"] = serde_json::Value::String(post.body_source.clone());
+        }
+        ArticleSourceFormat::Typst => {
+            value["contentTypst"] = serde_json::Value::String(post.body_source.clone());
+        }
+    }
     value
 }
 
@@ -821,7 +852,7 @@ fn openapi_json() -> serde_json::Value {
             "schemas": {
                 "PostSummary": {
                     "type": "object",
-                    "required": ["slug", "url", "dataUrl", "title", "description", "date", "datePublished", "tags", "categories", "source", "wordCount"],
+                    "required": ["slug", "url", "dataUrl", "title", "description", "date", "datePublished", "tags", "categories", "source", "contentSourceFormat", "wordCount"],
                     "properties": {
                         "slug": {"type": "string"},
                         "url": {"type": "string", "format": "uri"},
@@ -834,6 +865,7 @@ fn openapi_json() -> serde_json::Value {
                         "tags": {"type": "array", "items": {"type": "string"}},
                         "categories": {"type": "array", "items": {"type": "string"}},
                         "source": {"type": "string"},
+                        "contentSourceFormat": {"type": "string", "enum": ["markdown", "typst"]},
                         "sourceUrl": {"type": ["string", "null"], "format": "uri"},
                         "wordCount": {"type": "integer", "minimum": 0}
                     }
@@ -841,7 +873,19 @@ fn openapi_json() -> serde_json::Value {
                 "Post": {
                     "allOf": [
                         {"$ref": "#/components/schemas/PostSummary"},
-                        {"type": "object", "required": ["contentMarkdown", "contentHtml"], "properties": {"contentMarkdown": {"type": "string"}, "contentHtml": {"type": "string"}}}
+                        {
+                            "type": "object",
+                            "required": ["contentHtml"],
+                            "properties": {
+                                "contentMarkdown": {"type": "string", "description": "Authored Markdown source when contentSourceFormat is markdown."},
+                                "contentTypst": {"type": "string", "description": "Authored Typst body when contentSourceFormat is typst."},
+                                "contentHtml": {"type": "string", "description": "Sanitized rendered article-body HTML fragment."}
+                            },
+                            "oneOf": [
+                                {"required": ["contentMarkdown"], "properties": {"contentSourceFormat": {"const": "markdown"}}},
+                                {"required": ["contentTypst"], "properties": {"contentSourceFormat": {"const": "typst"}}}
+                            ]
+                        }
                     ]
                 },
                 "PostIndex": {
@@ -1027,6 +1071,147 @@ fn render_markdown(source: &str) -> String {
     html
 }
 
+fn render_typst(path: &FilePath) -> Result<String, StatusCode> {
+    let output = Command::new("typst")
+        .args(["compile", "--format", "html", "--features", "html"])
+        .arg(path)
+        .arg("-")
+        .output()
+        .map_err(|error| {
+            eprintln!("Could not run Typst for {}: {error}", path.display());
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
+    let diagnostics = String::from_utf8_lossy(&output.stderr);
+    if !output.status.success() {
+        eprintln!("Typst failed for {}:\n{diagnostics}", path.display());
+        return Err(StatusCode::INTERNAL_SERVER_ERROR);
+    }
+    if !diagnostics.trim().is_empty() {
+        eprintln!("Typst diagnostics for {}:\n{diagnostics}", path.display());
+    }
+
+    let document = String::from_utf8(output.stdout).map_err(|error| {
+        eprintln!(
+            "Typst emitted invalid UTF-8 for {}: {error}",
+            path.display()
+        );
+        StatusCode::INTERNAL_SERVER_ERROR
+    })?;
+    let body = html_body_fragment(&document).ok_or_else(|| {
+        eprintln!("Typst output for {} did not contain a body", path.display());
+        StatusCode::INTERNAL_SERVER_ERROR
+    })?;
+    Ok(sanitize_typst_html(body))
+}
+
+fn html_body_fragment(document: &str) -> Option<&str> {
+    let body_tag = document.find("<body")?;
+    let body_start = body_tag + document[body_tag..].find('>')? + 1;
+    let body_end = body_start + document[body_start..].find("</body>")?;
+    (body_start <= body_end).then_some(&document[body_start..body_end])
+}
+
+fn sanitize_typst_html(source: &str) -> String {
+    const MATHML_TAGS: &[&str] = &[
+        "math",
+        "mi",
+        "mn",
+        "mo",
+        "mrow",
+        "ms",
+        "mtext",
+        "mspace",
+        "msup",
+        "msub",
+        "msubsup",
+        "msqrt",
+        "mroot",
+        "mfrac",
+        "mstyle",
+        "merror",
+        "mpadded",
+        "mphantom",
+        "mfenced",
+        "menclose",
+        "mover",
+        "munder",
+        "munderover",
+        "mmultiscripts",
+        "mprescripts",
+        "mtable",
+        "mtr",
+        "mtd",
+        "maligngroup",
+        "malignmark",
+        "none",
+    ];
+    let mut sanitizer = ammonia::Builder::default();
+    sanitizer.add_tags(MATHML_TAGS);
+    sanitizer.add_tag_attributes("math", &["display"]);
+    sanitizer.add_tag_attributes(
+        "mo",
+        &[
+            "accent",
+            "fence",
+            "form",
+            "largeop",
+            "lspace",
+            "movablelimits",
+            "rspace",
+            "separator",
+            "stretchy",
+            "symmetric",
+        ],
+    );
+    sanitizer.add_tag_attributes("mspace", &["depth", "height", "width"]);
+    sanitizer.add_tag_attributes(
+        "mfrac",
+        &["bevelled", "denomalign", "linethickness", "numalign"],
+    );
+    sanitizer.add_tag_attributes(
+        "mstyle",
+        &[
+            "displaystyle",
+            "mathbackground",
+            "mathcolor",
+            "mathsize",
+            "mathvariant",
+            "scriptlevel",
+        ],
+    );
+    sanitizer.add_tag_attributes("mi", &["mathvariant"]);
+    sanitizer.add_tag_attributes("mn", &["mathvariant"]);
+    sanitizer.add_tag_attributes("mtext", &["mathvariant"]);
+    sanitizer.add_tag_attributes("ms", &["mathvariant"]);
+    sanitizer.add_tag_attributes("mtable", &["columnalign", "rowalign"]);
+    sanitizer.add_tag_attributes("mtd", &["columnalign", "rowalign"]);
+    sanitizer.add_tag_attributes("mover", &["accent"]);
+    sanitizer.add_tag_attributes("munder", &["accentunder"]);
+    sanitizer.add_tag_attributes("munderover", &["accent", "accentunder"]);
+    sanitizer.add_allowed_classes(
+        "mtable",
+        &[
+            "right-align",
+            "left-align",
+            "aligned",
+            "cases",
+            "multiline-equation",
+        ],
+    );
+    sanitizer.add_allowed_classes(
+        "mtd",
+        &[
+            "right-align",
+            "left-align",
+            "flushed",
+            "left-flush",
+            "right-flush",
+        ],
+    );
+    sanitizer.add_allowed_classes("mover", &["dotted"]);
+    sanitizer.clean(source).to_string()
+}
+
 fn protect_math(source: &str) -> (String, Vec<(String, String)>) {
     let bytes = source.as_bytes();
     let mut cursor = 0;
@@ -1201,19 +1386,44 @@ fn escape_html_text(source: &str) -> String {
 
 fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
     let blog_dir = FilePath::new(env!("CARGO_MANIFEST_DIR")).join("content/blog");
-    let pattern = format!("{}/*.md", blog_dir.display());
-    let entries = glob::glob(&pattern).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    let mut entries = Vec::new();
+    for extension in ["md", "typ"] {
+        let pattern = format!("{}/*.{}", blog_dir.display(), extension);
+        for entry in glob::glob(&pattern).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)? {
+            entries.push(entry.map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?);
+        }
+    }
+    entries.sort();
     let mut posts = Vec::new();
 
-    for entry in entries {
-        let path = entry.map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    for path in entries {
         let source = fs::read_to_string(&path).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-        let mut sections = source.splitn(3, "+++");
-        if !sections.next().unwrap_or_default().trim().is_empty() {
-            return Err(StatusCode::INTERNAL_SERVER_ERROR);
-        }
-        let front_matter = sections.next().ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
-        let markdown_body = sections.next().ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
+        let source_format = match path.extension().and_then(|extension| extension.to_str()) {
+            Some("md") => ArticleSourceFormat::Markdown,
+            Some("typ") => ArticleSourceFormat::Typst,
+            _ => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        };
+        let (front_matter, source_body) = match source_format {
+            ArticleSourceFormat::Markdown => {
+                let mut sections = source.splitn(3, "+++");
+                if !sections.next().unwrap_or_default().trim().is_empty() {
+                    return Err(StatusCode::INTERNAL_SERVER_ERROR);
+                }
+                (
+                    sections.next().ok_or(StatusCode::INTERNAL_SERVER_ERROR)?,
+                    sections.next().ok_or(StatusCode::INTERNAL_SERVER_ERROR)?,
+                )
+            }
+            ArticleSourceFormat::Typst => {
+                let comment = source
+                    .strip_prefix("/*")
+                    .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
+                let (front_matter, source_body) = comment
+                    .split_once("*/")
+                    .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
+                (front_matter.trim(), source_body)
+            }
+        };
         let metadata: TomlValue =
             toml::from_str(front_matter).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
         let title = metadata
@@ -1262,15 +1472,20 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             .and_then(|name| name.to_str())
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?
             .to_owned();
-        let body = markdown_body.replace("<!-- more -->", "").trim().to_owned();
+        let body = source_body.replace("<!-- more -->", "").trim().to_owned();
         let description = if metadata_description.trim().is_empty() {
             summarize_markdown(&body, &title)
         } else {
             metadata_description
         };
-        let body_html = render_markdown(&body);
+        let body_html = match source_format {
+            ArticleSourceFormat::Markdown => render_markdown(&body),
+            ArticleSourceFormat::Typst => render_typst(&path)?,
+        };
         let word_count = body.split_whitespace().count();
-        let has_math = body.contains("$$") || body.contains("\\(") || body.contains("\\[");
+        let has_math = matches!(source_format, ArticleSourceFormat::Markdown)
+            && (body.contains("$$") || body.contains("\\(") || body.contains("\\["));
+        let has_typst = matches!(source_format, ArticleSourceFormat::Typst);
         let sort_key = published_at.clone().unwrap_or_else(|| date.clone());
         let date_display = date.chars().take(10).collect();
         let tag_keys = tags.join("|");
@@ -1290,10 +1505,12 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             search_text,
             source: source_name,
             source_url,
-            body_markdown: body,
+            body_source: body,
             body_html,
+            source_format,
             word_count,
             has_math,
+            has_typst,
             sort_key,
         });
     }

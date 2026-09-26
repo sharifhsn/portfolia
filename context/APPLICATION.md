@@ -6,14 +6,18 @@ only active implementation.
 
 ## Runtime and static export
 
-- \`src/main.rs\` defines the Axum routes, blog metadata loading, Markdown
-  rendering, structured data, and machine-readable discovery endpoints.
+- \`src/main.rs\` defines the Axum routes, blog metadata loading, Markdown and
+  Typst rendering, structured data, and machine-readable discovery endpoints.
 - Askama compiles the active templates in \`templates/site.html\`,
   \`templates/blog.html\`, and \`templates/article.html\`.
 - \`src/static_export.rs\` renders the same pages into \`dist/\` for Pages.
-- \`content/blog/*.md\` is the source of the writing archive; each post carries
-  title/date/source/tags metadata and receives a fallback description when its
-  front matter does not provide one.
+- \`content/blog/*.md\` and \`content/blog/*.typ\` are the sources of the writing
+  archive; each post carries title/date/source/tags metadata and receives a
+  fallback description when its front matter does not provide one. Typst posts
+  use Typst 0.15.1 HTML export and sanitized MathML. HTML export is experimental
+  upstream; the site currently uses it for one pilot article.
+- Typst CLI 0.15.1 must be on \`PATH\` for local preview and static export when
+  Typst posts are present. The deployment workflow installs the pinned version.
 - \`content/projects.toml\` is the structured source for the projects page and
   \`/api/projects.json\`.
 - \`content/resume-current.md\` supplies the resume page. The PDF and DOCX
@@ -34,13 +38,14 @@ machine endpoints retain their extensions without a trailing slash.
 - \`GET /sitemap.xml\` — canonical page and article URLs.
 - \`GET /llms.txt\` — concise, linked site map for AI agents and other text
   clients.
-- \`GET /llms-full.txt\` — the complete public writing corpus as Markdown with
-  canonical and structured-data links for every article.
+- \`GET /llms-full.txt\` — the complete public writing corpus, with Markdown
+  source for Markdown posts and rendered HTML/MathML for Typst posts.
 - \`GET /feed.xml\` — Atom feed for the writing archive.
 - \`GET /feed.json\` — JSON Feed 1.1 representation of the writing archive.
 - \`GET /api/posts.json\` — stable JSON index of article metadata.
 - \`GET /api/posts/{slug}.json\` — stable JSON document containing one article's
-  metadata, Markdown source, and rendered HTML.
+  metadata, its source as \`contentMarkdown\` or \`contentTypst\` according to
+  \`contentSourceFormat\`, and sanitized rendered HTML.
 - \`GET /api/projects.json\` — structured project summaries and technologies.
 - \`GET /api/profile.json\` — public profile and resume discovery metadata.
 - \`GET /api/openapi.json\` — OpenAPI 3.1 description of the structured read
