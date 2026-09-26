@@ -522,7 +522,7 @@ fn llms_txt(posts: &[BlogPost]) -> String {
         (
             "Full writing corpus",
             "/llms-full.txt",
-            "The complete public writing corpus as Markdown with article metadata.",
+            "The complete public writing corpus with rendered article content and metadata.",
         ),
         (
             "Sitemap",
@@ -570,7 +570,7 @@ fn llms_txt(posts: &[BlogPost]) -> String {
 
 fn llms_full_txt(posts: &[BlogPost]) -> String {
     let mut text = String::from(
-        "# Sharif Haason — full writing corpus\n\nThis is the complete public writing archive. Markdown articles are included in Markdown, while Typst-authored articles are included as rendered HTML fragments so their MathML remains intact. The canonical page for each article and its structured JSON representation are included in the metadata block.\n\n",
+        "# Sharif Haason — full writing corpus\n\nThis is the complete public writing archive. Articles are included as rendered HTML fragments so their MathML remains intact. The canonical page for each article and its structured JSON representation are included in the metadata block.\n\n",
     );
     for post in posts {
         let published = post.published_at.as_deref().unwrap_or(&post.date);
@@ -1073,7 +1073,15 @@ fn render_markdown(source: &str) -> String {
 
 fn render_typst(path: &FilePath) -> Result<String, StatusCode> {
     let output = Command::new("typst")
-        .args(["compile", "--format", "html", "--features", "html"])
+        .args([
+            "compile",
+            "--format",
+            "html",
+            "--features",
+            "html",
+            "--root",
+            env!("CARGO_MANIFEST_DIR"),
+        ])
         .arg(path)
         .arg("-")
         .output()
@@ -1109,6 +1117,22 @@ fn html_body_fragment(document: &str) -> Option<&str> {
     let body_start = body_tag + document[body_tag..].find('>')? + 1;
     let body_end = body_start + document[body_start..].find("</body>")?;
     (body_start <= body_end).then_some(&document[body_start..body_end])
+}
+
+fn is_safe_typst_image_data_url(value: &str) -> bool {
+    let Some((media_type, payload)) = value.split_once(',') else {
+        return false;
+    };
+    matches!(
+        media_type,
+        "data:image/png;base64"
+            | "data:image/jpeg;base64"
+            | "data:image/gif;base64"
+            | "data:image/webp;base64"
+    ) && !payload.is_empty()
+        && payload
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'+' | b'/' | b'='))
 }
 
 fn sanitize_typst_html(source: &str) -> String {
@@ -1147,6 +1171,19 @@ fn sanitize_typst_html(source: &str) -> String {
     ];
     let mut sanitizer = ammonia::Builder::default();
     sanitizer.add_tags(MATHML_TAGS);
+    sanitizer.add_tag_attributes("img", &["alt", "height", "src", "width"]);
+    sanitizer.add_url_schemes(&["data"]);
+    sanitizer.attribute_filter(|element, attribute, value| {
+        if value.trim_start().to_ascii_lowercase().starts_with("data:")
+            && !(element == "img"
+                && attribute == "src"
+                && is_safe_typst_image_data_url(value))
+        {
+            None
+        } else {
+            Some(value.into())
+        }
+    });
     sanitizer.add_tag_attributes("math", &["display"]);
     sanitizer.add_tag_attributes(
         "mo",
@@ -2053,7 +2090,7 @@ mod tests {
         let article_json = api_post_json(circuits);
         assert_eq!(article_json["slug"], "circuits");
         assert!(
-            article_json["contentMarkdown"]
+            article_json["contentTypst"]
                 .as_str()
                 .unwrap()
                 .contains("Ohm's Law")
@@ -2278,7 +2315,7 @@ mod tests {
         let circuits = posts.iter().find(|post| post.slug == "circuits").unwrap();
         assert_eq!(circuits.title, "Circuits");
         assert_eq!(circuits.tags, ["Physics"]);
-        assert!(circuits.has_math);
+        assert!(circuits.has_typst);
         assert!(circuits.body_html.contains("Ohm's Law"));
         assert!(!circuits.body_html.contains("<!-- more -->"));
 
@@ -2325,7 +2362,7 @@ mod tests {
             .find(|post| post.slug == "computational-methods-week-02")
             .unwrap();
         assert!(fe621.tags.contains(&"Computational Methods".to_owned()));
-        assert!(fe621.has_math);
+        assert!(fe621.has_typst);
 
         let fe680 = posts
             .iter()
@@ -2333,7 +2370,7 @@ mod tests {
             .unwrap();
         assert!(fe680.tags.contains(&"Fixed Income".to_owned()));
         assert!(!fe680.tags.contains(&"Advanced Derivatives".to_owned()));
-        assert!(fe680.has_math);
+        assert!(fe680.has_typst);
         assert!(fe680.body_html.contains("DV01"));
         assert!(!posts.iter().any(|post| {
             post.slug == "ytm-and-the-yield-curve" || post.slug == "duration-and-dv01"

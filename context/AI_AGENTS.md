@@ -27,9 +27,9 @@ authentication. `/.well-known/agent.json` is the compact discovery manifest;
 10. `GET /manifest.webmanifest` for browser-facing application metadata, or
     `GET /.well-known/security.txt` for the vulnerability reporting policy.
 
-All of these endpoints are generated from the same `content/blog/*.md` and
-`content/blog/*.typ` sources, so their article counts and canonical URLs should
-agree.
+All of these endpoints are generated from the same `content/blog/*.typ`
+archive, so their article counts and canonical URLs should agree. The loader
+also retains compatibility with Markdown sources.
 
 ## JSON contract
 
@@ -83,8 +83,8 @@ article link and summary is present in the initial HTML.
 The Atom and JSON feeds include the same canonical article URLs, dates, authors,
 topics, summaries, and public source links. `llms-full.txt` contains the same
 articles with title, URL, date, topics, source, and source-link metadata. It
-uses Markdown source for Markdown posts and rendered HTML/MathML for Typst
-posts. `/projects/` is populated from `content/projects.toml`, and its JSON
+uses rendered HTML/MathML for the Typst archive. `/projects/` is populated from
+`content/projects.toml`, and its JSON
 endpoint and `CreativeWork`/`ItemList` JSON-LD use the same source. Machine
 endpoints and feeds advertise `Access-Control-Allow-Origin: *` in the static
 Cloudflare export for cross-origin read access. The export also sends a strict
@@ -97,7 +97,7 @@ does not require an inline-script exception.
 - Runtime and export: `src/main.rs`, `src/static_export.rs`
 - Active templates: `templates/site.html`, `templates/blog.html`,
   `templates/article.html`
-- Article sources: `content/blog/*.md`, `content/blog/*.typ`
+- Article sources: `content/blog/*.typ`
 - Current resume: `content/resume-current.md`
 - Public styling and progressive enhancement: `static/css/site.css`,
   `static/js/blog-filter.js`, `static/js/math-render.js`

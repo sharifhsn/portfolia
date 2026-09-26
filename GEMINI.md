@@ -12,7 +12,7 @@ The active source of truth is:
 - `src/main.rs` and `src/static_export.rs` for runtime/export behavior.
 - `templates/site.html`, `templates/blog.html`, and `templates/article.html`
   for the public HTML.
-- `content/blog/*.md` for article content and `content/resume-current.md` for
+- `content/blog/*.typ` for article content and `content/resume-current.md` for
   the current resume.
 
 Use the repository's `Justfile` for common commands. Do not treat the retired

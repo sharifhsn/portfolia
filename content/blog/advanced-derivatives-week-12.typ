@@ -47,6 +47,4 @@ $ beta_i = beta_j = 0 $, which means the correlation is zero, it’s entirely id
 
 Maximum Dependence is when $beta_i = beta_j = 1$, maximum market exposure. It’s the minimum of either $1 - Q_i(T)$, $1 - Q_j(T)$.
 
-If you want to illustrate this,
-
-*Slide 5*
+Lecture 9 slide 5 plots the conditional hazard-rate distribution for an unconditional hazard rate of 2% over a one-year horizon.

@@ -11,11 +11,11 @@ only active implementation.
 - Askama compiles the active templates in \`templates/site.html\`,
   \`templates/blog.html\`, and \`templates/article.html\`.
 - \`src/static_export.rs\` renders the same pages into \`dist/\` for Pages.
-- \`content/blog/*.md\` and \`content/blog/*.typ\` are the sources of the writing
-  archive; each post carries title/date/source/tags metadata and receives a
-  fallback description when its front matter does not provide one. Typst posts
-  use Typst 0.15.1 HTML export and sanitized MathML. HTML export is experimental
-  upstream; the site currently uses it for one pilot article.
+- \`content/blog/*.typ\` contains the current article archive; each post carries
+  title/date/source/tags metadata and receives a fallback description when its
+  front matter does not provide one. The loader retains Markdown compatibility,
+  and the resume still uses Markdown. Articles use Typst 0.15.1 HTML export and
+  sanitized MathML. HTML export is experimental upstream.
 - Typst CLI 0.15.1 must be on \`PATH\` for local preview and static export when
   Typst posts are present. The deployment workflow installs the pinned version.
 - \`content/projects.toml\` is the structured source for the projects page and
@@ -38,8 +38,8 @@ machine endpoints retain their extensions without a trailing slash.
 - \`GET /sitemap.xml\` — canonical page and article URLs.
 - \`GET /llms.txt\` — concise, linked site map for AI agents and other text
   clients.
-- \`GET /llms-full.txt\` — the complete public writing corpus, with Markdown
-  source for Markdown posts and rendered HTML/MathML for Typst posts.
+- \`GET /llms-full.txt\` — the complete public writing corpus as rendered
+  HTML/MathML with article metadata.
 - \`GET /feed.xml\` — Atom feed for the writing archive.
 - \`GET /feed.json\` — JSON Feed 1.1 representation of the writing archive.
 - \`GET /api/posts.json\` — stable JSON index of article metadata.
