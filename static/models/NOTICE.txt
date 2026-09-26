@@ -1,0 +1,18 @@
+Chat model
+
+This site includes Stentor-30M-Instruct in GGUF Q4_K_M format. The model was
+created by StentorLabs and quantized by mradermacher.
+
+Upstream model: https://huggingface.co/StentorLabs/Stentor-30M-Instruct
+Quantized model: https://huggingface.co/mradermacher/Stentor-30M-Instruct-GGUF
+License: Apache-2.0. See LICENSE.txt.
+
+The model card describes a 512-token context and limited knowledge, reasoning,
+and safety generalization. It is included here as an experimental demo.
+
+Browser runtime
+
+Inference runs in the browser with @wllama/wllama and its compatibility assets,
+version 3.6.1, using WebAssembly and WebGPU where available. The runtime is
+copyright Xuan Son Nguyen and distributed under the MIT License; see
+/static/js/vendor/wllama/LICENSE.txt.

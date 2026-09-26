@@ -1,5 +1,8 @@
 /target
 /dist
 /.wrangler
+/node_modules/
+/static/js/vendor/wllama/
+/static/models/*.gguf
 
 .env

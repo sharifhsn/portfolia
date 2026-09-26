@@ -47,7 +47,7 @@
   <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>{{ title }}</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260926-1">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260926-2">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -61,6 +61,9 @@
         <a href="/blog/" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
         <a href="/projects/" {% if page == "projects" %}aria-current="page"{% endif %}>Projects</a>
         <a href="/resume/" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
+        <a class="chat-nav-link" href="/chat/" aria-label="Chat" title="Chat" {% if page == "chat" %}aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-3 2v-5.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01"/></svg>
+        </a>
       </nav>
     </header>
     <main id="main" class="content">
@@ -114,6 +117,35 @@
         </div>
       </section>
       <article class="resume-content">{{ resume_html|safe }}</article>
+      {% else if page == "chat" %}
+      <section class="page-intro chat-intro" aria-labelledby="page-title">
+        <h1 id="page-title">A very small chat</h1>
+        <p>A tiny language model running in your browser. It is experimental, so expect short answers and occasional nonsense.</p>
+      </section>
+      <section class="chat-demo" aria-label="Chat with a tiny local model">
+        <div class="chat-model-row">
+          <div class="chat-model-details">
+            <p class="chat-model-name"><a href="https://huggingface.co/StentorLabs/Stentor-30M-Instruct" target="_blank" rel="noopener noreferrer">Stentor-30M-Instruct</a></p>
+            <p class="chat-model-meta">30M parameters · 512-token context · runs on this device</p>
+          </div>
+          <button id="chat-load" class="chat-load-button" type="button">Load model · 19.9 MiB</button>
+        </div>
+        <progress id="chat-progress" class="chat-progress" max="100" value="0" aria-label="Model download progress" hidden></progress>
+        <p id="chat-status" class="chat-status" role="status" aria-live="polite">The first load downloads the model. Your prompts stay in this browser.</p>
+        <div id="chat-log" class="chat-log" role="log" aria-label="Conversation" aria-live="off" tabindex="0">
+          <p id="chat-empty" class="chat-empty">When the model is ready, send it a short question.</p>
+        </div>
+        <form id="chat-form" class="chat-composer">
+          <label class="sr-only" for="chat-input">Message</label>
+          <textarea id="chat-input" name="message" rows="2" maxlength="1200" placeholder="Write a message" autocomplete="off" disabled></textarea>
+          <div class="chat-actions">
+            <button id="chat-clear" class="chat-clear-button" type="button" disabled>Clear</button>
+            <button id="chat-stop" class="chat-stop-button" type="button" hidden>Stop</button>
+            <button id="chat-send" class="chat-send-button" type="submit" disabled>Send</button>
+          </div>
+        </form>
+      </section>
+      <p class="chat-credit">Model by <a href="https://huggingface.co/StentorLabs/Stentor-30M-Instruct" target="_blank" rel="noopener noreferrer">StentorLabs</a>, quantized to GGUF Q4_K_M by <a href="https://huggingface.co/mradermacher/Stentor-30M-Instruct-GGUF" target="_blank" rel="noopener noreferrer">mradermacher</a> · Apache-2.0</p>
       {% endif %}
     </main>
     <footer class="site-footer">
@@ -129,5 +161,6 @@
       </nav>
     </footer>
   </div>
+  {% if page == "chat" %}<script type="module" src="/static/js/chat.js?v=20260926-1"></script>{% endif %}
 </body>
 </html>

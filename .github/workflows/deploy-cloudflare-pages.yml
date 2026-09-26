@@ -14,6 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
       - name: Install Typst 0.15.1
         run: |
           typst_archive="$RUNNER_TEMP/typst.tar.xz"
@@ -24,6 +28,11 @@ jobs:
           tar -xJf "$typst_archive" -C "$RUNNER_TEMP"
           echo "$RUNNER_TEMP/typst-x86_64-unknown-linux-musl" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/typst-x86_64-unknown-linux-musl/typst" --version
+      - name: Prepare browser chat assets
+        run: |
+          npm ci
+          npm run build:chat-runtime
+          ./scripts/fetch-chat-model.sh
       - name: Build static site
         run: cargo run --locked --release -- --export-static
       - uses: cloudflare/wrangler-action@v4

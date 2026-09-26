@@ -167,6 +167,7 @@ fn site_path(page: &str) -> &'static str {
         "blog" => "/blog/",
         "projects" => "/projects/",
         "resume" => "/resume/",
+        "chat" => "/chat/",
         _ => "/",
     }
 }
@@ -176,6 +177,7 @@ fn page_title(page: &str) -> &'static str {
         "blog" => "Writing | Sharif Haason",
         "projects" => "Projects | Sharif Haason",
         "resume" => "Resume | Sharif Haason",
+        "chat" => "Chat | Sharif Haason",
         _ => SITE_NAME,
     }
 }
@@ -187,6 +189,7 @@ fn page_description(page: &str) -> &'static str {
         "resume" => {
             "The professional resume of Sharif Haason, a product engineer at Monark Markets."
         }
+        "chat" => "A tiny experimental chatbot that runs in your browser on Sharif Haason's site.",
         _ => {
             "Sharif Haason is a product engineer at Monark Markets writing about Rust, compiler systems, mathematical research, and practical tools."
         }
@@ -446,7 +449,7 @@ fn sitemap_xml(posts: &[BlogPost]) -> String {
     let mut xml = String::from(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n",
     );
-    for path in ["/", "/blog", "/projects", "/resume"] {
+    for path in ["/", "/blog", "/projects", "/resume", "/chat"] {
         xml.push_str("  <url><loc>");
         xml.push_str(&xml_escape(&site_url(path)));
         xml.push_str("</loc>");
@@ -474,6 +477,7 @@ fn llms_txt(posts: &[BlogPost]) -> String {
         ("Writing index", "/blog", page_description("blog")),
         ("Projects", "/projects", page_description("projects")),
         ("Resume", "/resume", page_description("resume")),
+        ("Chat", "/chat", page_description("chat")),
         (
             "RSS feed",
             "/feed.xml",
@@ -701,7 +705,8 @@ fn api_profile_json() -> serde_json::Value {
             {"name": "Home", "url": site_url("/")},
             {"name": "Writing", "url": site_url("/blog")},
             {"name": "Projects", "url": site_url("/projects")},
-            {"name": "Resume", "url": site_url("/resume")}
+            {"name": "Resume", "url": site_url("/resume")},
+            {"name": "Chat", "url": site_url("/chat")}
         ],
         "resume": {
             "htmlUrl": site_url("/resume"),
@@ -1701,7 +1706,7 @@ fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, S
 }
 
 fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
-    if !["home", "projects", "resume"].contains(&page) {
+    if !["home", "projects", "resume", "chat"].contains(&page) {
         return Err(StatusCode::NOT_FOUND);
     }
     let resume_html = render_markdown(include_str!("../content/resume-current.md"));
@@ -1741,6 +1746,10 @@ async fn projects() -> Result<Html<String>, StatusCode> {
 
 async fn resume() -> Result<Html<String>, StatusCode> {
     render_site("resume")
+}
+
+async fn chat() -> Result<Html<String>, StatusCode> {
+    render_site("chat")
 }
 
 async fn blog_index(State(posts): State<Arc<Vec<BlogPost>>>) -> Result<Html<String>, StatusCode> {
@@ -1907,6 +1916,8 @@ async fn main() {
         .route("/projects/", get(projects))
         .route("/resume", get(resume))
         .route("/resume/", get(resume))
+        .route("/chat", get(chat))
+        .route("/chat/", get(chat))
         .route("/robots.txt", get(robots))
         .route("/sitemap.xml", get(sitemap))
         .route("/llms.txt", get(llms))
@@ -2034,7 +2045,7 @@ mod tests {
         let posts = load_blog_posts().unwrap();
         assert!(posts.iter().all(|post| !post.description.trim().is_empty()));
         let sitemap = sitemap_xml(&posts);
-        assert_eq!(sitemap.matches("<url>").count(), posts.len() + 4);
+        assert_eq!(sitemap.matches("<url>").count(), posts.len() + 5);
         assert!(sitemap.contains("https://sharifhsn.dev/blog/circuits/"));
 
         let llms = llms_txt(&posts);

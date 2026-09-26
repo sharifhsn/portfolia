@@ -1,0 +1,12 @@
+{
+  "name": "portfolia-static-assets",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:chat-runtime": "node scripts/build-chat-runtime.mjs"
+  },
+  "devDependencies": {
+    "@wllama/wllama": "3.6.1",
+    "@wllama/wllama-compat": "3.6.1"
+  }
+}

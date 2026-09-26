@@ -18,6 +18,8 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     write_route(output_dir, "projects", &projects.0)?;
     let resume = render_site("resume").map_err(render_status_error)?;
     write_route(output_dir, "resume", &resume.0)?;
+    let chat = render_site("chat").map_err(render_status_error)?;
+    write_route(output_dir, "chat", &chat.0)?;
 
     for post in posts {
         let html = render_blog_article(posts, &post.slug).map_err(render_status_error)?;
@@ -144,7 +146,7 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()
   Strict-Transport-Security: max-age=31536000
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests
   X-Frame-Options: DENY
   X-Permitted-Cross-Domain-Policies: none
   Cross-Origin-Opener-Policy: same-origin
@@ -247,6 +249,7 @@ mod tests {
         assert!(output.join("blog/index.html").is_file());
         assert!(output.join("projects/index.html").is_file());
         assert!(output.join("resume/index.html").is_file());
+        assert!(output.join("chat/index.html").is_file());
         assert!(output.join("robots.txt").is_file());
         assert!(output.join("sitemap.xml").is_file());
         assert!(output.join("llms.txt").is_file());
