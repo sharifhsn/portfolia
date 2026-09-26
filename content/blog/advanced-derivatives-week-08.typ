@@ -102,7 +102,7 @@ If we equate the variances between Black's model and this, we get
 
 $ sigma_k^2 t_k = sum_(i = 1)^k Lambda_(k - i)^2 delta_(i - 1) $
 
-Lecture 5 slide 10 gives a calibration example: Black volatilities of 24%, 22%, and 20% for the first three caplets correspond to LMM volatilities $Lambda_0 = 24.00 %$, $Lambda_1 = 19.80 %$, and $Lambda_2 = 15.23 %$.
+Lecture 5, slide 11 (PDF p. 11), gives the calibration example in its own words: “If Black volatilities for the first three caplets are 24%, 22%, and 20%, then $Lambda_0=24.00\%$, $Lambda_1=19.80\%$, and $Lambda_2=15.23\%$.”
 
 == Implementation
 <implementation>
@@ -122,7 +122,7 @@ Then,
 
 $ F_k(t_(j + 1)) = F_k(t) exp((sum_(i = j + 1)^k frac(delta_i F_i(t_j) Lambda_(i - j - 1), 1 + delta_i F_i(t_j)) - Lambda_(k - j - 1)^2 / 2) delta_j + Lambda_(k - j - 1) epsilon.alt sqrt(d_j)) $
 
-Lecture 5 slide 8 sets the notation for this time grid: $t_k$ is the kth reset date, $F_k\(t\)$ is the forward rate from $t_k$ to $t_(k + 1)$, $delta_k = t_(k + 1) - t_k$, and $m\(t\)$ indexes the next reset date at time $t$.
+Lecture 5, slide 8 (PDF p. 8), defines $t_k$ as the kth reset date, $F_k(t)$ as the forward rate between $t_k$ and $t_(k+1)$, $m(t)$ as the index for the next reset date at time $t$, and $delta_k=t_(k+1)-t_k$.
 
 ipynb file is provided
 

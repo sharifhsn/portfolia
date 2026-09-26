@@ -22,11 +22,17 @@ IEEE-754 allows for four possible precisions: single, double, single-extended, a
 
 The formats use these parameter values:
 
-- Precision $p$: single 24; single-extended 32; double 53; double-extended 64.
-- Maximum exponent $e_(m a x)$: single +127; single-extended +1023; double +1023; double-extended +16383.
-- Minimum exponent $e_(m i n)$: single -126; single-extended -1022; double -1022; double-extended -16382.
-- Exponent bits: single 8; single-extended 11; double 11; double-extended 15.
-- Total bits: single 32; single-extended 43; double 64; double-extended 79.
+#table(
+  columns: (28.81%, 10.17%, 25.42%, 10.17%, 25.42%),
+  align: (auto,auto,auto,auto,auto,),
+  table.header([Parameter], [Single], [Single-Extended], [Double], [Double-Extended],),
+  table.hline(),
+  [$p$], [24], [32], [53], [64],
+  [$e_(m a x)$], [+127], [+1023], [+1023], [+16383],
+  [$e_(m i n)$], [-126], [-1022], [-1022], [-16382],
+  [bits for exponent], [8], [11], [11], [15],
+  [total \#~of bits], [32], [43], [64], [79],
+)
 
 The usefulness of extended precision is that it grants a large amount of guard digits for internal calculations, for example in a calculator. There are fast algorithms for common transcendental functions like $log$, but most of them have a large amount of possible error. By using extended precision internally then rounding to regular precision on display, calculators can quickly compute transcendental functions for users accurately.
 
@@ -42,11 +48,17 @@ Not all bit patterns in IEEE-754 follow the rules that were laid out earlier for
 
 Special exponent values represent the following:
 
-- If $e = e_(m i n) - 1$ and $f = 0$, the value is $plus.minus 0$.
-- If $e = e_(m i n) - 1$ and $f eq.not 0$, the value is $0 . f times 2^(e_(m i n))$ (denormalized).
-- If $e_(m i n) lt.eq e lt.eq e_(m a x)$, the value is $1 . f times 2^e$ (normalized).
-- If $e = e_(m a x) + 1$ and $f = 0$, the value is $plus.minus oo$.
-- If $e = e_(m a x) + 1$ and $f eq.not 0$, the value is NaN.
+#table(
+  columns: (35.06%, 10.39%, 54.55%),
+  align: (auto,auto,auto,),
+  table.header([Exponent], [Fraction], [Represents],),
+  table.hline(),
+  [$e = e_(m i n) - 1$], [$f = 0$], [$plus.minus 0$],
+  [$e = e_(m i n) - 1$], [$f eq.not 0$], [$0 . f times 2^(e_(m i n))$ (#strong[denormalized])],
+  [$e_(m i n) lt.eq e lt.eq e_(m a x)$], [---], [$1 . f times 2^e$ (#strong[normalized])],
+  [$e = e_(m a x) + 1$], [$f = 0$], [$plus.minus oo$],
+  [$e = e_(m a x) + 1$], [$f eq.not 0$], [NaN],
+)
 
 The middle row represents normalized numbers, which we are already familiar with. We will discuss each of the other special values.
 
@@ -60,11 +72,17 @@ The idea of infinity is an important one to measure for floating point. Unlike w
 
 These operations produce NaN:
 
-- Adding opposite infinities: $oo + (- oo)$.
-- Multiplying zero by infinity: $0 times oo$.
-- Dividing zero by zero or infinity by infinity: $0 / 0$ or $oo / oo$.
-- Taking a remainder with zero, or infinity modulo a value: $x % 0$ or $oo % y$.
-- Taking a square root of a negative value: $sqrt(x)$ for $x < 0$.
+#table(
+  columns: 2,
+  align: (auto,auto,),
+  table.header([Operation], [Production],),
+  table.hline(),
+  [+], [$oo +\(- oo\)$],
+  [×], [$0 times oo$],
+  [/], [$0\/0$, $oo\/oo$],
+  [%], [$x % 0$, $oo % y$],
+  [$sqrt(dot.op)$], [$sqrt(x)$ for $x < 0$],
+)
 
 Unlike with denormalized numbers, the value in the significand does not necessarily represent any specific values. Often, some information about the operation will be placed in the significand as a signal. If an operation is done between a real number and an `NaN`, it will not change the significand of the `NaN`.
 

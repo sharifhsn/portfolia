@@ -62,4 +62,12 @@ IPv6 is an updated protocol from IPv4 that is optimized for the needs of the mod
 
 IPv6 does not protect against some problems that still exists, such as bit flips. If that happens, the packet is simply dropped because a different layer will do a checksum.
 
-The IPv6 header fields shown are Version, Traffic Class, Flow Label, Payload Length, Next Header, and Hop Limit. The source address and destination address follow on 4-bit boundaries.
+#table(
+  columns: (14.29%, 14.29%, 14.29%, 14.29%, 11.22%, 11.22%, 10.2%, 10.2%),
+  align: (auto,auto,auto,auto,auto,auto,auto,auto,),
+  table.header([Version], [Traffic Class], [Traffic Class], [Flow Label], [Flow Label], [Flow Label], [Flow Label], [Flow Label],),
+  table.hline(),
+  [Payload Length], [Payload Length], [Payload Length], [Payload Length], [Next Header], [Next Header], [Hop Limit], [Hop Limit],
+)
+
+followed by the source address and destination address, along 4-bit boundaries

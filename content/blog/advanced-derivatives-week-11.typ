@@ -42,7 +42,20 @@ Some assumptions, it helps in some way to have diversification. But many times, 
 
 == Waterfall
 <waterfall>
-In the case of a CMO/CDO (depends what our underlying is), the structure of instrument is usually a "waterfall". It defines how the income is received and how it's distributed to different tranches. Lecture 8 slide 5 makes the waterfall concrete for a synthetic CDO: equity takes the first 5% of portfolio losses and earns a 1,000 bp spread; mezzanine covers losses from 5% to 20% and earns 200 bp; senior covers losses above 20% and earns 10 bp. The underlying assets (bonds) are collateralized into a CDO. Let's say we have such pool of assets. These assets do not necessarily have the same probability of default or principal. But if you aggregate these into a special purpose vehicle (#strong[SPV]), the purpose is to generate tranches. These tranches, you have typically a #strong[senior], #strong[mezzanine], and #strong[equity] tranche. Sometimes we will have more specifications. The principal from the original pool is split into these tranches. And you have a target return, a promised return under the assumptions that we have no default. Typically, the principal for the senior tranche is much larger than the mezzanine and the equity tranche.
+Lecture 8, slide 2 (PDF p. 2), says that securities are created from “a portfolio of loans, bonds, credit card receivables, mortgages, auto loans, aircraft leases, music royalties, etc.” Usually, “the income from the assets is tranched.” It defines a waterfall this way: “income is first used to pay the promised return to the senior tranche, then to the next most senior tranche, and so on.” Slide 4, titled “The Waterfall,” draws the asset cash flows passing through senior, mezzanine, and equity tranches.
+
+Slide 3 (PDF p. 3) shows assets with \$100 million principal transferred to an SPV, which issues these claims:
+
+#table(
+  columns: 3,
+  align: (left, center, left),
+  inset: 4pt,
+  stroke: 0.5pt,
+  [*Tranche*], [*Principal*], [*Return*],
+  [Senior], [\$80 million], [LIBOR + 60 bp],
+  [Mezzanine], [\$15 million], [LIBOR + 250 bp],
+  [Equity], [\$5 million], [LIBOR + 2,000 bp],
+)
 
 Basically, the waterfall, which is also called the structure subordination, this describes the scheduled coupon and principal payments from different securities. It also describes the losses. The arrangement of this pool will generate cash flows. This cash flow is used first to pay the senior tranche. Then after the senior tranche is completely paid, the cash flows go to mezzanine, then equity. So as long as you have no defaults, this system works. But when you have a loss, the loss is first taken by the equity tranche, then the mezzanine, and then the senior tranche. This structure of subordination or waterfall creates advantages and disadvantages for the equity tranche. This tranche is far riskier than the other tranches. The idea behind the whole mechanism is to have many market participants. The senior tranche has AAA rating. The rating agencies will rate these particular tranches. The magic of it was to take something rated BBB and turn it into something rated AAA. You could take the mezzanine tranche from multiple CDOs and get a new CDO from that. Things got kind of complicated.
 
@@ -56,141 +69,95 @@ They tended to use Gaussian models, which do not have tail dependence, which was
 
 == Synthetic CDOs
 <synthetic-cdos>
-A cash CDO is an asset backed security #strong[ABS] where the underlying assets are debt obligations. The sense is that you own the underlying assets in the portfolio. The long position in the corporate bond is similar to a short position in the CDS. So it's a similar risk.
-
-So another way to construct CDOs involves forming a similar structure. Instead of being long in the company bond, you can be short CDS. From a risk perspective it's similar.
+Lecture 8, slide 5 (PDF p. 5), states: “A cash CDO is an ABS where the underlying assets are debt obligations”; “a synthetic CDO involves forming a similar structure with short CDS contracts.” It continues: “In a synthetic CDO most junior tranche bears losses first. After it has been wiped out, the second most junior tranche bears losses, and so on.”
 
 The originator of a #strong[synthetic CDO] can select a portfolio of companies that have a certain maturity structure, and look at the CDS for the companies. The notional is the total notional of the CDS contracts.
 
-Let's say we have this example. We have an equity tranche which is responsible for losses in the underlying CDS until they reach 5% of the total notional principal. Let's say this earns 1000 bp spread. The mezzanine tranche is responsible for losses between 5% and 20% (200 bp spread) and senior tranche is $> 20 %$ with 10bp spread.
+Slide 6 (PDF p. 6) gives the tranche boundaries and spreads:
 
-In case of default, when you have such a default, the idea is that the income is paid on the remaining tranche principal. If losses reach 8% of the notional principal, then the equity tranche is wiped out, and 3% is taken from the mezzanine tranche. So tranche 2 earns the promised 200 bps spread on 80% of its principal, because they have incurred losses. The promised return is applied to the surviving principal of that particular tranche.
+#table(
+  columns: 3,
+  align: (left, left, left),
+  inset: 4pt,
+  stroke: 0.5pt,
+  [*Tranche*], [*Loss allocation*], [*Spread*],
+  [Equity], [Losses up to 5% of total CDS notional], [1,000 bp],
+  [Mezzanine], [Losses between 5% and 20%], [200 bp],
+  [Senior], [Losses over 20%], [10 bp],
+)
+
+Slide 7 (PDF p. 7) states: “The income is paid on the remaining tranche principal.” Its example says that when losses reach 8% of the principal underlying the CDSs, tranche 1 has been wiped out and tranche 2 earns its promised 200 bp spread on 80% of its principal. The remaining 80% follows because the 5%–20% mezzanine tranche has absorbed 3 percentage points of loss out of its 15-point width.
 
 == Single Tranche Trading
 <single-tranche-trading>
-You can trade tranches of portfolios of CDSs without actually forming the portfolio. Cash flows are calculated in the same way as if the portfolios were formed. We can discuss a little bit of the description of the waterfall for the single tranche CDO.
+Lecture 8, slide 8 (PDF p. 8), says single-tranche trading “involves trading tranches of portfolios of CDSs without actually forming the portfolios”; “cash flows are calculated in the same way as they would be if the portfolios had been formed.” The protection buyer pays the tranche spread, and the protection seller pays losses falling inside the tranche's interval.
 
-In general we have the buyer of protection on the tranche, and the seller of the protection. The portfolio of short CDS positions is going to be used as a reference point which defines the cash flows between these two sides. This portfolio is not created just referenced. The buyer will pay the tranche spread to the seller, and the seller pays the amount that corresponds to the losses in the reference CDS. We can discuss the pricing model.
+Let $A$ be the attachment point, $D$ the detachment point, and $L(T)$ the cumulative fractional loss on the reference portfolio by time $T$. The tranche width is $D-A$. Its fractional loss is
 
-PAGE 2 NOTES
+$ell_(A,D)(T) = min(1, max(0, frac(L(T) - A, D - A)))$
 
-We have a simple payoff function, and this function is dependent on the cumulative default and percentage loss on the portfolio.
+Before portfolio losses reach $A$, tranche loss is zero. As losses move from $A$ to $D$, the tranche loses principal linearly. Once portfolio losses reach $D$, the tranche is fully written down. For original tranche notional $N_(A,D)$, remaining notional is $N_(A,D)(1-ell_(A,D)(T))$. The protection payment at a default is the increase in tranche loss times its original notional; the premium payment is the contractual spread applied to the surviving notional for that accrual period. If the portfolio loss has not changed, the protection leg has no payment. Each credit's portfolio loss is its exposure times loss given default, so recovery reduces the loss below the full exposure.
 
-We define some quantities which map the tranche to the reference portfolio.
+Slide 9 (PDF p. 9) introduces the example: “The best way to make the mechanics of an STCDO clear is to consider a specific STCDO deal.” It uses 100 reference credits with \$10 million face exposure each, for \$1 billion total notional, and a \$30 million tranche with a 250 bp spread, 3% attachment point, 4% width, and five-year maturity. The slide reproduces Table 12.3, “Coupon and loss payments on the synthetic CDO example discussed in the text”:
 
-PAGE 3 NOTES
-
-These are two extreme points.
-
-And we can see how fractional loss becomes a linear function.
-
-PAGE 4 NOTES
-
-Then the function becomes very simple.
-
-PAGE 5 NOTES
-
-What is the mechanics of the payments? It depends on the evolution of this function.
-
-PAGE 5 NOTES CONTINUED
-
-PAGE 6 NOTES
-
-What is happening with the protection leg? This is how you protect yourself from losses on the CDS.
-
-PAGE 7 NOTES
-
-If there's no change in the value, then there's no payments.
-
-Typically we want to run Monte Carlo simulations. The problem is that you have one default, and then you get all these different cases. So you have to simulate very large numbers. We will look at these simulations in the second part.
-
-PAGE 8 NOTES
-
-The percentage loss is not just 1/Nc, because it may be reduced by recovery.
-
-PAGE 8 NOTES CONTINUED
-
-The loss is dependent on the detachment point. The cumulative losses in the reference portfolio are going to be greater than than in the tranche.
-
-Lecture\_8.pdf textbook image:
-
-This is an illustration of a possible realization.
-
-This one has some characteristics. In this case the reference portfolio consists of 100 credits with a FV exposure of \$10M. That's the reference portfolio. Then you can define a tranche, which has the FV of \$30M, and the contractual spread is 250 bp. The attachment point is 3%, width is 4%, and a maturity of five years.
-
-Then you have a simulation for a possible example. Let's look at some characteristics.
-
-You have a payment schedule which is quarterly. We can do some calculations. For example, we have one loss in Jun 2007 from the reference portfolio. So how does this translate? This is cumulative percentage loss in the reference portfolio.
-
-PAGE 9 NOTES
-
-Here we assume that it's a homogeneous portfolio.
-
-This means we have 5 defaults in the portfolio before the tranche will begin to incur a loss.
-
-Let's look at when we have 5 defaults in Jun 2009. What is the tranche loss? This is going to be a linear function.
-
-This means if you get one such default, you get X% loss in the tranche. The tranche notional will reduce. There will also be a loss in payment by the protection seller.
-
-PAGE 10 NOTES
-
-You have two sides. The protection buyer will pay the tranche spread to the seller. They will get protection for a particular principal, which covers a particular cumulative default loss in that portfolio, a certain interval. In order to get protection for the losses. The losses are constructed out of the reference portfolio. So the payments are done for protection, which are the spread, which are specific to tranche. In the case of that protection. The net flow is from the point of the view of the seller. If you have positive cash flows, and defaults and then you have to make payments.
+#table(
+  columns: 8,
+  align: (left, center, center, center, center, center, center, center),
+  inset: 3pt,
+  stroke: 0.5pt,
+  [*Payment date*], [*Number of defaults*], [*Portfolio loss (%)*], [*Tranche loss (%)*], [*Notional (\$m)*], [*Coupon payment*], [*Protection leg (\$m)*], [*Net flow*],
+  [31 Mar 2007], [], [0.00], [0.0], [30.00], [], [], [],
+  [30 Jun 2007], [1], [0.70], [0.0], [30.00], [191 667], [], [191 667],
+  [30 Sep 2007], [], [0.70], [0.0], [30.00], [191 667], [], [191 667],
+  [31 Dec 2007], [2], [1.40], [0.0], [30.00], [189 583], [], [189 583],
+  [31 Mar 2008], [], [1.40], [0.0], [30.00], [189 583], [], [189 583],
+  [30 Jun 2008], [3], [2.10], [0.0], [30.00], [191 667], [], [191 667],
+  [30 Sep 2008], [], [2.10], [0.0], [30.00], [195 833], [], [195 833],
+  [31 Dec 2008], [4], [2.80], [0.0], [30.00], [189 583], [], [189 583],
+  [31 Mar 2009], [], [2.80], [0.0], [30.00], [183 333], [], [183 333],
+  [30 Jun 2009], [5], [3.50], [12.5], [26.25], [195 833], [-3.75], [−3 554 167],
+  [30 Sep 2009], [], [3.50], [12.5], [26.25], [165 885], [], [165 885],
+  [31 Dec 2009], [6], [4.20], [30.0], [21.00], [165 885], [-5.25], [−5 084 115],
+  [31 Mar 2010], [], [4.20], [30.0], [21.00], [132 708], [], [132 708],
+  [30 Jun 2010], [7], [4.90], [47.5], [15.75], [132 708], [-5.25], [−5 117 292],
+  [30 Sep 2010], [], [4.90], [47.5], [15.75], [99 531], [], [99 531],
+  [31 Dec 2010], [8], [5.60], [65.0], [10.50], [99 531], [-5.25], [−5 150 469],
+  [31 Mar 2011], [], [5.60], [65.0], [10.50], [66 354], [], [66 354],
+  [30 Jun 2011], [9], [6.30], [82.5], [5.25], [66 354], [-5.25], [−5 183 646],
+  [30 Sep 2011], [], [6.30], [82.5], [5.25], [33 542], [], [33 542],
+  [31 Dec 2011], [10], [7.00], [100.0], [], [], [-5.25], [−5 250 000],
+  [31 Mar 2012], [], [7.00], [100.0], [], [], [], [],
+)
 
 == Senior Tranche
 <senior-tranche>
 This works very well for the equity and mezzanine tranche. The senior tranche requires a small modification and some care.
 
-PAGE 10 NOTES CONTINUED
-
-Then you can calculate the tranche loss given a detachment point of 100% i.e.~full loss.
-
-PAGE 11 NOTES
-
-This is the cumulative default loss in the portfolio.
-
-This doesn't make sense because if the reference portfolio is wiped out, then the tranche should be wiped out. Then the senior tranche investors continue to receive payment in 44% of the tranche value.
-
-There is a solution to this:
-
-PAGE 11 NOTES CONTINUED
-
-In which case the fractional loss of such tranche is going to be map onto the maximum loss in the cumulative loss in the reference portfolio
+For a senior tranche whose detachment point is 100%, complete loss of the reference portfolio must mean complete loss of the tranche. The loss assigned to the tranche is the portfolio loss above attachment, capped at the tranche width; to express it as a fraction of tranche principal, divide by that width. Thus, when $L(T)=1$ and $D=1$, the numerator and width both equal $1-A$, and $ell_(A,1)(T)=1$. The 44% noted in the example is a loss measured on the portfolio scale; after normalization by the senior tranche's 44% width, it is a 100% loss of that tranche.
 
 == Correlation
 <correlation>
-We are interested in the general portfolio distribution, and such portfolio loss distribution is going to indicate the probability of certain losses in the future.
+Pricing a tranche requires the distribution of portfolio loss at each horizon: the probabilities of one, two, or more defaults by one year, five years, or another maturity. With credit $i$ weighted by portfolio share $w_i$ and recovery rate $R_i$, cumulative fractional portfolio loss is
 
-PAGE 12 NOTES
+$L(T) = sum_(i=1)^(N_c) w_i (1 - R_i) 1_(tau_i <= T)$.
 
-It's important to estimate this. We need some information about the portfolio loss distribution at different horizons, 1 default, 2 default, n defaults, 1 year, 5 years, n years etc. So this density is an important quantity.
+The portfolio contains a discrete number of names, and exposures, default probabilities, and recoveries can differ across them. Its expected loss is
 
-PAGE 12 NOTES CONTINUED
+$E[L(T)] = sum_(i=1)^(N_c) w_i (1 - R_i) Q_i(T)$,
 
-Here we can assume that for different maturities, the recovery rates may be different. $N_c$ is the number of names. This is the cumulative fractional loss in the portfolio.
+where $Q_i(T)=P(tau_i <= T)$. Holding those marginal default probabilities and recoveries fixed, changing dependence changes the shape and variance of the loss distribution, not its mean.
 
-The important part is that we have a discrete number of names (credit derivatives) in the portfolio.
+Slide 10 (PDF p. 10) captions its graph “The portfolio loss distribution for three levels of correlation.” The vertical axis is probability; the horizontal axis is portfolio loss (%); and the curves are labeled zero, medium, and high correlation. With the same marginal default probabilities, correlation changes the loss distribution's shape and tail, and therefore the chance that losses reach a given tranche.
 
-Furthermore, such loss $L\(T\)$ are weighted. We can do some simplifications, (in some cases you cannot do this and you have to do simulations), if we make some assumptions.
+Slide 11 (PDF p. 11) calls a factor-based Gaussian copula “a popular approach” for defining correlations between times to default. It says that often all pairwise correlations and all unconditional default distributions are assumed to be the same, and that the market implies a pairwise correlation from market quotes. Slide 12 (PDF p. 12), titled “Cumulative Default Probability Conditional on Factor,” gives the conditional default probability:
 
-PAGE 13 NOTES
+$Q(t|F) = Phi(frac(Phi^(-1)(Q(t)) - sqrt(rho) F, sqrt(1-rho)))$.
 
-Recovery rate $R_I$ is a constant, but may not be known in advance.
+Given $F$, the number of defaults among $n$ names is binomial:
 
-The expectation of the indicator function, that there is going to be a default, is the same as $1 - Q_i\(0\,T\)$.
+$P(K=k|F) = binom(n,k) Q(t|F)^k (1-Q(t|F))^(n-k)$.
 
-The variance and the shape of distribution may be independent from the correlation, but the expectation is independent.
-
-We can write
-
-PAGE 13 NOTES CONTINUED
-
-In this figure Lecture\_8.pdf portfolio loss distribution figure.
-
-This figure shows the portfolio loss distribution, which is implied by three different values of correlation. This is generated by using the Gaussian copula model which we will discuss, essentially a multinormal distribution. Here we can look at loss distribution, other distribution of such loss function. We look at linked default between default correlation and single tranche CDO. As we saw, loss of portfolio is independent of default correlation. The expected value of the loss distribution is going to be the center at 5%, that makes sense. We illustrate when there is no zero correlation, and also when there is medium correlation and high correlation.
-
-What can we see? When the correlation is zero, the names do not default together. The portfolio loss is between 0% and 100%. If you have a senior tranche with an attachment point of 10%, you have a very low probability that such tranche is affected. In a high correlation environment, then the credits have a high probability of surviving default together. You have a high probability of losses exceeding 10%, so the senior tranche would incur loss.
-
-The conclusion of this, if you are a senior investor, and you are in an environment where you have very low correlation, then names should be as independent as possible. But typically, the institutions and financial firms that construct CDOs, they have an expected loss. If you hold such equity tranche, you might have a better chance of surviving this high correlation environment.
+The slide writes the conditional default-count probability as $n! / ((n-k)!k!) Q(t|F)^k [1-Q(t|F)]^(n-k)$ and says: “This enables cash flows conditional on $F$ to be calculated. By integrating over $F$ the unconditional distributions are obtained.”
 
 == Valuation of Tranches of Synthetic CDOs and Basket CDSs
 <valuation-of-tranches-of-synthetic-cdos-and-basket-cdss>
@@ -202,75 +169,27 @@ But, this would be for the names that are not correlated. We can impose some dep
 
 == Single Factor Models
 <single-factor-models>
-Lecture\_9.pdf
-
-We will generalize with a single Gaussian distribution, and then make more complicated. This model has flexibility when modeling such portfolio.
-
-PAGE 14 NOTES
+Lecture 9, slide 3 (PDF p. 3), captions its figure: “Time dependence of the survival probabilities and default thresholds $C(T)$ for issuer curves with flat deterministic hazard rates shown.” Slide 5 (PDF p. 5) is captioned “The joint default probability as a function of the asset correlation (4 cases).”
 
 == The Gaussian Latent Variable Model
 <the-gaussian-latent-variable-model>
-We will not go through the model, just introduce the quantities. This is a factor model.
+This factor model assigns a standard-normal latent asset value to each credit:
 
-We have a random variable $A_i$ associated with credit $i$, each credit in the portfolio.
+$A_i = beta_i Z + sqrt(1-beta_i^2) epsilon_i$,
 
-And we assume that $A_i tilde.op N\(0\,1\)$.
+where the common market factor $Z$ and the name-specific idiosyncratic factors $epsilon_i$ are independent standard normals. The linear combination keeps each $A_i$ standard normal. Default by time $T$ occurs when $A_i$ falls below a time-dependent threshold $C_i(T)$.
 
-In this particular model, we define that a default occurs before time $T$ if the value of $A_i$ is less than a time-dependent threshold, which we will soon define.
+If $Q_i(T)$ is the cumulative default probability and $S_i(T)=1-Q_i(T)$ is the survival probability, then
 
-Each name in the portfolio is associated with a normal random variable, and we assume when we have a default.
+$Q_i(T) = P(A_i <= C_i(T)) = Phi(C_i(T))$, and $C_i(T)=Phi^(-1)(Q_i(T))=Phi^(-1)(1-S_i(T))$.
 
-PAGE 15 NOTES
+This links the latent threshold to market data. A CDS survival curve or an implied hazard rate supplies $S_i(T)$; the threshold is then calibrated at each horizon. When $S_i(T)=0.5$, the threshold is zero. When survival is near one, $Q_i(T)$ is small and the threshold lies far in the lower normal tail.
 
-The probability of default before $T$ is the same as the probability that the random variable is smaller than or equal to this time dependent threshold $C_i\(T\)$.
+The asset value $A_i$ itself is unobserved and has no dynamics in this construction, which is why it is called latent. A simulated value of $A_i$ is held fixed while the calibrated threshold moves over time. Default occurs at the first crossing,
 
-This $A_i$ is normally distributed. So this probability can be defined through the normal CDF.
+Default time $tau_i$ is the first time $t$ for which $A_i <= C_i(t)$.
 
-The probability of default can also be defined as $1 -$ the survival probability (for credit $i$) up to $T$.
-
-If you have the CDS available on this instrument, that is another means of estimating the probability of default.
-
-This is a model that can be calibrated to the market.
-
-PAGE 16 NOTES
-
-Then we can get the time-dependent threshold.
-
-By having such means to calibrate, we can get the time-dependent threshold from the survival probability.
-
-The table on slide 3 connects default probability, survival, and the latent threshold: $Q_i\(T\)= 1 - S_i\(T\)$, and $C_i\(T\)= Phi^(- 1)\(Q_i\(T\)\)$. When $S_i\(T\)= 0.5$, the threshold is zero; when survival is near one, the threshold lies far in the lower normal tail.
-
-PAGE 16 NOTES CONTINUED
-
-If you have such implied hazard rates, you can calculate the survival probability. This is very useful when you can use the CDS .
-
-For a small hazard rate, it means a higher survival probability, and vice versa.
-
-When survival probability is close to 1, 0.999, then the value of the threshold is the inverse CDF of one minus this value. This value is very small. So this is going to be on the left tail. The value in the threshold represents this. As you increase or decrease survival probability, this threshold changes.
-
-We have $S_i$ normally distributed, if it's smaller than the time dependent threshold, it has a variable probability. And it's based on the real market. We can take time present to the future, and it changes, because the survival probability does as well.
-
-If the survival probability is 0.5, then the threshold should be 0.
-
-This is something that you can calibrate on the market.
-
-PAGE 16 NOTES CONTINUED REMARK
-
-Because $A_i$ has no dynamics and is not observable, it is latent, hence the name.
-
-Slide 4 compares joint-default probability across four asset-correlation cases. In the latent-threshold view, each $A_i$ is fixed while the market-calibrated threshold $C_i\(t\)$ moves; default occurs at the first time $A_i lt.eq C_i\(t\)$, at $t = tau_i$. Repeating this for simulated values of $A_i$ gives a distribution of default times, its mean, and confidence intervals.
-
-PAGE 17 NOTES
-
-For each value we simulate from $A_i$, we get a time of default $tau_i$. The algorithm is very simple, we calculate $A_i$ and calculate times of default, so we get the mean and distribution.
-
-This is a building block.
-
-Next week we will look at correlation. These names in the portfolio no longer need to have the same probability of default, each of them is dependent on its own hazard rate, and we can assume we have different nominal values, principal values, and we can also model initially a one-factor model, which has a single factor and also an idiosyncratic component, and then it's about exposure to this factor. This offers a lot of flexibility in modeling. These models are about modeling the default time.
-
-PAGE 18 NOTES
-
-The idea is that you generate and calculate such default times. This will just give you the distribution of times of default. If the names are independent, you can generate all these times of default, and then you can get a distribution up to time $T$. This will have a vector. If you have 10k times, you can run this for all the credits. For time $= 1$ year, what is the probability of having 1, 2, n defaults. Then you can calculate expected loss based on the principal. And this is calibrated on the market's hazard rates.
+Repeating this draw gives a distribution of default times, from which one can estimate the mean and confidence intervals. The four cases in slide 5 (PDF p. 5) show how joint-default probability changes with asset correlation. With name-specific hazard rates and notionals, the same simulation produces the distribution of the number of defaults and portfolio loss at each horizon.
 
 == Next Week
 <next-week>

@@ -224,9 +224,15 @@ And then we substitute in the Q values to get the total formula for the adjustme
 
 $ ln [frac(Q_(1\,1) e^(R_(1\,1)) + Q_(1\,0) + dots.h, upright("P(0, 2)"))] $
 
-#strong[Here is the formal approach]. If we have $Q_(i\,j)$ already determined for $i lt.eq m$ where m is the final step of the tree. Then BIG LONG FORMULA on page 18.
+#strong[The formal approach] is to propagate state prices one time step at a time. If $Q_(i,j)$ is the present value of receiving 1 at node $(i,j)$, then the next layer's state price is the sum of discounted contributions from every node that can reach it:
 
-If you have the transition probability matrix, it's an iterative approach where you determine α, then Q, then α, then Q.
+$Q_(i+1,k)=sum_(j in P_(i+1,k)) Q_(i,j) p_(i,j,k) e^(-R_(i,j) Delta t)$,
+
+where $P_(i+1,k)$ is the set of predecessor nodes and $p_(i,j,k)$ is the probability of moving from $(i,j)$ to $(i+1,k)$. At each step, choose the displacement $alpha_i$ so the tree's zero-coupon price matches the observed discount factor:
+
+$P(0,(i+1)Delta t)=sum_k Q_(i+1,k)$.
+
+Starting from $Q_(0,0)=1$, this gives the iterative procedure: calibrate $alpha_i$, propagate the state prices with the transition probabilities, and repeat for the next time step.
 
 == Recombining binomial tree
 <recombining-binomial-tree>

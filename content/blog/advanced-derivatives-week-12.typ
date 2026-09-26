@@ -13,38 +13,46 @@ tags = ["Credit", "Dependence", "Copulas"]
 
 = Dependence cases
 
-Relevant variables for these credits
+The one-factor model associates each credit with a latent asset value
 
-*Page 4*
+$A_i = beta_i Z + sqrt(1-beta_i^2) epsilon_i$,
 
-Let’s look at, let’s say, minimum dependence:
+where $Z$ is the common market factor and each $epsilon_i$ is an independent idiosyncratic factor. The coefficients $beta_i$ determine how much each credit is exposed to the common factor; the asset correlation of two credits is $rho_(i,j)=beta_i beta_j$. The Lecture 9 notes introduce this model on PDF page 1.
 
-In what situation might we have such minimum dependence?
+Let $p_i(T)=P(tau_i<=T)$ be credit $i$'s default probability by time $T$. Changing the signs and sizes of the market-factor loadings gives three limiting dependence cases.
 
-The k where we have the lowest probability that we have both names defaulting.
+== Minimum dependence
 
-Both of these credits have an idiosyncratic component and a market exposure $z$.
+The smallest joint-default probability comes from opposite exposures to the same market factor. In the limit, set $beta_i=1$ and $beta_j=-1$. Both idiosyncratic components disappear and the asset correlation is $rho_(i,j)=-1$. The joint-default probability is
 
-So one way we can achieve minimum dependence is to have an opposite exposure to $z$.
+$P(tau_i<=T, tau_j<=T)=max(p_i(T)+p_j(T)-1, 0)$.
 
-If we have a large negative exposure to $z$, we’ll say $beta$ is large. For credit $j$, we can change the exposure to market variable $z$, and instead of having a large negative number, it becomes a large positive numbers, and we lower the probability of default.
+It is zero whenever the two default probabilities sum to at most one. If their sum exceeds one, the joint probability is the excess over one.
 
-For minimum dependence, if we take it in the *limit*, for $beta_i = -beta_j$
+== Independence
 
-In the limit, we can take $ beta_i = 1, quad beta_j = -1 $
+Set $beta_i=beta_j=0$. Each asset value is then only its own idiosyncratic factor, the correlation is zero, and the default events are independent:
 
-One has 100% exposure to $z$, the other has negative exposure to $z$, and both of them have zero idiosyncratic component.
+$P(tau_i<=T, tau_j<=T)=p_i(T)p_j(T)$.
 
-So correlation is inverse, $rho = -1$.
+== Maximum dependence
 
-In this case, such probability is dependent on the survival probability of the names, $(1 - Q_i(T) - Q_j(T))_+$
+Set $beta_i=beta_j=1$. Both credits have the same asset value $Z$ and their asset correlation is $1$. The joint-default probability is the smaller of their marginal default probabilities:
 
-The joint probability of default is zero as long as $Q_i(T) + Q_j(T) > 1$
+$P(tau_i<=T, tau_j<=T)=min(p_i(T),p_j(T))$.
 
-Independence means correlation is 0. And to do that, we have to remove market exposure. So in the limit, we take
+Lecture 9, slide 5 (PDF p. 5), captions its graph “The joint default probability as a function of the asset correlation (4 cases).”
 
-$ beta_i = beta_j = 0 $, which means the correlation is zero, it’s entirely idiosyncratic.
+== Conditional hazard and portfolio loss
 
-Maximum Dependence is when $beta_i = beta_j = 1$, maximum market exposure. It’s the minimum of either $1 - Q_i(T)$, $1 - Q_j(T)$.
+The April 17 handwritten lecture notes then condition on a realized common factor $Z=z$. With a flat deterministic conditional hazard rate, they write conditional survival as
 
-Lecture 9 slide 5 plots the conditional hazard-rate distribution for an unconditional hazard rate of 2% over a one-year horizon.
+$S_i(T|z)=e^(-lambda_i(T|z)T)=Phi(frac(beta_i z-C_i(T), sqrt(1-beta_i^2)))$,
+
+so that
+
+$lambda_i(T|z)=-frac(1,T) ln Phi(frac(beta_i z-C_i(T), sqrt(1-beta_i^2)))$.
+
+Here $C_i(T)$ is the default threshold calibrated from the single-name survival curve. Conditioning on $z$ makes the credits independent: compute the portfolio-loss distribution at that factor value, then integrate over the common factor to obtain the unconditional distribution. The notes state this procedure on PDF page 4.
+
+Lecture 9, slide 6 (PDF p. 6), captions the conditional hazard-rate plot: “Plot of conditional hazard rate distribution for $beta=0, 0.2, 0.4$,” assuming an unconditional hazard rate of 2% and a one-year horizon. Slide 3 (PDF p. 3) shows the time dependence of survival probabilities and default thresholds for issuer curves with flat deterministic hazard rates.

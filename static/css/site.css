@@ -704,6 +704,7 @@ p {
 .post-body th,
 .post-body td {
   padding: 0.4rem 0.7rem 0.4rem 0;
+  overflow-wrap: normal;
   text-align: left;
   vertical-align: top;
 }

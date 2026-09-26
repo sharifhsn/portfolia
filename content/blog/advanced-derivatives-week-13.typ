@@ -16,7 +16,7 @@ This is going to be a basic introduction, this is a complex topic to cover compr
 
 == Limitations of Multi-Name Latent Variables
 <limitations-of-multi-name-latent-variables>
-First of all, let's start with some considerations with respect to the previous model we discussed, some of its limitations.
+The Gaussian latent-variable framework and conditional-independence construction are developed in O’Kane's Chapter 13 (pp. 241–258). Its one-factor version is useful for simulating default times and calibrating thresholds to single-name hazard rates, but one common factor constrains how the names can move together.
 
 The Multi-Name latent variable model is single factor. There is one variable which is seen by the other credits. They each have their own idiosyncratic component. In terms of properties, simulations, that's it. We looked at conditional hazard rate and calculation of the portfolio of loss. Last assignment is related to this particular topic.
 
@@ -44,9 +44,7 @@ Let's assume that beta\_a \> beta\_b \> 0. One is more exposed to the market tha
 
 $ c = beta_a^2 gt.eq beta_a beta_b gt.eq beta_b^2 $
 
-So if you take a numerical example, SEE NOTES PAGE 3
-
-Intersector correlation is much higher, however. We don't want that. 40% \> 25% is a big problem.
+For example, take $beta_a=0.8$ and $beta_b=0.5$. The within-sector correlations are $beta_a^2=64%$ in sector A and $beta_b^2=25%$ in sector B. The cross-sector correlation is $beta_a beta_b=40%$. Sector B is therefore more correlated with sector A than it is with itself. That is the one-factor limitation: every correlation must be the product of two loadings on the same market factor.
 
 Sector B is not fully captured.
 
@@ -86,9 +84,7 @@ $ c = mat(delim: "[", 1, beta_(1 a)^2 + beta_(2 a)^2, beta_(1 a) beta_(1 b) + be
 
 \(Bottom half is same as top half, mirrored)
 
-Example on notes page 6
-
-The credits in two groups will have different correlations on the second factor.
+For example, give sector A loadings $(beta_(1a), beta_(2a))=(0.8,0)$ and sector B loadings $(beta_(1b), beta_(2b))=(0,0.5)$. The within-sector correlations are then 64% for A and 25% for B, while the cross-sector correlation is the dot product $0.8 dot 0 + 0 dot 0.5=0$. Separate factors can represent strong dependence within each group and weaker dependence across groups. More generally, the correlation between two credits is the dot product of their factor-loading vectors.
 
 In general, M-factors are needed to model M-sector portfolio. Three sectors? Three factors.
 
@@ -118,32 +114,21 @@ $ hat(U_i) tilde.op upright(" Uniform")\(0\,1\) $
 
 == Dependent Structure of Default Times of N Credits
 <dependent-structure-of-default-times-of-n-credits>
-The idea here is to express this in terms of copulas.
+Let $q_i(t)=P(tau_i<=t)$ be credit $i$'s cumulative default probability by time $t$. The default-time copula is
 
-Consider random variable u\_i at time t\_i
+$C(q_1(t_1), q_2(t_2), dots.h, q_N(t_N))=P(tau_1<=t_1, tau_2<=t_2, dots.h, tau_N<=t_N)$.
 
-$ u_i\(t_i\)= 1 - Q_i\(t_i\) $
+It expresses the joint probability of defaults by their marginal default probabilities. A copula is a multivariate distribution with uniform marginals; it separates the choice of each name's marginal default curve from the choice of dependence across names. For continuous marginal distributions, Sklar's theorem gives a unique copula representation:
 
-This is the probability of credit i defaulting before t\_i.
+$H(x_1, dots.h, x_N)=C(F_1(x_1), dots.h, F_N(x_N))$.
 
-Remember, this u\_1 is a probability which can take values.
+Setting all but one input to one recovers that name's marginal, for example $C(1, dots.h, u_k, dots.h, 1)=u_k$. If any default probability is zero, the joint-default probability is zero. The same construction works in $N$ dimensions; the bivariate case is a convenient way to display it.
 
-So the copula function is the same
+For the Gaussian latent-variable model, the bivariate default probability is
 
-$ C\(u_1\(t_1\)\,u_2\(t_2\)\,dots.h u_N\(t_N\)\)= bb(P)\(tau_i lt.eq t_i\,tau_2 lt.eq t_2\,dots.h tau_N lt.eq t_N\) $
+$P(tau_i<=t_i, tau_j<=t_j)=Phi_2(Phi^(-1)(q_i(t_i)), Phi^(-1)(q_j(t_j)); rho_(i,j))$.
 
-where tau is the time of default.
-
-In this copula, it's expressed in terms of the default probabilities. So this is the "default copula".
-
-We have this default copula, so we can also talk about the survival copula.
-
-There are some properties of copulas.
-
-- Because cdf increases always, we know that if any name's default probability increases, then the total joint probability of default will increase.
-- We can get the marginal distribution of u\_k if u\_i = 1 for all i != k. In order to get the marginal of any of these names, you can take $C\(1\,1\,1\,dots.h u_k\,1\,dots.h 1\)= u_k$
-- When is the copula equal to 0? If any of them have zero probability of default, riskless like Treasury bonds, then the copula will be 0.
-- The dimensionality of the copula can be reduced from N to N - 1 dimensions by setting any u\_i = 1. This is #strong[very important] because it's still a copula if N \> 2. N = 2 is useful for examples. Most textbooks describe properties in 2 dimensions. But then it's easy to extend into N dimensions, because you can set these u\_is to 1 and collapse it.
+Equivalently, its Gaussian copula is $C_(rho)^(G C)(u,v)=Phi_2(Phi^(-1)(u), Phi^(-1)(v); rho)$. This is the expression that was missing from the original note at this point (O’Kane, Chapter 14, pp. 261–263).
 
 == Dependency Limits
 <dependency-limits>
@@ -233,43 +218,23 @@ We might want to add some dynamics to this dependencies, the difference between 
 
 == Alternative to Dependence Structure of Default Times
 <alternative-to-dependence-structure-of-default-times>
-We discussed about the default copula.
+The survival copula uses survival probabilities $s_i(t)=1-q_i(t)$:
 
-We have 1 - the default probabilities, which is the survival copula
+$hat(C)(s_1(t_1), dots.h, s_N(t_N))=P(tau_1>t_1, dots.h, tau_N>t_N)$.
 
-$ hat(C)\(1 - u_1\(t_1\)\,1 - u_2\(t_2\)\,dots.h\,1 - u_N\(t_N\)\)= bb(P)\(tau_1 > t_1\,tau_2 > t_2 dots.h tau_N > t_N\) $
+In the bivariate case, the default and survival copulas are related by
 
-Typically survival copula has this little hat 🙂
+$hat(C)(u,v)=u+v-1+C(1-u,1-v)$.
 
-We will look at the bivariate case, but in general we have a relationship between the survival and default copula.
+For the Gaussian latent-variable model, default thresholds are jointly normal. The probability that both thresholds have been crossed is
 
-$ hat(C)\(u\,v\)= u + v - 1 + C\(1 - u\,1 - v\) $
+$P(tau_i<=t_i, tau_j<=t_j)=Phi_2(Phi^(-1)(q_i(t_i)), Phi^(-1)(q_j(t_j)); rho_(i,j))$.
 
-These are some kind of definitions.
+Thus the Gaussian copula is
 
-We'll make a short connection with the previous model. The latent variable model is a Gaussian copula model. If you consider this model, how would we express this? \[The displayed equation following this prompt was not recoverable from the exported note.\]
+$C_(rho)^(G C)(u,v)=Phi_2(Phi^(-1)(u), Phi^(-1)(v); rho)$.
 
-That's the probability that the time dependent threshold of credit i is smaller than the time dependent threshold
-
-We have a bivariate normal distribution: $Phi_(2\,rho)$
-
-So how do you write this in terms of default?
-
-See page 18 of Notes
-
-It has the same representation of bivariate normal. This is a Gaussian copula with marginals $F_i\(x_i\)= Phi\(x_i\)$
-
-Therefore the Gaussian bi-variate CDF is notated by
-
-$ C_rho^(G C) = Phi_2\[Phi^(- 1)\(u_1\)\,Phi^(- 1)\(u_2\)\] $
-
-And then we end up with an analytical expression.
-
-The survival copula is the same, just with 1 - u\_1 and 1 - u\_2. And because of the properties of the cdf, you can just make it the negative inverse cdf instead of 1 - cdf. And actually, since there are two negatives, they cancel out.
-
-So there is symmetry: #strong[the survival and default copulas of the Gaussian bi-variate are the same].
-
-Because of this property, this particular distribution does not have tail dependence. To understand this, we will look at various dependency measures. Other distributions will model this more accurately.
+The standard bivariate normal is unchanged when both variables are multiplied by $-1$. As a result, the Gaussian default and survival copulas have the same form. For a non-degenerate Gaussian copula, extreme joint events become less likely relative to their marginal tails as the thresholds move farther out: its upper- and lower-tail dependence coefficients are zero (O’Kane, Chapter 14, pp. 261–263, 269–270).
 
 == Measuring Dependence
 <measuring-dependence>
@@ -279,43 +244,31 @@ There are many ways.
 
 The most popular way is #strong[Pearson Linear Correlation].
 
-$ rho_P = bb(E)\[X Y\]= frac(bb(E)\[X\]dot.op bb(E)\[Y\], sqrt(bb(E)\[X^2\]-\(bb(E)\[X\]\)^2\)) sqrt(bb(E)\[Y^2\]-\(bb(E)\[Y\]\)^2\))) $
+$ rho_P = frac(bb(E)[X Y] - bb(E)[X] bb(E)[Y], sqrt(bb(E)[X^2] - bb(E)[X]^2) sqrt(bb(E)[Y^2] - bb(E)[Y]^2)) $
 
 Advantages: easier to understand. Everyone understands correlation. It is also invariant under linear transformation. Say we change the variables by scaling and shifting (multiplying and adding), it doesn't affect the correlation.
 
-Another advantage is that if the marginals are Gaussian and the correlation is 0, then we have independence.
+For jointly Gaussian variables, zero correlation does imply independence.
 
 However, there is a big disadvantage: linear correlation being 0 DOES NOT imply independence in general
 
 Sometimes the correlation is abused. It is a measure of linear dependence between variables. But just because there's no linear dependence, doesn't mean there are other kinds of dependence.
 
-A quick counterexample is on page 21 of the notes.
+Here is a five-point counterexample. Let $X$ take the equally likely values $-2,-1,0,1,2$, and set $Y=X^2$. Then $E[X]=0$, $E[Y]=2$, and $E[X Y]=E[X^3]=0$, so
 
-Let's say we have an experiment and we get five points, in y = x^2. And we want to determine the correlation.
+$upright("Cov")(X,Y)=E[X Y]-E[X]E[Y]=0$.
 
-Covariance is the same thing as the top of Pearson linear correlation.
-
-Expectation of x and x^3 are both 0, so everything is 0. But in this case, they are strictly dependent, they just have no linear dependency.
+Yet $Y$ is completely determined by $X$. The variables are dependent, but their linear correlation is zero. This illustrates why Pearson correlation alone does not describe general dependence (O’Kane, Chapter 14, §14.3, pp. 264–265).
 
 == #strong[Rank Correlation]
 <rank-correlation>
-If we have x, y random variables and draw n pairs (X\_i, Y\_i).
+Given $n$ observations $(X_i,Y_i)$, let $R_i$ and $S_i$ be the ranks of $X_i$ and $Y_i$. A pair of observations is concordant when their order agrees:
 
-Define R\_i as the rank of X\_i. That will tell us the order/rank of the variables in our realization, in terms of smallest to largest. Basically, we can take a sorted vec, and map the indices of the sorted vec to the elements.
+$\(X_1-X_2\)\(Y_1-Y_2\)>0$.
 
-If S\_i is the rank of Y\_i, then the average rankings
+It is discordant when the product is negative. Rank measures compare these orderings, so a monotone transformation of either variable does not change them.
 
-you can express rank correlation in terms of prevalence of concordant and discordant pairs. If we have two realizations (x\_1, y\_1) and (x\_2, y\_2), the pairs are concordant if $\(x_1 - x_2\)\(y_1 - y_2\)> 0$
-
-The pairs are numeric values. It's a product of two numbers, if it has to be greater than 0, either they are both positive or both negative.
-
-Discordant is if it's negative.
-
-Example on page 24 of the notes
-
-If we measured the rank correlation, it would be 100%. If we look at these data points.
-
-How do we measure this? There are two ways.
+For example, if five observations have identical ranks in both variables, then all $binom(5,2)=10$ pairs are concordant and none are discordant. Kendall's tau and Spearman's rho are both $1$. This spells out the perfectly ordered example in the notes (O’Kane, Chapter 14, §14.4, pp. 265–268).
 
 === Kendall's Tau
 <kendalls-tau>
@@ -335,12 +288,7 @@ $ tau = frac(2 sum_(i = 1)^(n - 1) sum_(j = i + 1)^n "sign"\(\(x_i - x_j\)\(y_i 
 
 So basically you're enumerating all these pairs, and then dividing it by the known bottom, and flipping the 2.
 
-What are the dependency limits?
-
-- Independence: τ = 0
-- Perfect Positive (Maximum): τ = 1, or τ = -1
-
-Minimum dependence does not exist, it converges to 0.
+For continuous variables, independence gives $tau=0$, perfect positive dependence gives $tau=1$, and perfect negative dependence gives $tau=-1$.
 
 For a continuous x, y, Kendall's tau should be
 
@@ -348,11 +296,9 @@ $ tau_(x y) = 4 integral_0^1 integral_0^1 C\(u\,v\)d C\(u\,v\)- 1 $
 
 === Spearman's Rho
 <spearmans-rho>
-Linear Pearson correlation for rank correlation
+Spearman's rho is Pearson correlation applied to the ranks. With no ties, it can be calculated directly from the rank differences:
 
 $ rho_S = frac(sum_(i = 1)^n\(R_i - macron(R)\)\(S_i - macron(S)\), sqrt(sum_(i = 1)^n\(R_i - macron(R)\)^2) sqrt(sum_(i = 1)^n\(S_i - macron(S)\)^2)) = frac(12 sum_(i = 1)^n\(R_i - macron(R)\)\(S_i - macron(S)\), n\(n^2 - 1\)) $
-
-expression for min of ranks for x and y, rbar sbar
 
 Furthermore, for a continuous x and y.
 
@@ -364,32 +310,16 @@ There are some advantages to rank correlation, which is that it's able to captur
 
 == Tail Dependence
 <tail-dependence>
-Rank correlation does not consider the absolute magnitude of the realizations and cannot capture extremely joint behavior. From a rank perspective, it's increasing or decreasing, or concordant or discordant.
+Rank correlation records whether observations tend to move in the same or opposite order, but it does not measure the magnitude of extreme co-movements. Tail dependence asks whether one variable remains extreme when the other is already in an extreme tail.
 
-For this reason, you can't look at just one measure of dependence.
+For variables with marginal CDFs $F_X$ and $F_Y$, the upper-tail dependence coefficient is
 
-This refers to the probability of the joint occurrence of these events, of being in the tails.
+$lambda_U = lim_(u arrow.r 1) P(Y > F_Y^(-1)(u) | X > F_X^(-1)(u))$.
 
-Visual in Notes page 30.
+The lower-tail coefficient is
 
-#strong[Upper Tail Dependence Parameter:]
+$lambda_L = lim_(u arrow.r 0) P(Y <= F_Y^(-1)(u) | X <= F_X^(-1)(u))$.
 
-$ lambda_u = lim_(u arrow.r 1) bb(P)\(Y > F_Y^(- 1)\(u\)\|x > F_X^(- 1)\(u\)\) $
+Here $u$ is a quantile level. In credit-risk terms, joint defaults correspond to the lower tail of latent asset values, while large portfolio losses correspond to the upper tail of losses. A positive coefficient means that an extreme observation in one variable has a non-vanishing limiting probability of being accompanied by an extreme observation in the other. The tail plot in the notes is illustrating this limiting behavior.
 
-where f is inverse marginal
-
-We'll say u is the probability of default.
-
-Since u is large,
-
-This is the conditional probability that y is in the tail, given that x is in the tail.
-
-We calculated in the conditional in the survival probability in the previous class, so it's measured similarly.
-
-If λ\_u \> 0, x and y are upper tail dependent. Similarly for lower tail dependence:
-
-$ lambda_L = lim_(u arrow.r 0) bb(P)\(Y < F_Y^(- 1)\(u\)\|x < F_X^(- 1)\(u\)\) $
-
-And if λ\_L \> 0, then x and y are lower tail dependent.
-
-The Gaussian copula doesn't have tail dependence.
+The Gaussian copula has zero upper- and lower-tail dependence for correlations strictly between $-1$ and $1$. It can match ordinary dependence while understating the chance of joint extremes; a copula with tail dependence is needed when that behavior matters (O’Kane, Chapter 14, §§14.5–14.6, pp. 269–270).

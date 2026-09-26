@@ -49,7 +49,25 @@ where $s$ is the spread of the bond's yield over the risk-free rate and $R$ is t
 
 We can look at a little more exact calculation.
 
-Slide 13 of Part I works through a five-year corporate bond on \$100 face value with a 6% annual coupon paid semiannually. At continuously compounded yields of 7% for the corporate bond and 5% for a comparable risk-free bond, their prices are 95.34 and 104.09, respectively, for an expected default loss of 8.75. With \$40 recovery and defaults halfway through each year, the present value of expected losses sums to $288.48 Q$\; equating this to 8.75 gives an annual default probability of $Q = 3.03 %$.
+Lecture 7, Part I, slide 13 (PDF p. 13) states the assumptions directly: a five-year corporate bond pays a 6% annual coupon semiannually; its continuously compounded yield is 7%, while a similar risk-free bond yields 5%. The risk-free bond is priced at 104.09 and the corporate bond at 95.34, giving an expected default loss of 8.75. The slide assumes a default probability of $Q$ per year and defaults halfway through each year, immediately before a coupon payment.
+
+Slide 14 (PDF p. 14) evaluates a \$40 recovery amount for each possible default time. It lists the risk-free value, loss given default, discount factor, and present value of expected loss:
+
+#table(
+  columns: 7,
+  align: (left, center, center, center, center, center, center),
+  inset: 4pt,
+  stroke: 0.5pt,
+  [*Time (years)*], [*Default probability*], [*Recovery amount*], [*Risk-free value*], [*Loss given default*], [*Discount factor*], [*PV of expected loss*],
+  [0.5], [Q], [40], [106.73], [66.73], [0.9753], [65.08 Q],
+  [1.5], [Q], [40], [105.97], [65.97], [0.9277], [61.20 Q],
+  [2.5], [Q], [40], [105.17], [65.17], [0.8825], [57.52 Q],
+  [3.5], [Q], [40], [104.34], [64.34], [0.8395], [54.01 Q],
+  [4.5], [Q], [40], [103.46], [63.46], [0.7985], [50.67 Q],
+  [*Total*], [], [], [], [], [], [288.48 Q],
+)
+
+Slide 15 (PDF p. 15) sets $288.48 Q = 8.75$ and obtains $Q = 3.03\%$. It then notes that the analysis can allow defaults to occur more frequently and that several bonds provide more parameters for describing the default-probability distribution.
 
 When we do pricing of a CDS, we will look more detail in this issue, where if defaults can happen at any time, we integrate over the domain.
 
