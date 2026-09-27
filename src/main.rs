@@ -290,6 +290,36 @@ fn breadcrumb_json_ld(canonical_url: &str, breadcrumbs: &[Breadcrumb]) -> serde_
     })
 }
 
+fn has_explicit_timezone(datetime: &str) -> bool {
+    let Some((_, time)) = datetime.split_once('T') else {
+        return false;
+    };
+    let valid_clock = |clock: &str| {
+        let bytes = clock.as_bytes();
+        bytes.len() >= 8
+            && bytes[2] == b':'
+            && bytes[5] == b':'
+            && bytes[..8]
+                .iter()
+                .enumerate()
+                .all(|(index, byte)| matches!(index, 2 | 5) || byte.is_ascii_digit())
+    };
+    if let Some(clock) = time.strip_suffix('Z') {
+        return valid_clock(clock);
+    }
+
+    let Some(offset_start) = time.rfind(['+', '-']) else {
+        return false;
+    };
+    let offset = &time[offset_start..];
+    let bytes = offset.as_bytes();
+    offset.len() == 6
+        && bytes[3] == b':'
+        && bytes[1..3].iter().all(u8::is_ascii_digit)
+        && bytes[4..].iter().all(u8::is_ascii_digit)
+        && valid_clock(&time[..offset_start])
+}
+
 fn safe_json(value: &serde_json::Value) -> String {
     serde_json::to_string(value)
         .expect("structured data should serialize")
@@ -437,7 +467,6 @@ fn article_json_ld(post: &BlogPost, canonical_url: &str, breadcrumbs: &[Breadcru
         "url": canonical_url,
         "headline": post.title,
         "description": post.description,
-        "datePublished": post.published_at.as_deref().unwrap_or(&post.date),
         "author": {"@id": format!("{SITE_ORIGIN}/#person")},
         "publisher": {"@id": format!("{SITE_ORIGIN}/#person")},
         "mainEntityOfPage": {"@id": format!("{canonical_url}#webpage")},
@@ -448,8 +477,19 @@ fn article_json_ld(post: &BlogPost, canonical_url: &str, breadcrumbs: &[Breadcru
         "inLanguage": "en-US",
         "isAccessibleForFree": true
     });
-    if let Some(updated_at) = &post.updated_at {
-        article["dateModified"] = serde_json::Value::String(updated_at.clone());
+    if let Some(published_at) = post
+        .published_at
+        .as_deref()
+        .filter(|date| has_explicit_timezone(date))
+    {
+        article["datePublished"] = serde_json::Value::String(published_at.to_owned());
+    }
+    if let Some(updated_at) = post
+        .updated_at
+        .as_deref()
+        .filter(|date| has_explicit_timezone(date))
+    {
+        article["dateModified"] = serde_json::Value::String(updated_at.to_owned());
     }
     if !post.source_url.is_empty() {
         article["citation"] = serde_json::Value::String(post.source_url.clone());
