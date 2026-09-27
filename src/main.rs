@@ -42,6 +42,7 @@ struct Site<'a> {
     description: &'a str,
     canonical_url: &'a str,
     structured_data: &'a str,
+    breadcrumbs: Vec<Breadcrumb>,
     projects: &'a [Project],
     resume_html: &'a str,
     pdf_available: bool,
@@ -82,11 +83,27 @@ struct BlogPost {
     source_url: String,
     body_source: String,
     body_html: String,
+    images: Vec<ArticleImage>,
+    featured_image: Option<ArticleImage>,
     source_format: ArticleSourceFormat,
     word_count: usize,
     has_math: bool,
     has_typst: bool,
     sort_key: String,
+}
+
+#[derive(Clone)]
+struct ArticleImage {
+    url: String,
+    alt: String,
+}
+
+#[derive(Clone)]
+struct Breadcrumb {
+    name: String,
+    href: String,
+    item: String,
+    current: bool,
 }
 
 #[derive(Clone)]
@@ -124,6 +141,7 @@ struct BlogIndex<'a> {
     tag_groups: &'a [BlogTagGroup],
     canonical_url: &'a str,
     structured_data: &'a str,
+    breadcrumbs: Vec<Breadcrumb>,
 }
 
 #[derive(Template)]
@@ -132,6 +150,8 @@ struct BlogArticle<'a> {
     post: &'a BlogPost,
     canonical_url: &'a str,
     structured_data: &'a str,
+    breadcrumbs: Vec<Breadcrumb>,
+    related: Vec<&'a BlogPost>,
     previous: Option<&'a BlogPost>,
     next: Option<&'a BlogPost>,
     position: usize,
@@ -186,7 +206,9 @@ fn page_title(page: &str) -> &'static str {
 
 fn page_description(page: &str) -> &'static str {
     match page {
-        "blog" => "Long-form writing, course notes, and technical explanations by Sharif Haason.",
+        "blog" => {
+            "Notes and articles by Sharif Haason on Rust, compiler systems, quantitative finance, options pricing, risk management, and applied mathematics."
+        }
         "projects" => "Selected software, research, and practical tools by Sharif Haason.",
         "hornet" => {
             "An interactive USD/MXN options pricing and risk demo adapted from the Hornet Trading Contest."
@@ -199,6 +221,73 @@ fn page_description(page: &str) -> &'static str {
             "Sharif Haason is a product engineer at Monark Markets writing about Rust, compiler systems, mathematical research, and practical tools."
         }
     }
+}
+
+fn breadcrumbs_for_page(page: &str) -> Vec<Breadcrumb> {
+    let paths: &[(&str, &str)] = match page {
+        "blog" => &[("Home", "/"), ("Writing", "/blog/")],
+        "projects" => &[("Home", "/"), ("Projects", "/projects/")],
+        "hornet" => &[
+            ("Home", "/"),
+            ("Projects", "/projects/"),
+            ("Hornet FX desk", "/projects/hornet/"),
+        ],
+        "resume" => &[("Home", "/"), ("Resume", "/resume/")],
+        "chat" => &[("Home", "/"), ("Chat", "/chat/")],
+        _ => &[],
+    };
+    make_breadcrumbs(paths)
+}
+
+fn breadcrumbs_for_article(title: &str, canonical_url: &str) -> Vec<Breadcrumb> {
+    vec![
+        Breadcrumb {
+            name: "Home".to_owned(),
+            href: "/".to_owned(),
+            item: site_url("/"),
+            current: false,
+        },
+        Breadcrumb {
+            name: "Writing".to_owned(),
+            href: "/blog/".to_owned(),
+            item: site_url("/blog/"),
+            current: false,
+        },
+        Breadcrumb {
+            name: title.to_owned(),
+            href: canonical_url.to_owned(),
+            item: canonical_url.to_owned(),
+            current: true,
+        },
+    ]
+}
+
+fn make_breadcrumbs(paths: &[(&str, &str)]) -> Vec<Breadcrumb> {
+    paths
+        .iter()
+        .enumerate()
+        .map(|(index, (name, path))| Breadcrumb {
+            name: (*name).to_owned(),
+            href: (*path).to_owned(),
+            item: site_url(path),
+            current: index + 1 == paths.len(),
+        })
+        .collect()
+}
+
+fn breadcrumb_json_ld(canonical_url: &str, breadcrumbs: &[Breadcrumb]) -> serde_json::Value {
+    serde_json::json!({
+        "@type": "BreadcrumbList",
+        "@id": format!("{canonical_url}#breadcrumb"),
+        "itemListElement": breadcrumbs.iter().enumerate().map(|(index, breadcrumb)| {
+            serde_json::json!({
+                "@type": "ListItem",
+                "position": index + 1,
+                "name": breadcrumb.name,
+                "item": breadcrumb.item
+            })
+        }).collect::<Vec<_>>()
+    })
 }
 
 fn safe_json(value: &serde_json::Value) -> String {
@@ -230,7 +319,7 @@ fn person_json_ld() -> serde_json::Value {
     })
 }
 
-fn page_json_ld(canonical_url: &str, page: &str) -> String {
+fn page_json_ld(canonical_url: &str, page: &str, breadcrumbs: &[Breadcrumb]) -> String {
     let page_type = if page == "home" {
         "ProfilePage"
     } else {
@@ -253,24 +342,38 @@ fn page_json_ld(canonical_url: &str, page: &str) -> String {
             "url": asset_url(PROFILE_IMAGE_PATH)
         });
     }
+    if !breadcrumbs.is_empty() {
+        webpage["breadcrumb"] = serde_json::json!({
+            "@id": format!("{canonical_url}#breadcrumb")
+        });
+    }
+
+    let mut graph = vec![
+        person_json_ld(),
+        serde_json::json!({
+            "@type": "WebSite",
+            "@id": format!("{SITE_ORIGIN}/#website"),
+            "url": SITE_ORIGIN,
+            "name": SITE_NAME,
+            "publisher": {"@id": format!("{SITE_ORIGIN}/#person")}
+        }),
+        webpage,
+    ];
+    if !breadcrumbs.is_empty() {
+        graph.push(breadcrumb_json_ld(canonical_url, breadcrumbs));
+    }
 
     safe_json(&serde_json::json!({
         "@context": "https://schema.org",
-        "@graph": [
-            person_json_ld(),
-            {
-                "@type": "WebSite",
-                "@id": format!("{SITE_ORIGIN}/#website"),
-                "url": SITE_ORIGIN,
-                "name": SITE_NAME,
-                "publisher": {"@id": format!("{SITE_ORIGIN}/#person")}
-            },
-            webpage
-        ]
+        "@graph": graph
     }))
 }
 
-fn projects_json_ld(canonical_url: &str, projects: &[Project]) -> String {
+fn projects_json_ld(
+    canonical_url: &str,
+    projects: &[Project],
+    breadcrumbs: &[Breadcrumb],
+) -> String {
     let items = projects
         .iter()
         .enumerate()
@@ -309,20 +412,27 @@ fn projects_json_ld(canonical_url: &str, projects: &[Project]) -> String {
                 "description": page_description("projects"),
                 "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
                 "about": {"@id": format!("{SITE_ORIGIN}/#person")},
+                "breadcrumb": {"@id": format!("{canonical_url}#breadcrumb")},
                 "mainEntity": {
                     "@type": "ItemList",
                     "numberOfItems": projects.len(),
                     "itemListElement": items
                 },
                 "inLanguage": "en-US"
-            }
+            },
+            breadcrumb_json_ld(canonical_url, breadcrumbs)
         ]
     }))
 }
 
-fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
+fn article_json_ld(post: &BlogPost, canonical_url: &str, breadcrumbs: &[Breadcrumb]) -> String {
+    let sections = if post.categories.is_empty() {
+        &post.tags
+    } else {
+        &post.categories
+    };
     let mut article = serde_json::json!({
-        "@type": "Article",
+        "@type": "BlogPosting",
         "@id": format!("{canonical_url}#article"),
         "url": canonical_url,
         "headline": post.title,
@@ -330,11 +440,10 @@ fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
         "datePublished": post.published_at.as_deref().unwrap_or(&post.date),
         "author": {"@id": format!("{SITE_ORIGIN}/#person")},
         "publisher": {"@id": format!("{SITE_ORIGIN}/#person")},
-        "mainEntityOfPage": {"@id": canonical_url},
-        "articleSection": post.tags,
+        "mainEntityOfPage": {"@id": format!("{canonical_url}#webpage")},
+        "articleSection": sections,
         "genre": post.categories,
         "keywords": post.tags,
-        "wordCount": post.word_count,
         "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
         "inLanguage": "en-US",
         "isAccessibleForFree": true
@@ -345,14 +454,23 @@ fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
     if !post.source_url.is_empty() {
         article["citation"] = serde_json::Value::String(post.source_url.clone());
     }
-    let breadcrumbs = serde_json::json!({
-        "@type": "BreadcrumbList",
-        "@id": format!("{canonical_url}#breadcrumb"),
-        "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "Home", "item": site_url("/")},
-            {"@type": "ListItem", "position": 2, "name": "Writing", "item": site_url("/blog")},
-            {"@type": "ListItem", "position": 3, "name": post.title.clone(), "item": canonical_url}
-        ]
+    if !post.images.is_empty() {
+        article["image"] = serde_json::Value::Array(
+            post.images
+                .iter()
+                .map(|image| serde_json::Value::String(image.url.clone()))
+                .collect(),
+        );
+    }
+    let webpage = serde_json::json!({
+        "@type": "WebPage",
+        "@id": format!("{canonical_url}#webpage"),
+        "url": canonical_url,
+        "name": format!("{} | {SITE_NAME}", post.title),
+        "description": post.description,
+        "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
+        "breadcrumb": {"@id": format!("{canonical_url}#breadcrumb")},
+        "inLanguage": "en-US"
     });
     safe_json(&serde_json::json!({
         "@context": "https://schema.org",
@@ -362,7 +480,7 @@ fn article_json_ld(post: &BlogPost, canonical_url: &str) -> String {
             "url": SITE_ORIGIN,
             "name": SITE_NAME,
             "publisher": {"@id": format!("{SITE_ORIGIN}/#person")}
-        }, article, breadcrumbs]
+        }, webpage, article, breadcrumb_json_ld(canonical_url, breadcrumbs)]
     }))
 }
 
@@ -419,11 +537,195 @@ fn summarize_markdown(source: &str, title: &str) -> String {
         .collect::<Vec<_>>()
         .join(" ");
     let summary = if summary.is_empty() { title } else { &summary };
-    let mut truncated = summary.chars().take(180).collect::<String>();
-    if summary.chars().count() > 180 {
-        truncated.push('…');
+    truncate_description(summary)
+}
+
+fn description_has_typst_markup(source: &str) -> bool {
+    source.lines().any(|line| {
+        let line = line.trim_start();
+        let heading_end = line
+            .chars()
+            .take_while(|character| *character == '=')
+            .count();
+        (heading_end > 0
+            && line
+                .as_bytes()
+                .get(heading_end)
+                .is_some_and(u8::is_ascii_whitespace))
+            || line.contains(" <")
+            || line.contains("#strong[")
+            || line.contains("#emph[")
+            || line.contains("#smallcaps[")
+    })
+}
+
+fn html_text(source: &str) -> String {
+    let mut plain = String::with_capacity(source.len());
+    let mut in_tag = false;
+    for character in source.chars() {
+        match character {
+            '<' => in_tag = true,
+            '>' if in_tag => {
+                in_tag = false;
+                plain.push(' ');
+            }
+            _ if !in_tag => plain.push(character),
+            _ => {}
+        }
     }
+    decode_html_entities(&plain)
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn decode_html_entities(source: &str) -> String {
+    let mut output = String::with_capacity(source.len());
+    let mut characters = source.chars().peekable();
+    while let Some(character) = characters.next() {
+        if character != '&' {
+            output.push(character);
+            continue;
+        }
+        let mut entity = String::new();
+        let mut terminated = false;
+        while let Some(next) = characters.peek().copied() {
+            if next == ';' {
+                characters.next();
+                terminated = true;
+                break;
+            }
+            if entity.len() >= 12 || next.is_whitespace() || next == '&' {
+                break;
+            }
+            entity.push(next);
+            characters.next();
+        }
+        let decoded = if terminated {
+            match entity.as_str() {
+                "amp" => Some('&'),
+                "lt" => Some('<'),
+                "gt" => Some('>'),
+                "quot" => Some('"'),
+                "apos" | "#39" => Some('\''),
+                "nbsp" => Some(' '),
+                value if value.starts_with("#x") || value.starts_with("#X") => {
+                    u32::from_str_radix(&value[2..], 16)
+                        .ok()
+                        .and_then(char::from_u32)
+                }
+                value if value.starts_with('#') => {
+                    value[1..].parse::<u32>().ok().and_then(char::from_u32)
+                }
+                _ => None,
+            }
+        } else {
+            None
+        };
+        if let Some(decoded) = decoded {
+            output.push(decoded);
+        } else {
+            output.push('&');
+            output.push_str(&entity);
+            if terminated {
+                output.push(';');
+            }
+        }
+    }
+    output
+}
+
+fn summarize_typst_html(source: &str, title: &str) -> String {
+    let mut paragraphs = Vec::new();
+    let mut remainder = source;
+    while let Some(start) = remainder.find("<p") {
+        let Some(content_start) = remainder[start..].find('>') else {
+            break;
+        };
+        let content_start = start + content_start + 1;
+        let Some(content_end) = remainder[content_start..].find("</p>") else {
+            break;
+        };
+        let paragraph = html_text(&remainder[content_start..content_start + content_end]);
+        let letters = paragraph
+            .chars()
+            .filter(|character| character.is_alphabetic())
+            .count();
+        if letters >= 20 {
+            paragraphs.push(paragraph);
+        }
+        remainder = &remainder[content_start + content_end + 4..];
+    }
+    let description = paragraphs.into_iter().take(3).collect::<Vec<_>>().join(" ");
+    truncate_description(if description.trim().is_empty() {
+        title
+    } else {
+        &description
+    })
+}
+
+fn truncate_description(source: &str) -> String {
+    const DESCRIPTION_LIMIT: usize = 180;
+    let source = source.split_whitespace().collect::<Vec<_>>().join(" ");
+    let characters = source.chars().collect::<Vec<_>>();
+    if characters.len() <= DESCRIPTION_LIMIT {
+        return source;
+    }
+    let cutoff = characters[..DESCRIPTION_LIMIT - 1]
+        .iter()
+        .rposition(|character| character.is_whitespace())
+        .unwrap_or(DESCRIPTION_LIMIT - 1);
+    let mut truncated = characters[..cutoff]
+        .iter()
+        .collect::<String>()
+        .trim_end()
+        .to_owned();
+    truncated.push('…');
     truncated
+}
+
+fn article_images(source: &str, title: &str) -> Vec<ArticleImage> {
+    let mut images = Vec::new();
+    let mut remainder = source;
+    while let Some(image_call) = remainder.find("image(\"") {
+        let path_start = image_call + "image(\"".len();
+        let Some(path_end) = remainder[path_start..].find('"') else {
+            break;
+        };
+        let path = &remainder[path_start..path_start + path_end];
+        remainder = &remainder[path_start + path_end + 1..];
+        let Some(static_path) = path.split_once("static/").map(|(_, path)| path) else {
+            continue;
+        };
+        if !static_path.starts_with("img/") || static_path.contains("..") {
+            continue;
+        }
+        let path_on_disk = FilePath::new(env!("CARGO_MANIFEST_DIR"))
+            .join("static")
+            .join(static_path);
+        if !path_on_disk.is_file() {
+            continue;
+        }
+        let current_figure = remainder
+            .find("#figure")
+            .map_or(remainder, |next_figure| &remainder[..next_figure]);
+        let alt = current_figure
+            .split_once("alt: \"")
+            .and_then(|(_, alt)| alt.split_once('"').map(|(alt, _)| alt))
+            .filter(|alt| !alt.trim().is_empty())
+            .unwrap_or(title);
+        let image = ArticleImage {
+            url: asset_url(&format!("/static/{static_path}")),
+            alt: alt.to_owned(),
+        };
+        if !images
+            .iter()
+            .any(|existing: &ArticleImage| existing.url == image.url)
+        {
+            images.push(image);
+        }
+    }
+    images
 }
 
 fn xml_escape(source: &str) -> String {
@@ -470,11 +772,13 @@ fn sitemap_xml(posts: &[BlogPost]) -> String {
     for post in posts {
         xml.push_str("  <url><loc>");
         xml.push_str(&xml_escape(&site_url(&format!("/blog/{}", post.slug))));
-        xml.push_str("</loc><lastmod>");
-        xml.push_str(&xml_escape(
-            post.updated_at.as_deref().unwrap_or(&post.date),
-        ));
-        xml.push_str("</lastmod></url>\n");
+        xml.push_str("</loc>");
+        if let Some(updated_at) = &post.updated_at {
+            xml.push_str("<lastmod>");
+            xml.push_str(&xml_escape(updated_at));
+            xml.push_str("</lastmod>");
+        }
+        xml.push_str("</url>\n");
     }
     xml.push_str("</urlset>\n");
     xml
@@ -1198,9 +1502,7 @@ fn sanitize_typst_html(source: &str) -> String {
     sanitizer.add_url_schemes(&["data"]);
     sanitizer.attribute_filter(|element, attribute, value| {
         if value.trim_start().to_ascii_lowercase().starts_with("data:")
-            && !(element == "img"
-                && attribute == "src"
-                && is_safe_typst_image_data_url(value))
+            && !(element == "img" && attribute == "src" && is_safe_typst_image_data_url(value))
         {
             None
         } else {
@@ -1533,15 +1835,22 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?
             .to_owned();
         let body = source_body.replace("<!-- more -->", "").trim().to_owned();
-        let description = if metadata_description.trim().is_empty() {
-            summarize_markdown(&body, &title)
-        } else {
-            metadata_description
-        };
         let body_html = match source_format {
             ArticleSourceFormat::Markdown => render_markdown(&body),
             ArticleSourceFormat::Typst => render_typst(&path)?,
         };
+        let invalid_typst_description = matches!(source_format, ArticleSourceFormat::Typst)
+            && description_has_typst_markup(&metadata_description);
+        let description = if metadata_description.trim().is_empty() || invalid_typst_description {
+            match source_format {
+                ArticleSourceFormat::Markdown => summarize_markdown(&body, &title),
+                ArticleSourceFormat::Typst => summarize_typst_html(&body_html, &title),
+            }
+        } else {
+            metadata_description
+        };
+        let images = article_images(&body, &title);
+        let featured_image = images.first().cloned();
         let word_count = body.split_whitespace().count();
         let has_math = matches!(source_format, ArticleSourceFormat::Markdown)
             && (body.contains("$$") || body.contains("\\(") || body.contains("\\["));
@@ -1567,6 +1876,8 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             source_url,
             body_source: body,
             body_html,
+            images,
+            featured_image,
             source_format,
             word_count,
             has_math,
@@ -1676,17 +1987,52 @@ fn popular_tag_groups(posts: &[BlogPost]) -> Vec<BlogTagGroup> {
 fn render_blog_index(posts: &[BlogPost]) -> Result<Html<String>, StatusCode> {
     let tag_groups = popular_tag_groups(posts);
     let canonical_url = site_url("/blog");
+    let breadcrumbs = breadcrumbs_for_page("blog");
+    let entries = posts
+        .iter()
+        .enumerate()
+        .map(|(index, post)| {
+            serde_json::json!({
+                "@type": "ListItem",
+                "position": index + 1,
+                "url": site_url(&format!("/blog/{}", post.slug)),
+                "item": {
+                    "@type": "BlogPosting",
+                    "headline": post.title,
+                    "url": site_url(&format!("/blog/{}", post.slug))
+                }
+            })
+        })
+        .collect::<Vec<_>>();
     let structured_data = safe_json(&serde_json::json!({
         "@context": "https://schema.org",
-        "@type": "CollectionPage",
-        "@id": format!("{canonical_url}#webpage"),
-        "url": canonical_url,
-        "name": page_title("blog"),
-        "description": page_description("blog"),
-        "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
-        "about": {"@id": format!("{SITE_ORIGIN}/#person")},
-        "numberOfItems": posts.len(),
-        "inLanguage": "en-US"
+        "@graph": [
+            person_json_ld(),
+            {
+                "@type": "WebSite",
+                "@id": format!("{SITE_ORIGIN}/#website"),
+                "url": SITE_ORIGIN,
+                "name": SITE_NAME,
+                "publisher": {"@id": format!("{SITE_ORIGIN}/#person")}
+            },
+            {
+                "@type": "CollectionPage",
+                "@id": format!("{canonical_url}#webpage"),
+                "url": canonical_url,
+                "name": page_title("blog"),
+                "description": page_description("blog"),
+                "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
+                "about": {"@id": format!("{SITE_ORIGIN}/#person")},
+                "breadcrumb": {"@id": format!("{canonical_url}#breadcrumb")},
+                "mainEntity": {
+                    "@type": "ItemList",
+                    "numberOfItems": posts.len(),
+                    "itemListElement": entries
+                },
+                "inLanguage": "en-US"
+            },
+            breadcrumb_json_ld(&canonical_url, &breadcrumbs)
+        ]
     }));
 
     BlogIndex {
@@ -1695,10 +2041,46 @@ fn render_blog_index(posts: &[BlogPost]) -> Result<Html<String>, StatusCode> {
         tag_groups: &tag_groups,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
+        breadcrumbs,
     }
     .render()
     .map(Html)
     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
+}
+
+fn related_posts(posts: &[BlogPost], current_index: usize) -> Vec<&BlogPost> {
+    let current = &posts[current_index];
+    let mut candidates = posts
+        .iter()
+        .enumerate()
+        .filter(|(index, _)| *index != current_index)
+        .filter_map(|(index, post)| {
+            let shared_tags = post
+                .tags
+                .iter()
+                .filter(|tag| current.tags.contains(tag))
+                .count();
+            let shared_categories = post
+                .categories
+                .iter()
+                .filter(|category| current.categories.contains(category))
+                .count();
+            let score = shared_tags + shared_categories * 2;
+            (score > 0).then_some((score, index.abs_diff(current_index), index, post))
+        })
+        .collect::<Vec<_>>();
+    candidates.sort_by(|left, right| {
+        right
+            .0
+            .cmp(&left.0)
+            .then_with(|| left.1.cmp(&right.1))
+            .then_with(|| left.2.cmp(&right.2))
+    });
+    candidates
+        .into_iter()
+        .take(3)
+        .map(|(_, _, _, post)| post)
+        .collect()
 }
 
 fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, StatusCode> {
@@ -1708,11 +2090,14 @@ fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, S
         .ok_or(StatusCode::NOT_FOUND)?;
     let post = &posts[position];
     let canonical_url = site_url(&format!("/blog/{}", post.slug));
-    let structured_data = article_json_ld(post, &canonical_url);
+    let breadcrumbs = breadcrumbs_for_article(&post.title, &canonical_url);
+    let structured_data = article_json_ld(post, &canonical_url, &breadcrumbs);
     BlogArticle {
         post,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
+        breadcrumbs,
+        related: related_posts(posts, position),
         previous: posts.get(position + 1),
         next: position.checked_sub(1).and_then(|index| posts.get(index)),
         position: position + 1,
@@ -1732,10 +2117,11 @@ fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
     let title = page_title(page);
     let description = page_description(page);
     let canonical_url = site_url(site_path(page));
+    let breadcrumbs = breadcrumbs_for_page(page);
     let structured_data = if page == "projects" {
-        projects_json_ld(&canonical_url, &projects)
+        projects_json_ld(&canonical_url, &projects, &breadcrumbs)
     } else {
-        page_json_ld(&canonical_url, page)
+        page_json_ld(&canonical_url, page, &breadcrumbs)
     };
     Site {
         page,
@@ -1743,6 +2129,7 @@ fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
         description,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
+        breadcrumbs,
         projects: &projects,
         resume_html: &resume_html,
         pdf_available: FilePath::new("static/resume/sharif-haason.pdf").is_file(),

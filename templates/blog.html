@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="format-detection" content="telephone=no">
   <meta name="author" content="Sharif Haason">
-  <meta name="description" content="Long-form writing and technical explanations by Sharif Haason.">
+  <meta name="description" content="Notes and articles by Sharif Haason on Rust, compiler systems, quantitative finance, options pricing, risk management, and applied mathematics.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="{{ canonical_url }}">
   <link rel="alternate" hreflang="en" href="{{ canonical_url }}">
@@ -29,7 +29,7 @@
   <link rel="alternate" type="text/plain" title="Security contact" href="/.well-known/security.txt">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Writing | Sharif Haason">
-  <meta property="og:description" content="Long-form writing and technical explanations by Sharif Haason.">
+  <meta property="og:description" content="Notes and articles by Sharif Haason on Rust, compiler systems, quantitative finance, options pricing, risk management, and applied mathematics.">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Sharif Haason">
   <meta property="og:locale" content="en_US">
@@ -45,7 +45,7 @@
   <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>Writing | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260926-3">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260927-1">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -63,10 +63,17 @@
       </nav>
     </header>
     <main id="main" class="content blog-content">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          {% for breadcrumb in breadcrumbs %}
+          <li>{% if breadcrumb.current %}<span aria-current="page">{{ breadcrumb.name }}</span>{% else %}<a href="{{ breadcrumb.href }}">{{ breadcrumb.name }}</a>{% endif %}</li>
+          {% endfor %}
+        </ol>
+      </nav>
       <section class="page-intro" aria-labelledby="page-title">
         <p class="page-kicker">Archive / {{ total }} pieces</p>
         <h1 id="page-title">Writing</h1>
-        <p>Long-form writing and technical explanations on systems, markets, and the things I’m learning.</p>
+        <p>Notes and articles on Rust, compiler systems, quantitative finance, options pricing, risk management, and applied mathematics.</p>
       </section>
       <div class="blog-layout">
         <aside class="tag-filter" aria-label="Filter writing">

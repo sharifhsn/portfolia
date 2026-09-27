@@ -162,6 +162,7 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
 /api/*
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
+  X-Robots-Tag: noindex
 
 /feed.json
   Content-Type: application/feed+json; charset=utf-8
@@ -173,6 +174,7 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
 /.well-known/*
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
+  X-Robots-Tag: noindex
 
 /.well-known/security.txt
   Content-Type: text/plain; charset=utf-8
@@ -180,10 +182,12 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
 /feed.*
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
+  X-Robots-Tag: noindex
 
 /llms*.txt
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
+  X-Robots-Tag: noindex
 "#,
     )?;
 

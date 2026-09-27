@@ -47,7 +47,7 @@
   <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>{{ title }}</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260926-3">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260927-1">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -67,6 +67,15 @@
       </nav>
     </header>
     <main id="main" class="content">
+      {% if breadcrumbs.len() > 0 %}
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          {% for breadcrumb in breadcrumbs %}
+          <li>{% if breadcrumb.current %}<span aria-current="page">{{ breadcrumb.name }}</span>{% else %}<a href="{{ breadcrumb.href }}">{{ breadcrumb.name }}</a>{% endif %}</li>
+          {% endfor %}
+        </ol>
+      </nav>
+      {% endif %}
       {% if page == "home" %}
       <section class="introduction" aria-labelledby="page-title">
         <div class="intro-copy">
