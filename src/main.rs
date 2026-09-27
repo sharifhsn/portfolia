@@ -166,6 +166,7 @@ fn site_path(page: &str) -> &'static str {
         "home" => "/",
         "blog" => "/blog/",
         "projects" => "/projects/",
+        "hornet" => "/projects/hornet/",
         "resume" => "/resume/",
         "chat" => "/chat/",
         _ => "/",
@@ -176,6 +177,7 @@ fn page_title(page: &str) -> &'static str {
     match page {
         "blog" => "Writing | Sharif Haason",
         "projects" => "Projects | Sharif Haason",
+        "hornet" => "Hornet FX desk | Sharif Haason",
         "resume" => "Resume | Sharif Haason",
         "chat" => "Chat | Sharif Haason",
         _ => SITE_NAME,
@@ -186,6 +188,9 @@ fn page_description(page: &str) -> &'static str {
     match page {
         "blog" => "Long-form writing, course notes, and technical explanations by Sharif Haason.",
         "projects" => "Selected software, research, and practical tools by Sharif Haason.",
+        "hornet" => {
+            "An interactive USD/MXN options pricing and risk demo adapted from the Hornet Trading Contest."
+        }
         "resume" => {
             "The professional resume of Sharif Haason, a product engineer at Monark Markets."
         }
@@ -449,7 +454,14 @@ fn sitemap_xml(posts: &[BlogPost]) -> String {
     let mut xml = String::from(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n",
     );
-    for path in ["/", "/blog", "/projects", "/resume", "/chat"] {
+    for path in [
+        "/",
+        "/blog",
+        "/projects",
+        "/projects/hornet",
+        "/resume",
+        "/chat",
+    ] {
         xml.push_str("  <url><loc>");
         xml.push_str(&xml_escape(&site_url(path)));
         xml.push_str("</loc>");
@@ -476,6 +488,11 @@ fn llms_txt(posts: &[BlogPost]) -> String {
         ("Home", "/", page_description("home")),
         ("Writing index", "/blog", page_description("blog")),
         ("Projects", "/projects", page_description("projects")),
+        (
+            "Hornet FX desk",
+            "/projects/hornet",
+            page_description("hornet"),
+        ),
         ("Resume", "/resume", page_description("resume")),
         ("Chat", "/chat", page_description("chat")),
         (
@@ -705,6 +722,7 @@ fn api_profile_json() -> serde_json::Value {
             {"name": "Home", "url": site_url("/")},
             {"name": "Writing", "url": site_url("/blog")},
             {"name": "Projects", "url": site_url("/projects")},
+            {"name": "Hornet FX desk", "url": site_url("/projects/hornet")},
             {"name": "Resume", "url": site_url("/resume")},
             {"name": "Chat", "url": site_url("/chat")}
         ],
@@ -1706,7 +1724,7 @@ fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, S
 }
 
 fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
-    if !["home", "projects", "resume", "chat"].contains(&page) {
+    if !["home", "projects", "hornet", "resume", "chat"].contains(&page) {
         return Err(StatusCode::NOT_FOUND);
     }
     let resume_html = render_markdown(include_str!("../content/resume-current.md"));
@@ -1742,6 +1760,10 @@ async fn home() -> Result<Html<String>, StatusCode> {
 
 async fn projects() -> Result<Html<String>, StatusCode> {
     render_site("projects")
+}
+
+async fn hornet() -> Result<Html<String>, StatusCode> {
+    render_site("hornet")
 }
 
 async fn resume() -> Result<Html<String>, StatusCode> {
@@ -1914,6 +1936,8 @@ async fn main() {
         .route("/blog/{slug}/", get(blog_article))
         .route("/projects", get(projects))
         .route("/projects/", get(projects))
+        .route("/projects/hornet", get(hornet))
+        .route("/projects/hornet/", get(hornet))
         .route("/resume", get(resume))
         .route("/resume/", get(resume))
         .route("/chat", get(chat))

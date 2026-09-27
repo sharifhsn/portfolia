@@ -16,6 +16,8 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     write_route(output_dir, "blog", &blog.0)?;
     let projects = render_site("projects").map_err(render_status_error)?;
     write_route(output_dir, "projects", &projects.0)?;
+    let hornet = render_site("hornet").map_err(render_status_error)?;
+    write_route(output_dir, "projects/hornet", &hornet.0)?;
     let resume = render_site("resume").map_err(render_status_error)?;
     write_route(output_dir, "resume", &resume.0)?;
     let chat = render_site("chat").map_err(render_status_error)?;

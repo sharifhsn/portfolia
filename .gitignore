@@ -3,6 +3,7 @@
 /.wrangler
 /node_modules/
 /static/js/vendor/wllama/
+/static/js/vendor/hornet/
 /static/models/*.gguf
 
 .env
