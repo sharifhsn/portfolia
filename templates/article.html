@@ -54,7 +54,7 @@
   {% for tag in post.tags %}<meta property="article:tag" content="{{ tag }}">
   {% endfor %}
   <title>{{ post.title }} | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260927-1">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260930-3">
   <link rel="author" href="/resume/">
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
@@ -74,13 +74,13 @@
   <div class="site-shell">
     <header class="site-header">
       <a class="site-name" href="/">
-        <span>Sharif Haason</span><small>systems · markets · notes</small>
+        <span>Sharif Haason</span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="/blog/" aria-current="page">Blog</a>
+        <a href="/blog/" aria-current="page">Writing</a>
         <a href="/projects/">Projects</a>
         <a href="/resume/">Resume</a>
-        <a class="chat-nav-link" href="/chat/" aria-label="Chat" title="Chat"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-3 2v-5.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01"/></svg></a>
+        <a href="/chat/">Chat</a>
       </nav>
     </header>
     <main id="main" class="content article-content">
@@ -133,16 +133,19 @@
       <p class="back-link bottom-back-link"><a href="/blog/">Back to all writing</a></p>
     </main>
     <footer class="site-footer">
-      <span>Sharif Haason</span>
-      <nav aria-label="Machine-readable resources">
-        <a href="/feed.xml">Atom feed</a>
-        <a href="/feed.json">JSON feed</a>
-        <a href="/llms.txt">LLM guide</a>
-        <a href="/api/openapi.json">API</a>
-        <a href="/.well-known/agent.json">Agent manifest</a>
-        <a href="/.well-known/security.txt">Security</a>
-        <a href="/sitemap.xml">Sitemap</a>
-      </nav>
+      <a href="/feed.xml">Subscribe to the writing</a>
+      <details class="site-resources">
+        <summary>Site resources</summary>
+        <nav aria-label="Machine-readable resources">
+          <a href="/feed.xml">Atom feed</a>
+          <a href="/feed.json">JSON feed</a>
+          <a href="/llms.txt">LLM guide</a>
+          <a href="/api/openapi.json">API</a>
+          <a href="/.well-known/agent.json">Agent manifest</a>
+          <a href="/.well-known/security.txt">Security</a>
+          <a href="/sitemap.xml">Sitemap</a>
+        </nav>
+      </details>
     </footer>
   </div>
   {% if post.has_math %}

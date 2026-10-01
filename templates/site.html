@@ -48,7 +48,7 @@
   <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>{{ title }}</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260927-1">
+  <link rel="stylesheet" href="/static/css/site.css?v=20260930-3">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -56,18 +56,16 @@
   <div class="site-shell">
     <header class="site-header">
       <a class="site-name" href="/" {% if page == "home" %}aria-current="page"{% endif %}>
-        <span>Sharif Haason</span><small>systems · markets · notes</small>
+        <span>Sharif Haason</span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="/blog/" {% if page == "blog" %}aria-current="page"{% endif %}>Blog</a>
+        <a href="/blog/" {% if page == "blog" %}aria-current="page"{% endif %}>Writing</a>
         <a href="/projects/" {% if page == "projects" || page == "hornet" %}aria-current="page"{% endif %}>Projects</a>
         <a href="/resume/" {% if page == "resume" %}aria-current="page"{% endif %}>Resume</a>
-        <a class="chat-nav-link" href="/chat/" aria-label="Chat" title="Chat" {% if page == "chat" %}aria-current="page"{% endif %}>
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-3 2v-5.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01"/></svg>
-        </a>
+        <a href="/chat/" {% if page == "chat" %}aria-current="page"{% endif %}>Chat</a>
       </nav>
     </header>
-    <main id="main" class="content">
+    <main id="main" class="content{% if page == "home" %} home-content{% else if page == "hornet" %} hornet-content{% endif %}">
       {% if breadcrumbs.len() > 0 %}
       <nav class="breadcrumbs" aria-label="Breadcrumb">
         <ol>
@@ -79,19 +77,48 @@
       {% endif %}
       {% if page == "home" %}
       <section class="introduction" aria-labelledby="page-title">
+        {% if photo_available %}
+        <img class="portrait" src="/static/img/profile.jpg" alt="Sharif Haason" width="152" height="152" decoding="async">
+        {% endif %}
         <div class="intro-copy">
           <h1 id="page-title">Sharif Haason</h1>
           <p class="role">Product engineer at Monark Markets.</p>
-          <p>I’m interested in Rust, compiler systems, mathematical research, and practical tools. This is where I write about what I build and learn.</p>
+          <p>I work on financial software and spend time with Rust, compilers, and applied mathematics. Here are some things I’ve built and written along the way.</p>
           <nav class="quick-links" aria-label="Quick links">
             <a href="https://www.linkedin.com/in/sharif-haason/" target="_blank" rel="me noopener noreferrer">LinkedIn</a>
             <a href="https://github.com/sharifhsn/" target="_blank" rel="me noopener noreferrer">GitHub</a>
           </nav>
         </div>
-        {% if photo_available %}
-        <img class="portrait" src="/static/img/profile.jpg" alt="Sharif Haason" width="112" height="112" decoding="async">
-        {% endif %}
       </section>
+      <div class="home-work">
+        <section class="home-writing" aria-labelledby="recent-writing-title">
+          <header class="section-heading">
+            <h2 id="recent-writing-title">Recent writing</h2>
+            <a href="/blog/">All writing</a>
+          </header>
+          <ul class="recent-posts">
+            {% for post in recent_posts %}
+            <li>
+              <article>
+                <time datetime="{{ post.date }}">{{ post.date_display }}</time>
+                {% if post.source_url != "" %}<span class="recent-source">From {{ post.source }}</span>{% endif %}
+                <h3><a href="/blog/{{ post.slug }}/">{{ post.title }}</a></h3>
+                <p>{{ post.description }}</p>
+              </article>
+            </li>
+            {% endfor %}
+          </ul>
+        </section>
+        <section class="home-project" aria-labelledby="home-project-title">
+          <header class="section-heading">
+            <h2 id="home-project-title">Something to try</h2>
+            <a href="/projects/">All projects</a>
+          </header>
+          <h3><a href="/projects/hornet/">Hornet FX desk</a></h3>
+          <p>Change a USD/MXN option’s inputs and see its price and risk sensitivities update. Adapted from my trading contest project.</p>
+          <a href="/projects/hornet/">Try the calculator</a>
+        </section>
+      </div>
       {% else if page == "blog" %}
       <section class="page-intro" aria-labelledby="page-title">
         <h1 id="page-title">Blog</h1>
@@ -101,7 +128,7 @@
       {% else if page == "projects" %}
       <section class="page-intro" aria-labelledby="page-title">
         <h1 id="page-title">Projects</h1>
-        <p>Selected work, with the problems, trade-offs, and implementation details behind it.</p>
+        <p>Research, trading competitions, and software projects.</p>
       </section>
       <section class="project-list" aria-label="Selected projects">
         {% for project in projects %}
@@ -130,91 +157,43 @@
       <article class="resume-content">{{ resume_html|safe }}</article>
       {% else if page == "hornet" %}
       <section class="page-intro hornet-intro" aria-labelledby="page-title">
-        <p class="page-kicker">PROJECT · BROWSER DEMO</p>
         <h1 id="page-title">Hornet FX desk</h1>
-        <p>A compact USD/MXN pricing and risk desk adapted from my Hornet Trading Contest project. Change the market or trade inputs to see the model reprice in your browser.</p>
       </section>
-      <section class="hornet-demo" aria-label="USD/MXN option pricing calculator">
-        <form id="hornet-form" class="hornet-controls">
-          <div class="hornet-panel-heading">
-            <h2>Trade and market</h2>
-            <span class="hornet-model-tag">Illustrative inputs</span>
-          </div>
-          <div class="hornet-input-grid">
-            <label for="hornet-kind">Instrument
-              <select id="hornet-kind" name="kind">
-                <option value="0">USD call</option>
-                <option value="1">USD put</option>
-                <option value="2">FX forward</option>
-              </select>
-            </label>
-            <label for="hornet-side">Position
-              <select id="hornet-side" name="side">
-                <option value="1">Long</option>
-                <option value="-1">Short</option>
-              </select>
-            </label>
-            <label for="hornet-spot">Spot · MXN per USD
-              <input id="hornet-spot" name="spot" type="number" inputmode="decimal" min="0.0001" max="1000" step="0.0001" value="20" required>
-            </label>
-            <label for="hornet-strike">Strike · MXN per USD
-              <input id="hornet-strike" name="strike" type="number" inputmode="decimal" min="0.0001" max="1000" step="0.0001" value="25.69" required>
-            </label>
-            <label for="hornet-maturity">Maturity · years
-              <input id="hornet-maturity" name="maturity" type="number" inputmode="decimal" min="0" max="50" step="0.01" value="5" required>
-            </label>
-            <label for="hornet-notional">Notional · USD
-              <input id="hornet-notional" name="notional" type="number" inputmode="numeric" min="10000" max="1000000000000" step="10000" value="1000000" required>
-            </label>
-            <label for="hornet-usd-rate">USD rate · %
-              <input id="hornet-usd-rate" name="usdRate" type="number" inputmode="decimal" min="-20" max="100" step="0.01" value="4" required>
-            </label>
-            <label for="hornet-mxn-rate">MXN rate · %
-              <input id="hornet-mxn-rate" name="mxnRate" type="number" inputmode="decimal" min="-20" max="100" step="0.01" value="9" required>
-            </label>
-            <label for="hornet-atm">ATM volatility · %
-              <input id="hornet-atm" name="atm" type="number" inputmode="decimal" min="0.01" max="300" step="0.01" value="12.35" required>
-            </label>
-            <label for="hornet-rr">Risk reversal · vol points
-              <input id="hornet-rr" name="rr" type="number" inputmode="decimal" min="-200" max="200" step="0.01" value="2" required>
-            </label>
-            <label for="hornet-fly">Butterfly · vol points
-              <input id="hornet-fly" name="fly" type="number" inputmode="decimal" min="-200" max="200" step="0.01" value="3" required>
-            </label>
-          </div>
-          <p class="hornet-anchor-note">Smile anchors <span>19.45</span><span>25.69</span><span>30.35</span> MXN per USD</p>
-        </form>
-        <section class="hornet-quote" aria-labelledby="hornet-result-heading">
-          <div class="hornet-panel-heading">
-            <h2 id="hornet-result-heading">Model value and risk</h2>
-            <span id="hornet-forward" class="hornet-forward">Forward —</span>
-          </div>
-          <p id="hornet-status" class="hornet-status" role="status" aria-live="polite">Loading the Rust pricing module…</p>
-          <p class="hornet-price"><span>Model value</span><output id="hornet-value">—</output><small>USD</small></p>
-          <div class="hornet-risk-scroll">
-            <table class="hornet-risk-table">
-              <caption class="sr-only">Position sensitivities in USD</caption>
-              <thead><tr><th scope="col">Risk measure</th><th scope="col">USD impact</th><th scope="col">Move</th></tr></thead>
-              <tbody>
-                <tr><th scope="row">Delta</th><td><output data-metric="1">—</output></td><td>spot +1%</td></tr>
-                <tr><th scope="row">Gamma</th><td><output data-metric="2">—</output></td><td>half × 1%²</td></tr>
-                <tr><th scope="row">ATM vega</th><td><output data-metric="3">—</output></td><td>vol +1 point</td></tr>
-                <tr><th scope="row">Rega</th><td><output data-metric="4">—</output></td><td>RR +1 point</td></tr>
-                <tr><th scope="row">Fly vega</th><td><output data-metric="5">—</output></td><td>fly +1 point</td></tr>
-                <tr><th scope="row">USD rho</th><td><output data-metric="6">—</output></td><td>USD rate +1 bp</td></tr>
-                <tr><th scope="row">MXN rho</th><td><output data-metric="7">—</output></td><td>MXN rate +1 bp</td></tr>
-                <tr><th scope="row">Carry</th><td><output data-metric="8">—</output></td><td>1 calendar day</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <details class="hornet-method">
-            <summary>About this model</summary>
-            <p>The calculator ports the Hornet practice engine’s USD/MXN FX option formula, three-node quadratic volatility smile, and finite-difference risk bumps to Rust and WebAssembly. The starting market is an illustrative exercise scenario; no live quotes or external services are used.</p>
-            <p>This is an adaptation for the portfolio site, not a certified cell-for-cell copy of the original workbook. Its smile interpolation follows the practice engine’s coordinates, whose parity with the recovered workbook has not been established.</p>
-          </details>
+      <form id="hornet-form" class="hornet-workbook" aria-label="USD/MXN trade worksheet">
+        <header class="hornet-workbook-heading">
+          <h2>Scratch trades <span>USD/MXN</span></h2>
+          <div class="hornet-actions"><label class="hornet-date-label" for="hornet-date">Valuation date <input id="hornet-date" name="valuationDate" type="date" required></label><button id="hornet-add" type="button">Add trade</button><button id="hornet-copy" type="button" disabled>Copy table</button><button type="reset">Reset</button></div>
+        </header>
+        <section class="hornet-market" aria-label="Market scenario inputs">
+          <div class="hornet-market-cell"><label for="hornet-spot">Spot <small>MXN/USD</small></label><div class="hornet-number"><input id="hornet-spot" name="spot" type="text" inputmode="decimal" value="20.000" data-number="spot" required autocomplete="off"></div></div>
+<div class="hornet-market-cell"><label for="hornet-usdRate">USD rate <small>%</small></label><div class="hornet-number"><input id="hornet-usdRate" name="usdRate" type="text" inputmode="decimal" value="4.00" data-number="usdRate" required autocomplete="off"></div></div>
+<div class="hornet-market-cell"><label for="hornet-mxnRate">MXN rate <small>%</small></label><div class="hornet-number"><input id="hornet-mxnRate" name="mxnRate" type="text" inputmode="decimal" value="9.00" data-number="mxnRate" required autocomplete="off"></div></div>
+<div class="hornet-market-cell"><label for="hornet-atm">ATM vol <small>%</small></label><div class="hornet-number"><input id="hornet-atm" name="atm" type="text" inputmode="decimal" value="12.35" data-number="atm" required autocomplete="off"></div></div>
+<div class="hornet-market-cell"><label for="hornet-rr">RR <small>vol pts</small></label><div class="hornet-number"><input id="hornet-rr" name="rr" type="text" inputmode="decimal" value="2.00" data-number="rr" required autocomplete="off"></div></div>
+<div class="hornet-market-cell"><label for="hornet-fly">Fly <small>vol pts</small></label><div class="hornet-number"><input id="hornet-fly" name="fly" type="text" inputmode="decimal" value="3.00" data-number="fly" required autocomplete="off"></div></div>
+<div class="hornet-market-cell"><label for="hornet-lowStrike">Low strike <small>MXN/USD</small></label><div class="hornet-number"><input id="hornet-lowStrike" name="lowStrike" type="text" inputmode="decimal" value="19.45" data-number="lowStrike" required autocomplete="off"></div></div>
+<div class="hornet-market-cell"><label for="hornet-atmStrike">ATM strike <small>MXN/USD</small></label><div class="hornet-number"><input id="hornet-atmStrike" name="atmStrike" type="text" inputmode="decimal" value="25.69" data-number="atmStrike" required autocomplete="off"></div></div>
+<div class="hornet-market-cell"><label for="hornet-highStrike">High strike <small>MXN/USD</small></label><div class="hornet-number"><input id="hornet-highStrike" name="highStrike" type="text" inputmode="decimal" value="30.35" data-number="highStrike" required autocomplete="off"></div></div>
         </section>
-      </section>
-      <p class="hornet-back-link"><a href="/projects/">← Back to projects</a></p>
+        <div class="hornet-book-scroll" role="region" aria-label="Trade positions and total risk, horizontally scrollable" tabindex="0">
+          <table class="hornet-book">
+            <caption class="sr-only">Scratch trades. Editable contract cells and calculated risk in USD.</caption>
+            <colgroup><col class="hornet-row-col"><col class="hornet-kind-col"><col class="hornet-side-col"><col class="hornet-notional-col"><col class="hornet-strike-col"><col class="hornet-tenor-col"><col span="9" class="hornet-risk-col"><col class="hornet-delete-col"></colgroup>
+            <thead>
+              <tr class="hornet-groups"><th colspan="6" scope="colgroup">Contract</th><th colspan="9" scope="colgroup">Valuation &amp; risk <small>USD</small></th><th></th></tr>
+              <tr><th scope="col">#</th><th scope="col">Instrument</th><th scope="col">Side</th><th scope="col">Notional <small>USD</small></th><th scope="col">Strike <small>MXN/USD</small></th><th scope="col">Expiry</th><th scope="col" class="hornet-risk-head">MtM <button type="button" class="hornet-help" aria-label="About MtM" aria-describedby="hornet-tip-0">?<span role="tooltip" id="hornet-tip-0">USD position value at the entered market. Full repricing, not Greek attribution.</span></button></th><th scope="col" class="hornet-risk-head">Delta <button type="button" class="hornet-help" aria-label="About Delta" aria-describedby="hornet-tip-1">?<span role="tooltip" id="hornet-tip-1">USD sensitivity scaled to a +1% spot move.</span></button></th><th scope="col" class="hornet-risk-head">Gamma <button type="button" class="hornet-help" aria-label="About Gamma" aria-describedby="hornet-tip-2">?<span role="tooltip" id="hornet-tip-2">Half the USD second-order change for a 1 bp spot move, as calculated by the current practice engine.</span></button></th><th scope="col" class="hornet-risk-head">ATM vega <button type="button" class="hornet-help" aria-label="About ATM vega" aria-describedby="hornet-tip-3">?<span role="tooltip" id="hornet-tip-3">USD sensitivity to +1 volatility point in ATM volatility.</span></button></th><th scope="col" class="hornet-risk-head">Rega <button type="button" class="hornet-help" aria-label="About Rega" aria-describedby="hornet-tip-4">?<span role="tooltip" id="hornet-tip-4">USD sensitivity to +1 volatility point in risk reversal.</span></button></th><th scope="col" class="hornet-risk-head">Fly vega <button type="button" class="hornet-help" aria-label="About Fly vega" aria-describedby="hornet-tip-5">?<span role="tooltip" id="hornet-tip-5">USD sensitivity to +1 volatility point in butterfly.</span></button></th><th scope="col" class="hornet-risk-head">USD rho <button type="button" class="hornet-help" aria-label="About USD rho" aria-describedby="hornet-tip-6">?<span role="tooltip" id="hornet-tip-6">USD sensitivity to +1 basis point in the USD rate.</span></button></th><th scope="col" class="hornet-risk-head">MXN rho <button type="button" class="hornet-help" aria-label="About MXN rho" aria-describedby="hornet-tip-7">?<span role="tooltip" id="hornet-tip-7">USD sensitivity to +1 basis point in the MXN rate.</span></button></th><th scope="col" class="hornet-risk-head">Carry <button type="button" class="hornet-help" aria-label="About Carry" aria-describedby="hornet-tip-8">?<span role="tooltip" id="hornet-tip-8">USD value change with one day less to maturity at the same market.</span></button></th><th scope="col"><span class="sr-only">Remove</span></th></tr>
+            </thead>
+            <tbody id="hornet-trades"></tbody>
+            <tfoot><tr id="hornet-total"><th scope="row" colspan="3">Total</th><td data-total-notional title="Signed USD reference notional; not a delta measure">—</td><td colspan="2"></td><td><output aria-live="off" data-total="0">—</output></td><td><output aria-live="off" data-total="1">—</output></td><td><output aria-live="off" data-total="2">—</output></td><td><output aria-live="off" data-total="3">—</output></td><td><output aria-live="off" data-total="4">—</output></td><td><output aria-live="off" data-total="5">—</output></td><td><output aria-live="off" data-total="6">—</output></td><td><output aria-live="off" data-total="7">—</output></td><td><output aria-live="off" data-total="8">—</output></td><td></td></tr></tfoot>
+          </table>
+        </div>
+        <p id="hornet-status" class="hornet-status" role="status" aria-live="polite">Loading calculator…</p>
+        <noscript><p class="hornet-status">Enable JavaScript to compose and reprice trades.</p></noscript>
+      </form>
+      <details class="hornet-method">
+        <summary>Model notes</summary>
+        <p>Illustrative markets, priced locally by the Hornet practice engine. Scratch trades stay in this session. Workbook layout and cell precision follow MiniSystem; pricing parity with its VBA has not been established.</p>
+      </details>
       {% else if page == "chat" %}
       <section class="page-intro chat-intro" aria-labelledby="page-title">
         <h1 id="page-title">A very small chat</h1>
@@ -247,18 +226,21 @@
       {% endif %}
     </main>
     <footer class="site-footer">
-      <span>Sharif Haason</span>
-      <nav aria-label="Machine-readable resources">
-        <a href="/feed.xml">Atom feed</a>
-        <a href="/feed.json">JSON feed</a>
-        <a href="/llms.txt">LLM guide</a>
-        <a href="/api/openapi.json">API</a>
-        <a href="/.well-known/agent.json">Agent manifest</a>
-        <a href="/.well-known/security.txt">Security</a>
-        <a href="/sitemap.xml">Sitemap</a>
-      </nav>
+      <a href="/feed.xml">Subscribe to the writing</a>
+      <details class="site-resources">
+        <summary>Site resources</summary>
+        <nav aria-label="Machine-readable resources">
+          <a href="/feed.xml">Atom feed</a>
+          <a href="/feed.json">JSON feed</a>
+          <a href="/llms.txt">LLM guide</a>
+          <a href="/api/openapi.json">API</a>
+          <a href="/.well-known/agent.json">Agent manifest</a>
+          <a href="/.well-known/security.txt">Security</a>
+          <a href="/sitemap.xml">Sitemap</a>
+        </nav>
+      </details>
     </footer>
   </div>
-  {% if page == "chat" %}<script type="module" src="/static/js/chat.js?v=20260926-1"></script>{% else if page == "hornet" %}<script type="module" src="/static/js/hornet.js?v=20260926-2"></script>{% endif %}
+  {% if page == "chat" %}<script type="module" src="/static/js/chat.js?v=20260926-1"></script>{% else if page == "hornet" %}<script type="module" src="/static/js/hornet.js?v=20260930-2"></script>{% endif %}
 </body>
 </html>

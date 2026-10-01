@@ -44,6 +44,7 @@ struct Site<'a> {
     structured_data: &'a str,
     breadcrumbs: Vec<Breadcrumb>,
     projects: &'a [Project],
+    recent_posts: Vec<&'a BlogPost>,
     resume_html: &'a str,
     pdf_available: bool,
     docx_available: bool,
@@ -68,6 +69,7 @@ impl ArticleSourceFormat {
 #[derive(Clone)]
 struct BlogPost {
     slug: String,
+    study_note: bool,
     title: String,
     date: String,
     date_display: String,
@@ -110,6 +112,7 @@ struct Breadcrumb {
 struct BlogTag {
     name: String,
     count: usize,
+    writing_count: usize,
 }
 
 struct BlogTagGroup {
@@ -138,6 +141,8 @@ struct ProjectDocument {
 struct BlogIndex<'a> {
     posts: &'a [BlogPost],
     total: usize,
+    writing_total: usize,
+    study_total: usize,
     tag_groups: &'a [BlogTagGroup],
     canonical_url: &'a str,
     structured_data: &'a str,
@@ -1797,6 +1802,10 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
     }
     entries.sort();
     let mut posts = Vec::new();
+    let study_notes: TomlValue = toml::from_str(include_str!("../content/study-notes.toml"))
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    let study_slugs: BTreeSet<String> =
+        toml_strings(study_notes.get("slugs")).into_iter().collect();
 
     for path in entries {
         let source = fs::read_to_string(&path).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
@@ -1900,6 +1909,7 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
         let tag_keys = tags.join("|");
         let search_text = format!("{} {} {}", title, description, tags.join(" "));
         posts.push(BlogPost {
+            study_note: study_slugs.contains(&slug),
             slug,
             title,
             date,
@@ -1934,14 +1944,15 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
     });
 
     let counts = tag_counts(&posts);
+    let writing_counts = tag_counts(posts.iter().filter(|post| !post.study_note));
     for post in &mut posts {
         post.display_tags = post
             .tags
             .iter()
             .filter(|tag| {
-                counts
-                    .get(*tag)
-                    .is_some_and(|count| tag_is_visible(tag, *count))
+                counts.get(*tag).is_some_and(|count| {
+                    tag_is_visible(tag, *count, *writing_counts.get(*tag).unwrap_or(&0))
+                })
             })
             .cloned()
             .collect();
@@ -1956,11 +1967,11 @@ fn load_projects() -> Vec<Project> {
         .projects
 }
 
-fn tag_is_visible(name: &str, count: usize) -> bool {
-    count >= MIN_VISIBLE_TAG_COUNT || REQUESTED_VISIBLE_TAGS.contains(&name)
+fn tag_is_visible(name: &str, count: usize, writing_count: usize) -> bool {
+    writing_count >= 3 || count >= MIN_VISIBLE_TAG_COUNT || REQUESTED_VISIBLE_TAGS.contains(&name)
 }
 
-fn tag_counts(posts: &[BlogPost]) -> BTreeMap<String, usize> {
+fn tag_counts<'a>(posts: impl IntoIterator<Item = &'a BlogPost>) -> BTreeMap<String, usize> {
     let mut counts = BTreeMap::<String, usize>::new();
     for post in posts {
         let mut seen = BTreeSet::new();
@@ -1982,11 +1993,18 @@ fn tag_group_name(name: &str) -> &'static str {
         | "Probability Theory"
         | "FX"
         | "Stochastic Calculus"
-        | "Risk Management" => "Quantitative Finance",
+        | "Risk Management"
+        | "Financial Markets"
+        | "Monetary Policy" => "Quantitative Finance",
         "Internet Technology"
         | "Principles of Programming Languages"
         | "Operating Systems Design"
-        | "Rust" => "Computer Science",
+        | "Rust"
+        | "AI"
+        | "Programming Languages" => "Computer Science",
+        "Tariffs & Trade" | "Trade Policy" | "Fiscal Policy" | "Public Policy" | "Housing" => {
+            "Economics and Policy"
+        }
         "Physics" => "Other",
         _ => "Other frequent topics",
     }
@@ -1996,21 +2014,27 @@ fn tag_group_order(name: &str) -> u8 {
     match name {
         "Quantitative Finance" => 0,
         "Computer Science" => 1,
-        "Other" => 2,
-        _ => 3,
+        "Economics and Policy" => 2,
+        "Other" => 3,
+        _ => 4,
     }
 }
 
 fn popular_tag_groups(posts: &[BlogPost]) -> Vec<BlogTagGroup> {
     let mut grouped_tags = BTreeMap::<String, Vec<BlogTag>>::new();
+    let writing_counts = tag_counts(posts.iter().filter(|post| !post.study_note));
     for (name, count) in tag_counts(posts) {
-        if !tag_is_visible(&name, count) {
+        if !tag_is_visible(&name, count, *writing_counts.get(&name).unwrap_or(&0)) {
             continue;
         }
         grouped_tags
             .entry(tag_group_name(&name).to_owned())
             .or_default()
-            .push(BlogTag { name, count });
+            .push(BlogTag {
+                writing_count: *writing_counts.get(&name).unwrap_or(&0),
+                name,
+                count,
+            });
     }
 
     let mut groups: Vec<BlogTagGroup> = grouped_tags
@@ -2078,6 +2102,8 @@ fn render_blog_index(posts: &[BlogPost]) -> Result<Html<String>, StatusCode> {
     BlogIndex {
         posts,
         total: posts.len(),
+        writing_total: posts.iter().filter(|post| !post.study_note).count(),
+        study_total: posts.iter().filter(|post| post.study_note).count(),
         tag_groups: &tag_groups,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
@@ -2148,7 +2174,7 @@ fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, S
     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
 }
 
-fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
+fn render_site(page: &str, posts: &[BlogPost]) -> Result<Html<String>, StatusCode> {
     if !["home", "projects", "hornet", "resume", "chat"].contains(&page) {
         return Err(StatusCode::NOT_FOUND);
     }
@@ -2171,6 +2197,11 @@ fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
         structured_data: &structured_data,
         breadcrumbs,
         projects: &projects,
+        recent_posts: posts
+            .iter()
+            .filter(|post| !post.study_note)
+            .take(3)
+            .collect(),
         resume_html: &resume_html,
         pdf_available: FilePath::new("static/resume/sharif-haason.pdf").is_file(),
         docx_available: FilePath::new("static/resume/sharif-haason.docx").is_file(),
@@ -2181,24 +2212,24 @@ fn render_site(page: &str) -> Result<Html<String>, StatusCode> {
     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
 }
 
-async fn home() -> Result<Html<String>, StatusCode> {
-    render_site("home")
+async fn home(State(posts): State<Arc<Vec<BlogPost>>>) -> Result<Html<String>, StatusCode> {
+    render_site("home", posts.as_slice())
 }
 
 async fn projects() -> Result<Html<String>, StatusCode> {
-    render_site("projects")
+    render_site("projects", &[])
 }
 
 async fn hornet() -> Result<Html<String>, StatusCode> {
-    render_site("hornet")
+    render_site("hornet", &[])
 }
 
 async fn resume() -> Result<Html<String>, StatusCode> {
-    render_site("resume")
+    render_site("resume", &[])
 }
 
 async fn chat() -> Result<Html<String>, StatusCode> {
-    render_site("chat")
+    render_site("chat", &[])
 }
 
 async fn blog_index(State(posts): State<Arc<Vec<BlogPost>>>) -> Result<Html<String>, StatusCode> {
@@ -2465,7 +2496,7 @@ mod tests {
     #[test]
     fn canonical_pages_render_with_metadata_and_real_assets() {
         for page in ["home", "projects", "resume"] {
-            let Html(html) = render_site(page).unwrap();
+            let Html(html) = render_site(page, &[]).unwrap();
             assert!(html.contains("Sharif Haason"), "page {page}");
             assert!(html.contains("https://schema.org"));
             if page == "home" {
@@ -2483,12 +2514,15 @@ mod tests {
                 assert!(html.contains("/static/resume/sharif-haason.docx"));
             }
         }
-        let Html(projects) = render_site("projects").unwrap();
+        let Html(projects) = render_site("projects", &[]).unwrap();
         assert!(projects.contains("Implied Willow Tree for Derivatives"));
         assert!(projects.contains("application/ld+json"));
         assert!(projects.contains("project-nba-reddit-ai-chatbot"));
-        assert_eq!(render_site("blog").unwrap_err(), StatusCode::NOT_FOUND);
-        assert_eq!(render_site("missing").unwrap_err(), StatusCode::NOT_FOUND);
+        assert_eq!(render_site("blog", &[]).unwrap_err(), StatusCode::NOT_FOUND);
+        assert_eq!(
+            render_site("missing", &[]).unwrap_err(),
+            StatusCode::NOT_FOUND
+        );
     }
 
     #[test]
@@ -2825,6 +2859,22 @@ mod tests {
             .unwrap();
         assert!(fe621.tags.contains(&"Computational Methods".to_owned()));
         assert!(fe621.has_typst);
+        assert!(fe621.study_note);
+        assert!(
+            posts
+                .iter()
+                .find(|post| post.slug == "circuits")
+                .unwrap()
+                .study_note
+        );
+        assert!(
+            !posts
+                .iter()
+                .find(|post| post.slug == "making-a-website")
+                .unwrap()
+                .study_note
+        );
+        assert!(!rust_post.study_note);
 
         let fe680 = posts
             .iter()
@@ -2848,13 +2898,18 @@ mod tests {
                 .iter()
                 .map(|group| group.name.as_str())
                 .collect::<Vec<_>>(),
-            ["Quantitative Finance", "Computer Science", "Other"]
+            [
+                "Quantitative Finance",
+                "Computer Science",
+                "Economics and Policy",
+                "Other"
+            ]
         );
 
         let visible_tags: Vec<&BlogTag> = groups.iter().flat_map(|group| &group.tags).collect();
-        assert_eq!(visible_tags.len(), 12);
         assert!(visible_tags.iter().all(|tag| {
-            tag.count >= MIN_VISIBLE_TAG_COUNT
+            tag.writing_count >= 3
+                || tag.count >= MIN_VISIBLE_TAG_COUNT
                 || REQUESTED_VISIBLE_TAGS.contains(&tag.name.as_str())
         }));
         assert_eq!(
@@ -2865,7 +2920,11 @@ mod tests {
                 .count,
             8
         );
-        assert!(!visible_tags.iter().any(|tag| tag.name == "AI"));
+        assert!(
+            visible_tags
+                .iter()
+                .any(|tag| tag.name == "AI" && tag.writing_count == 4)
+        );
         assert!(posts.iter().all(|post| {
             post.display_tags
                 .iter()
@@ -2897,8 +2956,8 @@ mod tests {
         assert!(index.contains("<h3>Computer Science</h3>"));
         assert!(index.contains("<h3>Other</h3>"));
         assert!(index.contains("data-tag-select=\"Rust\""));
-        assert!(!index.contains("value=\"AI\""));
-        assert!(!index.contains("data-tag-select=\"AI\""));
+        assert!(index.contains("value=\"AI\""));
+        assert!(index.contains("data-tag-select=\"AI\""));
         assert!(!index.contains("Course notes"));
         assert!(!index.contains("FE-621") && !index.contains("FE-680"));
         let methods_filter = index.find("value=\"Computational Methods\"").unwrap();

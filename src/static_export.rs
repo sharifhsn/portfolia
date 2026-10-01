@@ -9,18 +9,18 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     }
     fs::create_dir_all(output_dir)?;
 
-    let home = render_site("home").map_err(render_status_error)?;
+    let home = render_site("home", posts).map_err(render_status_error)?;
     write_route(output_dir, "", &home.0)?;
 
     let blog = render_blog_index(posts).map_err(render_status_error)?;
     write_route(output_dir, "blog", &blog.0)?;
-    let projects = render_site("projects").map_err(render_status_error)?;
+    let projects = render_site("projects", posts).map_err(render_status_error)?;
     write_route(output_dir, "projects", &projects.0)?;
-    let hornet = render_site("hornet").map_err(render_status_error)?;
+    let hornet = render_site("hornet", posts).map_err(render_status_error)?;
     write_route(output_dir, "projects/hornet", &hornet.0)?;
-    let resume = render_site("resume").map_err(render_status_error)?;
+    let resume = render_site("resume", posts).map_err(render_status_error)?;
     write_route(output_dir, "resume", &resume.0)?;
-    let chat = render_site("chat").map_err(render_status_error)?;
+    let chat = render_site("chat", posts).map_err(render_status_error)?;
     write_route(output_dir, "chat", &chat.0)?;
 
     for post in posts {
@@ -241,6 +241,14 @@ mod tests {
     #[test]
     fn export_contains_root_all_articles_and_pages_asset_files() {
         let posts = super::super::load_blog_posts().expect("blog content should load");
+        let classifications: toml::Value =
+            toml::from_str(include_str!("../content/study-notes.toml")).unwrap();
+        let study_slugs = classifications["slugs"].as_array().unwrap();
+        assert_eq!(
+            posts.iter().filter(|post| post.study_note).count(),
+            study_slugs.len(),
+            "archive classification must contain unique, existing slugs"
+        );
         let nonce = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)
             .expect("clock should be after the epoch")
@@ -251,6 +259,11 @@ mod tests {
 
         let home = fs::read_to_string(output.join("index.html")).expect("root page exists");
         assert!(home.contains("Sharif Haason"));
+        assert_eq!(home.matches("<article>").count(), 3);
+        for post in posts.iter().filter(|post| !post.study_note).take(3) {
+            assert!(home.contains(&format!("href=\"/blog/{}/\"", post.slug)));
+        }
+        assert!(home.contains("href=\"/projects/hornet/\""));
         assert!(!home.contains("/v/6") && !home.contains("/designs"));
         assert!(output.join("blog/index.html").is_file());
         assert!(output.join("projects/index.html").is_file());
@@ -295,7 +308,12 @@ mod tests {
         let blog_index =
             fs::read_to_string(output.join("blog/index.html")).expect("blog index exists");
         assert!(!blog_index.contains("/v/6") && !blog_index.contains("/designs"));
-        assert!(blog_index.contains(&format!("{} pieces", posts.len())));
+        assert!(blog_index.contains(&format!(
+            "Showing {} pieces.",
+            posts.iter().filter(|post| !post.study_note).count()
+        )));
+        assert!(blog_index.contains("Study archive"));
+        assert!(blog_index.contains("data-study-note=\"true\""));
         for post in &posts {
             assert!(
                 output

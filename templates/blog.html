@@ -45,7 +45,7 @@
   <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>Writing | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260927-1">
+  <link rel="stylesheet" href="/static/css/site.css?v=20261001-1">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -53,16 +53,16 @@
   <div class="site-shell">
     <header class="site-header">
       <a class="site-name" href="/">
-        <span>Sharif Haason</span><small>systems · markets · notes</small>
+        <span>Sharif Haason</span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="/blog/" aria-current="page">Blog</a>
+        <a href="/blog/" aria-current="page">Writing</a>
         <a href="/projects/">Projects</a>
         <a href="/resume/">Resume</a>
-        <a class="chat-nav-link" href="/chat/" aria-label="Chat" title="Chat"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-3 2v-5.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01"/></svg></a>
+        <a href="/chat/">Chat</a>
       </nav>
     </header>
-    <main id="main" class="content blog-content">
+    <main id="main" class="content blog-content writing-index">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
         <ol>
           {% for breadcrumb in breadcrumbs %}
@@ -71,9 +71,8 @@
         </ol>
       </nav>
       <section class="page-intro" aria-labelledby="page-title">
-        <p class="page-kicker">Archive / {{ total }} pieces</p>
         <h1 id="page-title">Writing</h1>
-        <p>Notes and articles on Rust, compiler systems, quantitative finance, options pricing, risk management, and applied mathematics.</p>
+        <p>Essays and commentary on software, finance, economics, and policy.</p>
       </section>
       <div class="blog-layout">
         <aside class="tag-filter" aria-label="Filter writing">
@@ -84,12 +83,14 @@
             <span class="sr-only">Search writing</span>
             <input id="writing-search" type="search" placeholder="Search writing" autocomplete="off" aria-describedby="filter-status">
           </label>
+          <details class="topic-disclosure">
+            <summary>Browse by topic</summary>
           <fieldset class="tag-filter-set">
-            <legend>Browse by topic</legend>
+            <legend class="sr-only">Writing topics</legend>
             <div class="tag-all">
               <label class="tag-choice">
                 <input type="radio" name="writing-topic" value="" data-tag-filter checked>
-                <span class="tag-pill">All writing <span class="tag-count">{{ total }}</span></span>
+                <span class="tag-pill">All topics <span class="tag-count"><span class="writing-count">{{ writing_total }}</span><span class="archive-count">{{ total }}</span></span></span>
               </label>
             </div>
             {% for group in tag_groups %}
@@ -97,23 +98,29 @@
               <h3>{{ group.name }}</h3>
               <div class="tag-options">
                 {% for tag in group.tags %}
-                <label class="tag-choice">
+                <label class="tag-choice" data-writing-count="{{ tag.writing_count }}">
                   <input type="radio" name="writing-topic" value="{{ tag.name }}" data-tag-filter>
-                  <span class="tag-pill">{{ tag.name }} <span class="tag-count">{{ tag.count }}</span></span>
+                  <span class="tag-pill">{{ tag.name }} <span class="tag-count"><span class="writing-count">{{ tag.writing_count }}</span><span class="archive-count">{{ tag.count }}</span></span></span>
                 </label>
                 {% endfor %}
               </div>
             </div>
             {% endfor %}
           </fieldset>
+          </details>
         </aside>
         <section class="blog-results" aria-labelledby="writing-results-title">
           <h2 id="writing-results-title" class="sr-only">Writing results</h2>
-          <p id="filter-status" class="filter-status" data-filter-status aria-live="polite">Showing {{ total }} pieces.</p>
+          <p id="filter-status" class="filter-status" data-filter-status aria-live="polite">Showing {{ writing_total }} pieces.</p>
+          <div class="search-empty" data-search-empty hidden>
+            <h2>No matching writing</h2>
+            <p>Try another search or clear the filters to browse writing.</p>
+            <button type="button" data-clear-filters>Clear filters</button>
+          </div>
           <ol id="writing-results" class="post-list">
         {% for post in posts %}
-        <li class="post-item">
-          <article class="post-row h-entry" data-tags="{{ post.tag_keys }}" data-search="{{ post.search_text }}" aria-labelledby="post-title-{{ post.slug }}">
+        <li class="post-item" data-study-note="{{ post.study_note }}">
+          <article class="post-row h-entry" data-study-note="{{ post.study_note }}" data-tags="{{ post.tag_keys }}" data-search="{{ post.search_text }}" aria-labelledby="post-title-{{ post.slug }}">
             <time class="post-date dt-published" datetime="{{ post.date }}">{{ post.date_display }}</time>
             <div class="post-summary">
               <h2 id="post-title-{{ post.slug }}"><a class="post-title p-name u-url" href="/blog/{{ post.slug }}/">{{ post.title }}</a></h2>
@@ -129,22 +136,29 @@
         </li>
         {% endfor %}
           </ol>
+          <details class="study-disclosure">
+            <summary>Study archive</summary>
+            <label class="study-choice"><input type="checkbox" data-study-filter> Include study notes <span class="tag-count">{{ study_total }}</span></label>
+          </details>
         </section>
       </div>
     </main>
     <footer class="site-footer">
-      <span>Sharif Haason</span>
-      <nav aria-label="Machine-readable resources">
-        <a href="/feed.xml">Atom feed</a>
-        <a href="/feed.json">JSON feed</a>
-        <a href="/llms.txt">LLM guide</a>
-        <a href="/api/openapi.json">API</a>
-        <a href="/.well-known/agent.json">Agent manifest</a>
-        <a href="/.well-known/security.txt">Security</a>
-        <a href="/sitemap.xml">Sitemap</a>
-      </nav>
+      <a href="/feed.xml">Subscribe to the writing</a>
+      <details class="site-resources">
+        <summary>Site resources</summary>
+        <nav aria-label="Machine-readable resources">
+          <a href="/feed.xml">Atom feed</a>
+          <a href="/feed.json">JSON feed</a>
+          <a href="/llms.txt">LLM guide</a>
+          <a href="/api/openapi.json">API</a>
+          <a href="/.well-known/agent.json">Agent manifest</a>
+          <a href="/.well-known/security.txt">Security</a>
+          <a href="/sitemap.xml">Sitemap</a>
+        </nav>
+      </details>
     </footer>
   </div>
-  <script src="/static/js/blog-filter.js?v=20260916-3" defer></script>
+  <script src="/static/js/blog-filter.js?v=20261001-1" defer></script>
 </body>
 </html>
