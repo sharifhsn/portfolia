@@ -1,0 +1,28 @@
+{% import "chrome.html" as chrome %}
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f6fa">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/static/img/favicon.png">
+  <title>Page not found | Sharif Haason</title>
+  {% include "styles.html" %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="site-shell">
+    {% call chrome::header("missing") %}
+    <main id="main" class="content">
+      <section class="page-intro">
+        <h1>Page not found</h1>
+        <p>This address doesn't point to a page on the site.</p>
+        <p><a href="/">Go to the home page</a> or <a href="/blog/">browse the writing</a>.</p>
+      </section>
+    </main>
+    {% call chrome::footer() %}
+  </div>
+</body>
+</html>

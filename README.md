@@ -2,7 +2,9 @@
 
 The canonical public site is [sharifhsn.dev](https://sharifhsn.dev/). It is a
 reading-first Rust/Axum/Askama portfolio with a static Cloudflare Pages export.
-`main` is the only active branch and the root route is the settled design.
+The current checkout uses a light editorial design, shared page chrome, and
+a compact worksheet for the Hornet calculator. See [the design review](context/DESIGN_REVIEW.md)
+and [design direction](DESIGN.md) for decisions and verification.
 
 ## For people and agents
 
@@ -44,15 +46,20 @@ metadata and security niceties are recorded in
 
 ```sh
 just build       # compile the Axum server
-just test        # run Rust tests
+just test        # run Rust and frontend behavior tests
+just prepare-assets  # first setup: chat runtime/model and Hornet WASM
 just preview     # serve locally on 127.0.0.1:8095
 just static      # export dist/ for Cloudflare Pages
 just pages-preview
 ```
 
-The active page templates are `templates/site.html`, `templates/blog.html`,
-and `templates/article.html`. Blog sources are `content/blog/*.typ`; Typst CLI
-0.15.1 is required for preview and static export. GitHub Actions installs the
+The page templates are `templates/site.html`, `templates/blog.html`, and
+`templates/article.html`, with shared chrome/styles and separate page partials.
+Ordinary preview/export uses prepared assets; it does not reinstall or download
+the browser model each time. Tests require Node 22 or newer and prepared Hornet
+WASM (`just hornet-wasm` if only preparing for tests). Builds and local tests
+use two Cargo jobs. Blog sources are `content/blog/*.typ`; Typst CLI 0.15.1 is required for preview and static export. GitHub Actions installs the
 pinned CLI for deployment. The current resume source is
-`content/resume-current.md`. Do not use the retired templates or historical
-context files as runtime sources.
+`content/resume-current.md`. Article loading is Typst-only; retired `/v/*` and
+`/designs` routes return 404.
+The real Markdown resume remains supported.

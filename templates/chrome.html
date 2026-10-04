@@ -1,0 +1,28 @@
+{% macro header(current) %}
+<header class="site-header">
+  <a class="site-name" href="/" {% if current == "home" %}aria-current="page"{% endif %}>Sharif Haason</a>
+  <nav aria-label="Main navigation">
+    <a href="/blog/" {% if current == "blog" %}aria-current="page"{% endif %}>Writing</a>
+    <a href="/projects/" {% if current == "projects" || current == "hornet" || current == "chat" %}aria-current="page"{% endif %}>Projects</a>
+    <a href="/resume/" {% if current == "resume" %}aria-current="page"{% endif %}>Resume</a>
+  </nav>
+</header>
+{% endmacro %}
+
+{% macro footer() %}
+<footer class="site-footer">
+  <a href="/feed.xml">Subscribe to the writing</a>
+  <details class="site-resources">
+    <summary>Site resources</summary>
+    <nav aria-label="Machine-readable resources">
+      <a href="/feed.xml">Atom feed</a>
+      <a href="/feed.json">JSON feed</a>
+      <a href="/llms.txt">LLM guide</a>
+      <a href="/api/openapi.json">API</a>
+      <a href="/.well-known/agent.json">Agent manifest</a>
+      <a href="/.well-known/security.txt">Security</a>
+      <a href="/sitemap.xml">Sitemap</a>
+    </nav>
+  </details>
+</footer>
+{% endmacro %}

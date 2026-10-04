@@ -1,0 +1,40 @@
+<section class="introduction" aria-labelledby="page-title">
+  <div class="intro-copy">
+    <h1 id="page-title">Sharif Haason</h1>
+    <p class="role">Product engineer at Monark Markets.</p>
+    <p>I build financial software and work with Rust, compilers, and applied mathematics. This is where I share projects and ideas from that work.</p>
+    <nav class="quick-links" aria-label="Profile links">
+      <a href="/projects/">Explore my projects</a>
+      <a href="https://github.com/sharifhsn/" rel="me">GitHub</a>
+      <a href="https://www.linkedin.com/in/sharif-haason/" rel="me">LinkedIn</a>
+    </nav>
+  </div>
+  {% if photo_available %}<img class="portrait" src="/static/img/profile.jpg" alt="Sharif Haason" width="800" height="800" decoding="async" fetchpriority="high">{% endif %}
+</section>
+<div class="home-work">
+  <section class="home-writing" aria-labelledby="recent-writing-title">
+    <header class="section-heading"><h2 id="recent-writing-title">Recent writing</h2><a href="/blog/">All writing</a></header>
+    <ul class="recent-posts">
+      {% for post in recent_posts %}
+      <li><article>
+        <time datetime="{{ post.date }}">{{ post.date_display }}</time>
+        <h3><a href="/blog/{{ post.slug }}/">{{ post.title }}</a></h3>
+        <p>{{ post.description }}</p>
+      </article></li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="home-project" aria-labelledby="home-project-title">
+    <header class="section-heading"><h2 id="home-project-title">Working projects</h2></header>
+    <div class="home-tool">
+      <h3><a href="/projects/hornet/">Hornet FX desk</a></h3>
+      <p>Compose USD/MXN trades in a working risk grid. Change the market and see each position and the total reprice.</p>
+      <a class="text-action" href="/projects/hornet/">Open the worksheet</a>
+    </div>
+    <div class="home-tool">
+      <h3><a href="/projects/#selected-projects">Research and software</a></h3>
+      <p>Options pricing, a market-making competition, and data pipelines for basketball analysis.</p>
+      <a class="text-action" href="/projects/">See the project notes</a>
+    </div>
+  </section>
+</div>

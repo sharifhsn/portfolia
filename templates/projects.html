@@ -1,0 +1,33 @@
+<section class="page-intro" aria-labelledby="page-title">
+  <h1 id="page-title">Projects</h1>
+  <p>Financial tools, quantitative research, and experiments you can try.</p>
+</section>
+<section class="demo-list" aria-labelledby="demo-title">
+  <h2 id="demo-title">Try a project</h2>
+  <div class="demo-layout">
+    <article class="demo-entry">
+      <div class="demo-preview worksheet-preview" aria-hidden="true"><span>Hornet</span><div><span>Contract</span><span>Value</span><span>Risk</span></div><div><span>USD call</span><span>MtM</span><span>Delta</span></div><div><span>USD put</span><span>MtM</span><span>Vega</span></div><div><strong>Total</strong><span>∑</span><span>∑</span></div></div>
+      <h3><a href="/projects/hornet/">Hornet FX desk</a></h3>
+      <p>A USD/MXN worksheet adapted from my trading-contest project. Edit trade rows, reprice the book, and inspect combined risk.</p>
+      <a class="text-action" href="/projects/hornet/">Open the worksheet</a>
+    </article>
+    <article class="demo-entry">
+      <div class="demo-preview model-preview" aria-hidden="true"><span>Stentor-30M</span><strong>Small model.<br>On your device.</strong><span>Browser experiment</span></div>
+      <h3><a href="/chat/">Browser language model</a></h3>
+      <p>A 30-million-parameter model running locally in your browser. An inference experiment, with a very small context and imperfect answers.</p>
+      <a class="text-action" href="/chat/">Try the model</a>
+    </article>
+  </div>
+</section>
+<section class="project-list" id="selected-projects" aria-labelledby="selected-title">
+  <h2 id="selected-title">Selected work</h2>
+  {% for project in projects %}
+  <article class="project-card" id="project-{{ project.slug }}" aria-labelledby="project-title-{{ project.slug }}">
+    <header><h3 id="project-title-{{ project.slug }}">{{ project.name }}</h3><p class="project-meta">{{ project.kind }}<br>{{ project.dates }}</p></header>
+    <div class="project-copy"><p>{{ project.summary }}</p><p class="project-technologies">{{ project.technologies }}</p>
+      <details class="project-details"><summary>Project details</summary><ul>{% for detail in project.details %}<li>{{ detail }}</li>{% endfor %}</ul></details>
+      {% if project.slug == "hornet-trading-contest" %}<p class="project-action"><a href="/projects/hornet/">Open the FX worksheet</a></p>{% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</section>

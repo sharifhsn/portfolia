@@ -1,11 +1,12 @@
+{% import "chrome.html" as chrome %}
 <!doctype html>
 <html lang="en-US">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="theme-color" content="#0f1418">
-  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#f3f6fa">
+  <meta name="color-scheme" content="light">
   <meta name="format-detection" content="telephone=no">
   <meta name="author" content="Sharif Haason">
   <meta name="description" content="{{ post.description }}">
@@ -54,7 +55,7 @@
   {% for tag in post.tags %}<meta property="article:tag" content="{{ tag }}">
   {% endfor %}
   <title>{{ post.title }} | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20260930-3">
+  {% include "styles.html" %}
   <link rel="author" href="/resume/">
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <script type="application/ld+json">{{ structured_data|safe }}</script>
@@ -66,43 +67,27 @@
   <link rel="alternate" type="application/json" title="Agent discovery manifest" href="/.well-known/agent.json">
   <link rel="alternate" type="text/plain" title="Sharif Haason — full writing corpus" href="/llms-full.txt">
   <link rel="alternate" type="text/plain" title="Security contact" href="/.well-known/security.txt">
-  {% if post.has_math %}<link rel="stylesheet" href="/static/css/katex.min.css?v=20260918-1">{% endif %}
-  {% if post.has_typst %}<link rel="stylesheet" href="/static/css/typst-math.css?v=0.15.1-1">{% endif %}
+  <link rel="stylesheet" href="/static/css/typst-math.css?v=0.15.1-1">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="site-shell">
-    <header class="site-header">
-      <a class="site-name" href="/">
-        <span>Sharif Haason</span>
-      </a>
-      <nav aria-label="Main navigation">
-        <a href="/blog/" aria-current="page">Writing</a>
-        <a href="/projects/">Projects</a>
-        <a href="/resume/">Resume</a>
-        <a href="/chat/">Chat</a>
-      </nav>
-    </header>
+    {% call chrome::header("blog") %}
     <main id="main" class="content article-content">
-      <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <ol>
-          {% for breadcrumb in breadcrumbs %}
-          <li>{% if breadcrumb.current %}<span aria-current="page">{{ breadcrumb.name }}</span>{% else %}<a href="{{ breadcrumb.href }}">{{ breadcrumb.name }}</a>{% endif %}</li>
-          {% endfor %}
-        </ol>
-      </nav>
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/blog/">All writing</a></nav>
       <article class="h-entry">
         <header class="article-header">
           <h1 class="p-name">{{ post.title }}</h1>
           <div class="article-meta">
             <time class="dt-published" datetime="{{ post.date }}">{{ post.date_display }}</time>
-            <span>Article {{ position }} of {{ total }}</span>
-            {% if post.source != "" %}<span>Source: {{ post.source }}</span>{% endif %}
+            <a class="p-author h-card" href="/resume/">Sharif Haason</a>
+            <span>{{ post.reading_minutes() }} min read</span>
+            {% if post.study_note %}<span>Study note</span>{% endif %}
             {% if let Some(updated_at) = post.updated_at %}<span>Updated <time datetime="{{ updated_at }}">{{ updated_at }}</time></span>{% endif %}
           </div>
           {% if post.display_tags.len() > 0 %}
           <ul class="article-labels">
-            {% for tag in post.display_tags %}<li>{{ tag }}</li>{% endfor %}
+            {% for tag in post.display_tags %}<li><a href="/blog/?topic={{ tag|urlencode }}{% if post.study_note %}&amp;study=1{% endif %}">{{ tag }}</a></li>{% endfor %}
           </ul>
           {% endif %}
         </header>
@@ -132,26 +117,7 @@
       </nav>
       <p class="back-link bottom-back-link"><a href="/blog/">Back to all writing</a></p>
     </main>
-    <footer class="site-footer">
-      <a href="/feed.xml">Subscribe to the writing</a>
-      <details class="site-resources">
-        <summary>Site resources</summary>
-        <nav aria-label="Machine-readable resources">
-          <a href="/feed.xml">Atom feed</a>
-          <a href="/feed.json">JSON feed</a>
-          <a href="/llms.txt">LLM guide</a>
-          <a href="/api/openapi.json">API</a>
-          <a href="/.well-known/agent.json">Agent manifest</a>
-          <a href="/.well-known/security.txt">Security</a>
-          <a href="/sitemap.xml">Sitemap</a>
-        </nav>
-      </details>
-    </footer>
+    {% call chrome::footer() %}
   </div>
-  {% if post.has_math %}
-  <script defer src="/static/js/katex.min.js?v=20260918-1"></script>
-  <script defer src="/static/js/auto-render.min.js?v=20260918-1"></script>
-  <script defer src="/static/js/math-render.js?v=20260918-2"></script>
-  {% endif %}
 </body>
 </html>

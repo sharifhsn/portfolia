@@ -1,0 +1,9 @@
+<section class="page-intro resume-heading" aria-labelledby="page-title">
+  <h1 id="page-title">Resume</h1>
+  <p>Experience in financial software, data engineering, and quantitative research.</p>
+  <div class="download-links">
+    {% if pdf_available %}<a class="download-primary" href="/static/resume/sharif-haason.pdf" download>Download PDF</a>{% endif %}
+    {% if docx_available %}<a href="/static/resume/sharif-haason.docx" download>Download DOCX</a>{% endif %}
+  </div>
+</section>
+<article class="resume-content">{{ resume_html|safe }}</article>

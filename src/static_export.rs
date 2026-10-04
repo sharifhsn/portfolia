@@ -89,57 +89,8 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
         output_dir.join("static").as_path(),
     )?;
 
-    let mut redirects = String::new();
-    for week in 1..=14 {
-        if week == 8 {
-            continue;
-        }
-        redirects.push_str(&format!(
-            "/v/6/blog/fe621-week-{week:02} /blog/computational-methods-week-{week:02}/ 301\n"
-        ));
-    }
-    for week in 1..=13 {
-        redirects.push_str(&format!(
-            "/v/6/blog/fe680-week-{week:02} /blog/advanced-derivatives-week-{week:02}/ 301\n"
-        ));
-    }
-    redirects.push_str(
-        "/v/6/blog/fe621-finite-difference-sketches /blog/computational-methods-finite-difference-sketches/ 301\n",
-    );
-    redirects.push_str(
-        "/v/6/blog/fe621-midterm-cheat-sheet /blog/computational-methods-midterm-cheat-sheet/ 301\n",
-    );
-    redirects.push_str(
-        "/v/6 / 301\n/designs / 301\n/v/:id / 301\n/v/:id/blog /blog/ 301\n/v/:id/projects /projects/ 301\n/v/:id/resume /resume/ 301\n/v/6/blog/:slug /blog/:slug/ 301\n",
-    );
-    fs::write(output_dir.join("_redirects"), redirects)?;
-    fs::write(
-        output_dir.join("404.html"),
-        r##"<!doctype html>
-<html lang="en-US">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="theme-color" content="#0f1418">
-  <meta name="color-scheme" content="dark">
-  <meta name="robots" content="noindex">
-  <link rel="icon" type="image/png" sizes="355x355" href="/static/img/favicon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
-  <link rel="manifest" href="/manifest.webmanifest">
-  <title>Page not found | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css">
-</head>
-<body>
-  <main class="content">
-    <h1>Page not found</h1>
-    <p>This page may have moved or no longer exists.</p>
-    <p><a href="/">Go to the home page</a> or <a href="/blog/">browse the writing</a>.</p>
-  </main>
-</body>
-</html>
-"##,
-    )?;
+    let not_found = super::render_not_found().map_err(render_status_error)?;
+    fs::write(output_dir.join("404.html"), not_found.0)?;
     fs::write(
         output_dir.join("_headers"),
         r#"/*
@@ -289,17 +240,13 @@ mod tests {
         assert!(headers.contains("Content-Security-Policy:"));
         assert!(headers.contains("Content-Language: en-US"));
         assert!(headers.contains("Strict-Transport-Security:"));
-        let redirects = fs::read_to_string(output.join("_redirects")).expect("redirects exist");
         assert!(
-            redirects.contains("/v/6/blog/fe621-week-02 /blog/computational-methods-week-02/ 301")
+            !output.join("_redirects").exists(),
+            "retired variants should not be exported"
         );
-        assert!(
-            redirects.contains("/v/6/blog/fe680-week-01 /blog/advanced-derivatives-week-01/ 301")
-        );
-        assert!(
-            redirects.find("/v/6/blog/fe621-week-02").unwrap()
-                < redirects.find("/v/6/blog/:slug").unwrap()
-        );
+        let not_found = fs::read_to_string(output.join("404.html")).unwrap();
+        assert!(not_found.contains("Main navigation"));
+        assert!(not_found.contains("Page not found"));
         assert!(output.join("static/css/site.css").is_file());
         assert!(output.join("static/img/apple-touch-icon.png").is_file());
         assert!(output.join("static/img/icon-192.png").is_file());

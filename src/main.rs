@@ -5,7 +5,7 @@ use axum::{
     Router,
     extract::{Path, State},
     http::{StatusCode, header},
-    response::{Html, IntoResponse, Redirect, Response},
+    response::{Html, IntoResponse, Response},
     routing::get,
 };
 use serde::Deserialize;
@@ -42,28 +42,12 @@ struct Site<'a> {
     description: &'a str,
     canonical_url: &'a str,
     structured_data: &'a str,
-    breadcrumbs: Vec<Breadcrumb>,
     projects: &'a [Project],
     recent_posts: Vec<&'a BlogPost>,
     resume_html: &'a str,
     pdf_available: bool,
     docx_available: bool,
     photo_available: bool,
-}
-
-#[derive(Clone, Copy)]
-enum ArticleSourceFormat {
-    Markdown,
-    Typst,
-}
-
-impl ArticleSourceFormat {
-    fn as_str(self) -> &'static str {
-        match self {
-            Self::Markdown => "markdown",
-            Self::Typst => "typst",
-        }
-    }
 }
 
 #[derive(Clone)]
@@ -87,11 +71,48 @@ struct BlogPost {
     body_html: String,
     images: Vec<ArticleImage>,
     featured_image: Option<ArticleImage>,
-    source_format: ArticleSourceFormat,
     word_count: usize,
-    has_math: bool,
-    has_typst: bool,
     sort_key: String,
+}
+
+impl BlogPost {
+    fn reading_minutes(&self) -> usize {
+        self.word_count.div_ceil(200).max(1)
+    }
+}
+
+fn display_date(value: &str) -> String {
+    let date: String = value.chars().take(10).collect();
+    let parts: Vec<_> = date.split('-').collect();
+    if let [year, month, day] = parts.as_slice()
+        && let (Ok(month), Ok(day)) = (month.parse::<usize>(), day.parse::<u8>())
+        && (1..=12).contains(&month)
+        && (1..=31).contains(&day)
+    {
+        let months = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        ];
+        return format!("{} {day}, {year}", months[month - 1]);
+    }
+    date
+}
+
+#[derive(Template)]
+#[template(path = "not_found.html")]
+struct NotFound;
+
+fn render_not_found() -> Result<Html<String>, StatusCode> {
+    NotFound
+        .render()
+        .map(Html)
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
+}
+
+async fn not_found() -> Response {
+    match render_not_found() {
+        Ok(page) => (StatusCode::NOT_FOUND, page).into_response(),
+        Err(status) => status.into_response(),
+    }
 }
 
 #[derive(Clone)]
@@ -103,9 +124,7 @@ struct ArticleImage {
 #[derive(Clone)]
 struct Breadcrumb {
     name: String,
-    href: String,
     item: String,
-    current: bool,
 }
 
 #[derive(Clone)]
@@ -146,7 +165,6 @@ struct BlogIndex<'a> {
     tag_groups: &'a [BlogTagGroup],
     canonical_url: &'a str,
     structured_data: &'a str,
-    breadcrumbs: Vec<Breadcrumb>,
 }
 
 #[derive(Template)]
@@ -155,12 +173,9 @@ struct BlogArticle<'a> {
     post: &'a BlogPost,
     canonical_url: &'a str,
     structured_data: &'a str,
-    breadcrumbs: Vec<Breadcrumb>,
     related: Vec<&'a BlogPost>,
     previous: Option<&'a BlogPost>,
     next: Option<&'a BlogPost>,
-    position: usize,
-    total: usize,
 }
 
 fn site_url(path: &str) -> String {
@@ -248,21 +263,15 @@ fn breadcrumbs_for_article(title: &str, canonical_url: &str) -> Vec<Breadcrumb> 
     vec![
         Breadcrumb {
             name: "Home".to_owned(),
-            href: "/".to_owned(),
             item: site_url("/"),
-            current: false,
         },
         Breadcrumb {
             name: "Writing".to_owned(),
-            href: "/blog/".to_owned(),
             item: site_url("/blog/"),
-            current: false,
         },
         Breadcrumb {
             name: title.to_owned(),
-            href: canonical_url.to_owned(),
             item: canonical_url.to_owned(),
-            current: true,
         },
     ]
 }
@@ -270,12 +279,9 @@ fn breadcrumbs_for_article(title: &str, canonical_url: &str) -> Vec<Breadcrumb> 
 fn make_breadcrumbs(paths: &[(&str, &str)]) -> Vec<Breadcrumb> {
     paths
         .iter()
-        .enumerate()
-        .map(|(index, (name, path))| Breadcrumb {
+        .map(|(name, path)| Breadcrumb {
             name: (*name).to_owned(),
-            href: (*path).to_owned(),
             item: site_url(path),
-            current: index + 1 == paths.len(),
         })
         .collect()
 }
@@ -535,54 +541,6 @@ fn clean_inline_text(source: &str) -> String {
         .collect::<Vec<_>>()
         .join(" ")
         .replace('|', "\\|")
-}
-
-fn strip_markdown_links(source: &str) -> String {
-    let mut output = String::with_capacity(source.len());
-    let mut remainder = source;
-
-    while let Some(open) = remainder.find('[') {
-        output.push_str(&remainder[..open]);
-        let after_open = &remainder[open + 1..];
-        let Some(close_rel) = after_open.find("](") else {
-            output.push_str(&remainder[open..]);
-            return output;
-        };
-        let close = open + 1 + close_rel;
-        let destination_start = close + 2;
-        let Some(destination_close_rel) = remainder[destination_start..].find(')') else {
-            output.push_str(&remainder[open..]);
-            return output;
-        };
-
-        output.push_str(&remainder[open + 1..close]);
-        remainder = &remainder[destination_start + destination_close_rel + 1..];
-    }
-
-    output.push_str(remainder);
-    output
-}
-
-fn summarize_markdown(source: &str, title: &str) -> String {
-    let paragraph = source
-        .split("\n\n")
-        .map(str::trim)
-        .find(|block| {
-            !block.is_empty()
-                && !block.starts_with('#')
-                && !block.starts_with("```")
-                && !block.starts_with("~~~")
-        })
-        .unwrap_or(title);
-    let summary = strip_markdown_links(paragraph)
-        .replace("**", "")
-        .replace("__", "")
-        .replace(['*', '`', '>'], "")
-        .split_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ");
-    let summary = if summary.is_empty() { title } else { &summary };
-    truncate_description(summary)
 }
 
 fn description_has_typst_markup(source: &str) -> bool {
@@ -954,10 +912,7 @@ fn llms_full_txt(posts: &[BlogPost]) -> String {
         } else {
             post.source_url.clone()
         };
-        let content = match post.source_format {
-            ArticleSourceFormat::Markdown => post.body_source.trim().to_owned(),
-            ArticleSourceFormat::Typst => post.body_html.clone(),
-        };
+        let content = &post.body_html;
         text.push_str(&format!(
             "## {}\n\n- URL: {}\n- Structured data: {}\n- Description: {}\n- Date: {}\n- Exact published timestamp: {}\n- Topics: {}\n- Categories: {}\n- Source: {}\n- Source URL: {}\n- Content source format: {}\n\n{}\n\n",
             clean_inline_text(&post.title),
@@ -974,7 +929,7 @@ fn llms_full_txt(posts: &[BlogPost]) -> String {
             categories,
             clean_inline_text(&post.source),
             source_url,
-            post.source_format.as_str(),
+            "typst",
             content
         ));
     }
@@ -993,7 +948,7 @@ fn post_summary_json(post: &BlogPost) -> serde_json::Value {
         "tags": post.tags,
         "categories": post.categories,
         "source": post.source,
-        "contentSourceFormat": post.source_format.as_str(),
+        "contentSourceFormat": "typst",
         "sourceUrl": if post.source_url.is_empty() { serde_json::Value::Null } else { serde_json::Value::String(post.source_url.clone()) },
         "wordCount": post.word_count,
     });
@@ -1010,14 +965,7 @@ fn post_summary_json(post: &BlogPost) -> serde_json::Value {
 fn post_json(post: &BlogPost) -> serde_json::Value {
     let mut value = post_summary_json(post);
     value["contentHtml"] = serde_json::Value::String(post.body_html.clone());
-    match post.source_format {
-        ArticleSourceFormat::Markdown => {
-            value["contentMarkdown"] = serde_json::Value::String(post.body_source.clone());
-        }
-        ArticleSourceFormat::Typst => {
-            value["contentTypst"] = serde_json::Value::String(post.body_source.clone());
-        }
-    }
+    value["contentTypst"] = serde_json::Value::String(post.body_source.clone());
     value
 }
 
@@ -1124,8 +1072,8 @@ fn web_manifest_json() -> serde_json::Value {
         "start_url": "/",
         "scope": "/",
         "display": "browser",
-        "theme_color": "#0f1418",
-        "background_color": "#0f1418",
+        "theme_color": "#f3f6fa",
+        "background_color": "#f3f6fa",
         "icons": [
             {
                 "src": "/static/img/icon-192.png",
@@ -1216,7 +1164,7 @@ fn openapi_json() -> serde_json::Value {
                 "get": {
                     "operationId": "getFullCorpus",
                     "summary": "Get the complete public writing corpus",
-                    "responses": {"200": {"description": "Plain-text Markdown corpus", "content": {"text/plain": {"schema": {"type": "string"}}}}}
+                    "responses": {"200": {"description": "Plain-text corpus with rendered article content", "content": {"text/plain": {"schema": {"type": "string"}}}}}
                 }
             }
         },
@@ -1237,7 +1185,7 @@ fn openapi_json() -> serde_json::Value {
                         "tags": {"type": "array", "items": {"type": "string"}},
                         "categories": {"type": "array", "items": {"type": "string"}},
                         "source": {"type": "string"},
-                        "contentSourceFormat": {"type": "string", "enum": ["markdown", "typst"]},
+                        "contentSourceFormat": {"type": "string", "const": "typst"},
                         "sourceUrl": {"type": ["string", "null"], "format": "uri"},
                         "wordCount": {"type": "integer", "minimum": 0}
                     }
@@ -1247,16 +1195,11 @@ fn openapi_json() -> serde_json::Value {
                         {"$ref": "#/components/schemas/PostSummary"},
                         {
                             "type": "object",
-                            "required": ["contentHtml"],
+                            "required": ["contentHtml", "contentTypst"],
                             "properties": {
-                                "contentMarkdown": {"type": "string", "description": "Authored Markdown source when contentSourceFormat is markdown."},
                                 "contentTypst": {"type": "string", "description": "Authored Typst body when contentSourceFormat is typst."},
                                 "contentHtml": {"type": "string", "description": "Sanitized rendered article-body HTML fragment."}
-                            },
-                            "oneOf": [
-                                {"required": ["contentMarkdown"], "properties": {"contentSourceFormat": {"const": "markdown"}}},
-                                {"required": ["contentTypst"], "properties": {"contentSourceFormat": {"const": "typst"}}}
-                            ]
+                            }
                         }
                     ]
                 },
@@ -1451,6 +1394,8 @@ fn render_typst(path: &FilePath) -> Result<String, StatusCode> {
             "html",
             "--features",
             "html",
+            "--jobs",
+            "1",
             "--root",
             env!("CARGO_MANIFEST_DIR"),
         ])
@@ -1543,6 +1488,10 @@ fn sanitize_typst_html(source: &str) -> String {
     ];
     let mut sanitizer = ammonia::Builder::default();
     sanitizer.add_tags(MATHML_TAGS);
+    for heading in ["h1", "h2", "h3", "h4", "h5", "h6"] {
+        sanitizer.add_tag_attributes(heading, &["id"]);
+    }
+    sanitizer.add_allowed_classes("p", &["article-deck"]);
     sanitizer.add_tag_attributes("img", &["alt", "height", "src", "width"]);
     sanitizer.add_url_schemes(&["data"]);
     sanitizer.attribute_filter(|element, attribute, value| {
@@ -1793,13 +1742,11 @@ fn escape_html_text(source: &str) -> String {
 
 fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
     let blog_dir = FilePath::new(env!("CARGO_MANIFEST_DIR")).join("content/blog");
-    let mut entries = Vec::new();
-    for extension in ["md", "typ"] {
-        let pattern = format!("{}/*.{}", blog_dir.display(), extension);
-        for entry in glob::glob(&pattern).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)? {
-            entries.push(entry.map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?);
-        }
-    }
+    let pattern = format!("{}/*.typ", blog_dir.display());
+    let mut entries = glob::glob(&pattern)
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
     entries.sort();
     let mut posts = Vec::new();
     let study_notes: TomlValue = toml::from_str(include_str!("../content/study-notes.toml"))
@@ -1809,32 +1756,12 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
 
     for path in entries {
         let source = fs::read_to_string(&path).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-        let source_format = match path.extension().and_then(|extension| extension.to_str()) {
-            Some("md") => ArticleSourceFormat::Markdown,
-            Some("typ") => ArticleSourceFormat::Typst,
-            _ => return Err(StatusCode::INTERNAL_SERVER_ERROR),
-        };
-        let (front_matter, source_body) = match source_format {
-            ArticleSourceFormat::Markdown => {
-                let mut sections = source.splitn(3, "+++");
-                if !sections.next().unwrap_or_default().trim().is_empty() {
-                    return Err(StatusCode::INTERNAL_SERVER_ERROR);
-                }
-                (
-                    sections.next().ok_or(StatusCode::INTERNAL_SERVER_ERROR)?,
-                    sections.next().ok_or(StatusCode::INTERNAL_SERVER_ERROR)?,
-                )
-            }
-            ArticleSourceFormat::Typst => {
-                let comment = source
-                    .strip_prefix("/*")
-                    .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
-                let (front_matter, source_body) = comment
-                    .split_once("*/")
-                    .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
-                (front_matter.trim(), source_body)
-            }
-        };
+        let comment = source
+            .strip_prefix("/*")
+            .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
+        let (front_matter, source_body) = comment
+            .split_once("*/")
+            .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
         let metadata: TomlValue =
             toml::from_str(front_matter).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
         let title = metadata
@@ -1884,28 +1811,19 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?
             .to_owned();
         let body = source_body.replace("<!-- more -->", "").trim().to_owned();
-        let body_html = match source_format {
-            ArticleSourceFormat::Markdown => render_markdown(&body),
-            ArticleSourceFormat::Typst => render_typst(&path)?,
-        };
-        let invalid_typst_description = matches!(source_format, ArticleSourceFormat::Typst)
-            && description_has_typst_markup(&metadata_description);
-        let description = if metadata_description.trim().is_empty() || invalid_typst_description {
-            match source_format {
-                ArticleSourceFormat::Markdown => summarize_markdown(&body, &title),
-                ArticleSourceFormat::Typst => summarize_typst_html(&body_html, &title),
-            }
+        let body_html = render_typst(&path)?;
+        let description = if metadata_description.trim().is_empty()
+            || description_has_typst_markup(&metadata_description)
+        {
+            summarize_typst_html(&body_html, &title)
         } else {
             metadata_description
         };
         let images = article_images(&body, &title);
         let featured_image = images.first().cloned();
-        let word_count = body.split_whitespace().count();
-        let has_math = matches!(source_format, ArticleSourceFormat::Markdown)
-            && (body.contains("$$") || body.contains("\\(") || body.contains("\\["));
-        let has_typst = matches!(source_format, ArticleSourceFormat::Typst);
+        let word_count = html_text(&body_html).split_whitespace().count();
         let sort_key = published_at.clone().unwrap_or_else(|| date.clone());
-        let date_display = date.chars().take(10).collect();
+        let date_display = display_date(&date);
         let tag_keys = tags.join("|");
         let search_text = format!("{} {} {}", title, description, tags.join(" "));
         posts.push(BlogPost {
@@ -1928,10 +1846,7 @@ fn load_blog_posts() -> Result<Vec<BlogPost>, StatusCode> {
             body_html,
             images,
             featured_image,
-            source_format,
             word_count,
-            has_math,
-            has_typst,
             sort_key,
         });
     }
@@ -2107,7 +2022,6 @@ fn render_blog_index(posts: &[BlogPost]) -> Result<Html<String>, StatusCode> {
         tag_groups: &tag_groups,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
-        breadcrumbs,
     }
     .render()
     .map(Html)
@@ -2119,7 +2033,7 @@ fn related_posts(posts: &[BlogPost], current_index: usize) -> Vec<&BlogPost> {
     let mut candidates = posts
         .iter()
         .enumerate()
-        .filter(|(index, _)| *index != current_index)
+        .filter(|(index, post)| *index != current_index && post.study_note == current.study_note)
         .filter_map(|(index, post)| {
             let shared_tags = post
                 .tags
@@ -2162,12 +2076,14 @@ fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, S
         post,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
-        breadcrumbs,
         related: related_posts(posts, position),
-        previous: posts.get(position + 1),
-        next: position.checked_sub(1).and_then(|index| posts.get(index)),
-        position: position + 1,
-        total: posts.len(),
+        previous: posts[position + 1..]
+            .iter()
+            .find(|candidate| candidate.study_note == post.study_note),
+        next: posts[..position]
+            .iter()
+            .rev()
+            .find(|candidate| candidate.study_note == post.study_note),
     }
     .render()
     .map(Html)
@@ -2195,7 +2111,6 @@ fn render_site(page: &str, posts: &[BlogPost]) -> Result<Html<String>, StatusCod
         description,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
-        breadcrumbs,
         projects: &projects,
         recent_posts: posts
             .iter()
@@ -2239,8 +2154,12 @@ async fn blog_index(State(posts): State<Arc<Vec<BlogPost>>>) -> Result<Html<Stri
 async fn blog_article(
     State(posts): State<Arc<Vec<BlogPost>>>,
     Path(slug): Path<String>,
-) -> Result<Html<String>, StatusCode> {
-    render_blog_article(posts.as_slice(), &slug)
+) -> Response {
+    match render_blog_article(posts.as_slice(), &slug) {
+        Ok(page) => page.into_response(),
+        Err(StatusCode::NOT_FOUND) => not_found().await,
+        Err(status) => status.into_response(),
+    }
 }
 
 async fn robots() -> Response {
@@ -2317,53 +2236,6 @@ async fn api_post(
     Ok(json_response(&api_post_json(post)))
 }
 
-async fn legacy_home(Path(_id): Path<u8>) -> Redirect {
-    Redirect::permanent("/")
-}
-
-async fn legacy_page(Path((_id, page)): Path<(u8, String)>) -> Redirect {
-    let target = match page.as_str() {
-        "blog" => "/blog/",
-        "projects" => "/projects/",
-        "resume" => "/resume/",
-        _ => "/",
-    };
-    Redirect::permanent(target)
-}
-
-fn legacy_blog_target(slug: &str) -> String {
-    match slug {
-        "fe621-finite-difference-sketches" => {
-            "/blog/computational-methods-finite-difference-sketches/".to_owned()
-        }
-        "fe621-midterm-cheat-sheet" => {
-            "/blog/computational-methods-midterm-cheat-sheet/".to_owned()
-        }
-        _ => {
-            if let Some(week) = slug
-                .strip_prefix("fe621-week-")
-                .and_then(|week| week.parse::<u8>().ok())
-                .filter(|week| (1..=14).contains(week) && *week != 8)
-            {
-                return format!("/blog/computational-methods-week-{week:02}/");
-            }
-            if let Some(week) = slug
-                .strip_prefix("fe680-week-")
-                .and_then(|week| week.parse::<u8>().ok())
-                .filter(|week| (1..=13).contains(week))
-            {
-                return format!("/blog/advanced-derivatives-week-{week:02}/");
-            }
-            format!("/blog/{slug}/")
-        }
-    }
-}
-
-async fn legacy_blog_article(Path(slug): Path<String>) -> Redirect {
-    let target = legacy_blog_target(&slug);
-    Redirect::permanent(&target)
-}
-
 #[tokio::main]
 async fn main() {
     let mut args = std::env::args().skip(1);
@@ -2414,10 +2286,7 @@ async fn main() {
         .route("/api/openapi.json", get(openapi))
         .route("/.well-known/agent.json", get(agent_manifest))
         .route("/.well-known/security.txt", get(security_txt))
-        .route("/v/6/blog/{slug}", get(legacy_blog_article))
-        .route("/v/{id}/{page}", get(legacy_page))
-        .route("/v/{id}", get(legacy_home))
-        .route("/designs", get(|| async { Redirect::permanent("/") }))
+        .fallback(not_found)
         .nest_service("/static", ServeDir::new("static"))
         .with_state(posts);
     let address = std::env::var("PORTFOLIA_BIND").unwrap_or_else(|_| "127.0.0.1:8095".into());
@@ -2456,18 +2325,26 @@ mod tests {
     }
 
     #[test]
-    fn summaries_use_markdown_link_labels_without_raw_destinations() {
-        assert_eq!(
-            summarize_markdown(
-                "The [link](https://example.com/a-long-path) works.",
-                "Fallback"
-            ),
-            "The link works."
-        );
+    fn readable_dates_preserve_the_published_calendar_day() {
+        assert_eq!(display_date("2026-10-02"), "Oct 2, 2026");
+        assert_eq!(display_date("2024-09-23T23:59:00-04:00"), "Sep 23, 2024");
+        assert_eq!(display_date("2026-13-02"), "2026-13-02");
+        assert_eq!(display_date("unknown"), "unknown");
     }
 
     #[test]
-    fn canonical_urls_and_legacy_article_aliases_are_stable() {
+    fn typst_heading_links_survive_sanitization_without_executable_attributes() {
+        let html = sanitize_typst_html(
+            "<h3 id=\"combinatorial-formula\" onclick=\"alert(1)\">Formula</h3><a href=\"#combinatorial-formula\">Jump</a><a href=\"javascript:alert(1)\">Unsafe</a>",
+        );
+        assert!(html.contains("id=\"combinatorial-formula\""));
+        assert!(html.contains("href=\"#combinatorial-formula\""));
+        assert!(!html.contains("onclick"));
+        assert!(!html.contains("javascript:"));
+    }
+
+    #[test]
+    fn canonical_urls_are_stable() {
         assert_eq!(site_url("/"), "https://sharifhsn.dev/");
         assert_eq!(site_url("/blog"), "https://sharifhsn.dev/blog/");
         assert_eq!(
@@ -2482,15 +2359,6 @@ mod tests {
             site_url("/manifest.webmanifest"),
             "https://sharifhsn.dev/manifest.webmanifest"
         );
-        assert_eq!(
-            legacy_blog_target("fe621-week-02"),
-            "/blog/computational-methods-week-02/"
-        );
-        assert_eq!(
-            legacy_blog_target("fe680-week-01"),
-            "/blog/advanced-derivatives-week-01/"
-        );
-        assert_eq!(legacy_blog_target("fe621-week-08"), "/blog/fe621-week-08/");
     }
 
     #[test]
@@ -2530,7 +2398,7 @@ mod tests {
         let posts = load_blog_posts().unwrap();
         assert!(posts.iter().all(|post| !post.description.trim().is_empty()));
         let sitemap = sitemap_xml(&posts);
-        assert_eq!(sitemap.matches("<url>").count(), posts.len() + 5);
+        assert_eq!(sitemap.matches("<url>").count(), posts.len() + 6);
         assert!(sitemap.contains("https://sharifhsn.dev/blog/circuits/"));
 
         let llms = llms_txt(&posts);
@@ -2548,7 +2416,7 @@ mod tests {
         assert!(full.starts_with("# Sharif Haason — full writing corpus"));
         assert!(full.contains("## Circuits"));
         assert!(full.contains("https://sharifhsn.dev/api/posts/circuits.json"));
-        assert!(full.contains("Ohm's Law"));
+        assert!(full.contains("Ohm’s Law"));
 
         let feed = feed_xml(&posts);
         assert!(feed.contains("<feed xmlns=\"http://www.w3.org/2005/Atom\">"));
@@ -2662,7 +2530,7 @@ mod tests {
     }
 
     #[test]
-    fn all_migrated_posts_load_with_metadata_and_clean_markdown() {
+    fn typst_posts_load_with_metadata_and_clean_descriptions() {
         let posts = load_blog_posts().unwrap();
         assert_eq!(posts.len(), 153);
         assert_eq!(
@@ -2811,15 +2679,15 @@ mod tests {
         let circuits = posts.iter().find(|post| post.slug == "circuits").unwrap();
         assert_eq!(circuits.title, "Circuits");
         assert_eq!(circuits.tags, ["Physics"]);
-        assert!(circuits.has_typst);
-        assert!(circuits.body_html.contains("Ohm's Law"));
+        assert!(circuits.body_html.contains("Ohm’s Law"));
         assert!(!circuits.body_html.contains("<!-- more -->"));
 
         let python = posts
             .iter()
             .find(|post| post.slug == "python-crash-course")
             .unwrap();
-        assert!(python.body_html.contains("<pre><code>2 # 2"));
+        assert!(python.body_html.contains("<pre><code>"));
+        assert!(html_text(&python.body_html).contains("2 # 2"));
 
         let linkedin = posts
             .iter()
@@ -2858,7 +2726,6 @@ mod tests {
             .find(|post| post.slug == "computational-methods-week-02")
             .unwrap();
         assert!(fe621.tags.contains(&"Computational Methods".to_owned()));
-        assert!(fe621.has_typst);
         assert!(fe621.study_note);
         assert!(
             posts
@@ -2882,7 +2749,6 @@ mod tests {
             .unwrap();
         assert!(fe680.tags.contains(&"Fixed Income".to_owned()));
         assert!(!fe680.tags.contains(&"Advanced Derivatives".to_owned()));
-        assert!(fe680.has_typst);
         assert!(fe680.body_html.contains("DV01"));
         assert!(!posts.iter().any(|post| {
             post.slug == "ytm-and-the-yield-curve" || post.slug == "duration-and-dv01"
@@ -2967,11 +2833,42 @@ mod tests {
             "tags inside a subject group should be alphabetized"
         );
 
+        assert_eq!(posts.iter().filter(|post| !post.study_note).count(), 36);
+        assert_eq!(posts.iter().filter(|post| post.study_note).count(), 117);
+        for (position, post) in posts.iter().enumerate() {
+            assert!(
+                related_posts(&posts, position)
+                    .iter()
+                    .all(|related| related.study_note == post.study_note)
+            );
+            let Html(rendered) = render_blog_article(&posts, &post.slug).unwrap();
+            let navigation = rendered
+                .split("aria-label=\"Article navigation\"")
+                .nth(1)
+                .unwrap()
+                .split("</nav>")
+                .next()
+                .unwrap();
+            for href in navigation.split("href=\"/blog/").skip(1) {
+                let slug = href.split('/').next().unwrap();
+                let linked = posts
+                    .iter()
+                    .find(|candidate| candidate.slug == slug)
+                    .unwrap();
+                assert_eq!(
+                    linked.study_note, post.study_note,
+                    "navigation from {} to {} crossed collections",
+                    post.slug, slug
+                );
+            }
+        }
+
         let Html(article) = render_blog_article(&posts, "circuits").unwrap();
         assert!(article.contains("Electromotive Force"));
-        assert!(article.contains("/static/js/auto-render.min.js"));
+        assert!(article.contains("/static/css/typst-math.css"));
+        assert!(!article.contains("/static/js/auto-render.min.js"));
         assert!(article.contains("https://sharifhsn.dev/blog/circuits/"));
-        assert!(article.contains("Source: Archive"));
+        assert!(!article.contains("Article 1 of"));
         assert!(article.contains("/api/posts/circuits.json"));
         assert!(article.contains("application/ld+json"));
         assert!(article.contains("BreadcrumbList"));

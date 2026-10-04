@@ -1,0 +1,53 @@
+<section class="page-intro hornet-intro" aria-labelledby="page-title">
+        <h1 id="page-title">Hornet FX desk</h1>
+      </section>
+      <form id="hornet-form" class="hornet-workbook" aria-label="USD/MXN trade worksheet">
+        <header class="hornet-workbook-heading">
+          <h2>Scratch trades <span>USD/MXN</span></h2>
+          <div class="hornet-actions"><label class="hornet-date-label" for="hornet-date">Valuation date <input id="hornet-date" name="valuationDate" type="date" required></label><button id="hornet-add" type="button">Add trade</button><button id="hornet-copy" type="button" disabled>Copy table</button><button type="reset">Reset</button></div>
+        </header>
+        <section class="hornet-market" aria-label="Market scenario inputs">
+          <fieldset class="hornet-market-group">
+            <legend>Market</legend>
+            <div class="hornet-market-fields">
+              <div class="hornet-market-cell"><label for="hornet-spot">Spot <small>MXN/USD</small></label><div class="hornet-number"><input id="hornet-spot" name="spot" type="text" inputmode="decimal" value="20.000" data-number="spot" required autocomplete="off"></div></div>
+              <div class="hornet-market-cell"><label for="hornet-usdRate">USD rate <small>%</small></label><div class="hornet-number"><input id="hornet-usdRate" name="usdRate" type="text" inputmode="decimal" value="4.00" data-number="usdRate" required autocomplete="off"></div></div>
+              <div class="hornet-market-cell"><label for="hornet-mxnRate">MXN rate <small>%</small></label><div class="hornet-number"><input id="hornet-mxnRate" name="mxnRate" type="text" inputmode="decimal" value="9.00" data-number="mxnRate" required autocomplete="off"></div></div>
+            </div>
+          </fieldset>
+          <fieldset class="hornet-market-group">
+            <legend>Volatility smile</legend>
+            <div class="hornet-market-fields">
+              <div class="hornet-market-cell"><label for="hornet-atm">ATM vol <small>%</small></label><div class="hornet-number"><input id="hornet-atm" name="atm" type="text" inputmode="decimal" value="12.35" data-number="atm" required autocomplete="off"></div></div>
+              <div class="hornet-market-cell"><label for="hornet-rr">RR <small>vol pts</small></label><div class="hornet-number"><input id="hornet-rr" name="rr" type="text" inputmode="decimal" value="2.00" data-number="rr" required autocomplete="off"></div></div>
+              <div class="hornet-market-cell"><label for="hornet-fly">Fly <small>vol pts</small></label><div class="hornet-number"><input id="hornet-fly" name="fly" type="text" inputmode="decimal" value="3.00" data-number="fly" required autocomplete="off"></div></div>
+            </div>
+          </fieldset>
+          <fieldset class="hornet-market-group">
+            <legend>Anchor strikes</legend>
+            <div class="hornet-market-fields">
+              <div class="hornet-market-cell"><label for="hornet-lowStrike">Low strike <small>MXN/USD</small></label><div class="hornet-number"><input id="hornet-lowStrike" name="lowStrike" type="text" inputmode="decimal" value="19.45" data-number="lowStrike" required autocomplete="off"></div></div>
+              <div class="hornet-market-cell"><label for="hornet-atmStrike">ATM strike <small>MXN/USD</small></label><div class="hornet-number"><input id="hornet-atmStrike" name="atmStrike" type="text" inputmode="decimal" value="25.69" data-number="atmStrike" required autocomplete="off"></div></div>
+              <div class="hornet-market-cell"><label for="hornet-highStrike">High strike <small>MXN/USD</small></label><div class="hornet-number"><input id="hornet-highStrike" name="highStrike" type="text" inputmode="decimal" value="30.35" data-number="highStrike" required autocomplete="off"></div></div>
+            </div>
+          </fieldset>
+        </section>
+        <div class="hornet-book-scroll" role="region" aria-label="Trade positions and total risk, horizontally scrollable" tabindex="0">
+          <table class="hornet-book">
+            <caption class="sr-only">Scratch trades. Editable contract cells and calculated risk in USD.</caption>
+            <colgroup><col class="hornet-row-col"><col class="hornet-kind-col"><col class="hornet-side-col"><col class="hornet-notional-col"><col class="hornet-strike-col"><col class="hornet-tenor-col"><col span="9" class="hornet-risk-col"><col class="hornet-delete-col"></colgroup>
+            <thead>
+              <tr class="hornet-groups"><th colspan="6" scope="colgroup">Contract</th><th colspan="9" scope="colgroup">Valuation &amp; risk <small>USD</small></th><th></th></tr>
+              <tr><th scope="col">#</th><th scope="col">Instrument</th><th scope="col">Side</th><th scope="col">Notional <small>USD</small></th><th scope="col">Strike <small>MXN/USD</small></th><th scope="col">Expiry</th><th scope="col" class="hornet-risk-head">MtM <button type="button" class="hornet-help" aria-label="About MtM" aria-describedby="hornet-tip-0">?<span role="tooltip" id="hornet-tip-0">USD position value at the entered market. Full repricing, not Greek attribution.</span></button></th><th scope="col" class="hornet-risk-head">Delta <button type="button" class="hornet-help" aria-label="About Delta" aria-describedby="hornet-tip-1">?<span role="tooltip" id="hornet-tip-1">USD sensitivity scaled to a +1% spot move.</span></button></th><th scope="col" class="hornet-risk-head">Gamma <button type="button" class="hornet-help" aria-label="About Gamma" aria-describedby="hornet-tip-2">?<span role="tooltip" id="hornet-tip-2">Half the USD second-order change for a 1 bp spot move, as calculated by the current practice engine.</span></button></th><th scope="col" class="hornet-risk-head">ATM vega <button type="button" class="hornet-help" aria-label="About ATM vega" aria-describedby="hornet-tip-3">?<span role="tooltip" id="hornet-tip-3">USD sensitivity to +1 volatility point in ATM volatility.</span></button></th><th scope="col" class="hornet-risk-head">Rega <button type="button" class="hornet-help" aria-label="About Rega" aria-describedby="hornet-tip-4">?<span role="tooltip" id="hornet-tip-4">USD sensitivity to +1 volatility point in risk reversal.</span></button></th><th scope="col" class="hornet-risk-head">Fly vega <button type="button" class="hornet-help" aria-label="About Fly vega" aria-describedby="hornet-tip-5">?<span role="tooltip" id="hornet-tip-5">USD sensitivity to +1 volatility point in butterfly.</span></button></th><th scope="col" class="hornet-risk-head">USD rho <button type="button" class="hornet-help" aria-label="About USD rho" aria-describedby="hornet-tip-6">?<span role="tooltip" id="hornet-tip-6">USD sensitivity to +1 basis point in the USD rate.</span></button></th><th scope="col" class="hornet-risk-head">MXN rho <button type="button" class="hornet-help" aria-label="About MXN rho" aria-describedby="hornet-tip-7">?<span role="tooltip" id="hornet-tip-7">USD sensitivity to +1 basis point in the MXN rate.</span></button></th><th scope="col" class="hornet-risk-head">Carry <button type="button" class="hornet-help" aria-label="About Carry" aria-describedby="hornet-tip-8">?<span role="tooltip" id="hornet-tip-8">USD value change with one day less to maturity at the same market.</span></button></th><th scope="col"><span class="sr-only">Remove</span></th></tr>
+            </thead>
+            <tbody id="hornet-trades"></tbody>
+            <tfoot><tr id="hornet-total"><th scope="row" colspan="3">Total</th><td data-total-notional title="Signed USD reference notional; not a delta measure">—</td><td colspan="2"></td><td><output aria-live="off" data-total="0">—</output></td><td><output aria-live="off" data-total="1">—</output></td><td><output aria-live="off" data-total="2">—</output></td><td><output aria-live="off" data-total="3">—</output></td><td><output aria-live="off" data-total="4">—</output></td><td><output aria-live="off" data-total="5">—</output></td><td><output aria-live="off" data-total="6">—</output></td><td><output aria-live="off" data-total="7">—</output></td><td><output aria-live="off" data-total="8">—</output></td><td></td></tr></tfoot>
+          </table>
+        </div>
+        <p id="hornet-status" class="hornet-status" role="status" aria-live="polite">Loading calculator…</p>
+        <noscript><p class="hornet-status">Enable JavaScript to compose and reprice trades.</p></noscript>
+      </form>
+      <details class="hornet-method">
+        <summary>Model notes</summary>
+        <p>Illustrative markets, priced locally by the Hornet practice engine. Scratch trades stay in this session. Workbook layout and cell precision follow MiniSystem; pricing parity with its VBA has not been established.</p>
+      </details>

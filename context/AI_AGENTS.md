@@ -3,7 +3,7 @@
 Portfolia is public, static-first, and intentionally readable without
 JavaScript. Agents should start at the canonical origin
 `https://sharifhsn.dev/`, use trailing-slash URLs for HTML pages, and treat
-`/v/*` and `/designs` as compatibility redirects only.
+`/v/*` and `/designs` as retired routes returning 404.
 
 The site is public-read-only: no endpoint accepts mutations or requires
 authentication. `/.well-known/agent.json` is the compact discovery manifest;
@@ -28,8 +28,8 @@ authentication. `/.well-known/agent.json` is the compact discovery manifest;
     `GET /.well-known/security.txt` for the vulnerability reporting policy.
 
 All of these endpoints are generated from the same `content/blog/*.typ`
-archive, so their article counts and canonical URLs should agree. The loader
-also retains compatibility with Markdown sources.
+archive, so their article counts and canonical URLs should agree. Article
+loading is Typst-only; the resume uses its separate Markdown source.
 
 ## JSON contract
 
@@ -59,9 +59,8 @@ also retains compatibility with Markdown sources.
 ```
 
 The per-article URL returns the same item fields plus `contentHtml` and the
-source field named by `contentSourceFormat`: `contentMarkdown` for Markdown or
-`contentTypst` for Typst. It also includes `version` and `site` at the top
-level. `url` is the human canonical page; `dataUrl` is its machine-readable
+`contentTypst` source. `contentSourceFormat` is always `"typst"`. It also includes
+`version` and `site` at the top level. `url` is the human canonical page; `dataUrl` is its machine-readable
 companion. Consumers should not infer a different page URL from the data
 endpoint.
 
@@ -89,18 +88,18 @@ endpoint and `CreativeWork`/`ItemList` JSON-LD use the same source. Machine
 endpoints and feeds advertise `Access-Control-Allow-Origin: *` in the static
 Cloudflare export for cross-origin read access. The export also sends a strict
 but same-origin-compatible CSP, HSTS, clickjacking protection, and a minimal
-Permissions Policy; the math renderer is an external same-origin script so it
-does not require an inline-script exception.
+Permissions Policy. Article mathematics uses native MathML and a same-origin stylesheet;
+there is no KaTeX script or external math-service dependency.
 
 ## Repository source of truth
 
 - Runtime and export: `src/main.rs`, `src/static_export.rs`
-- Active templates: `templates/site.html`, `templates/blog.html`,
-  `templates/article.html`
+- Page templates: `templates/site.html`, `templates/blog.html`,
+  `templates/article.html`; shared `chrome.html`/`styles.html` and named page partials
 - Article sources: `content/blog/*.typ`
 - Current resume: `content/resume-current.md`
 - Public styling and progressive enhancement: `static/css/site.css`,
-  `static/js/blog-filter.js`, `static/js/math-render.js`
+  `static/js/blog-filter.js`, `static/js/hornet.js`, `static/js/chat.js`
 - Security and reporting policy: `SECURITY.md`, `/.well-known/security.txt`
 - Deployment: `.github/workflows/deploy-cloudflare-pages.yml`
 

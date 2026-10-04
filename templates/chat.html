@@ -1,0 +1,28 @@
+<section class="page-intro chat-intro" aria-labelledby="page-title">
+        <h1 id="page-title">Browser language model</h1>
+        <p>An experiment with a 30-million-parameter language model. Load it on your device and try a short conversation.</p>
+      </section>
+      <section class="chat-demo" aria-label="Chat with a tiny local model">
+        <div class="chat-model-row">
+          <div class="chat-model-details">
+            <p class="chat-model-name"><a href="https://huggingface.co/StentorLabs/Stentor-30M-Instruct" target="_blank" rel="noopener noreferrer">Stentor-30M-Instruct</a></p>
+            <p class="chat-model-meta">30M parameters. 512-token context. Runs on this device.</p>
+          </div>
+          <button id="chat-load" class="chat-load-button" type="button">Load model · 19.9 MiB</button>
+        </div>
+        <progress id="chat-progress" class="chat-progress" max="100" value="0" aria-label="Model download progress" hidden></progress>
+        <p id="chat-status" class="chat-status" role="status" aria-live="polite">The first load downloads the model. Your prompts stay in this browser.</p>
+        <div id="chat-log" class="chat-log" role="log" aria-label="Conversation" aria-live="off" tabindex="0">
+          <p id="chat-empty" class="chat-empty">When the model is ready, send it a short question.</p>
+        </div>
+        <form id="chat-form" class="chat-composer">
+          <label class="sr-only" for="chat-input">Message</label>
+          <textarea id="chat-input" name="message" rows="2" maxlength="1200" placeholder="Write a message" autocomplete="off" disabled></textarea>
+          <div class="chat-actions">
+            <button id="chat-clear" class="chat-clear-button" type="button" disabled>Clear</button>
+            <button id="chat-stop" class="chat-stop-button" type="button" hidden>Stop</button>
+            <button id="chat-send" class="chat-send-button" type="submit" disabled>Send</button>
+          </div>
+        </form>
+      </section>
+      <p class="chat-credit">Model by <a href="https://huggingface.co/StentorLabs/Stentor-30M-Instruct" target="_blank" rel="noopener noreferrer">StentorLabs</a>, quantized to GGUF Q4_K_M by <a href="https://huggingface.co/mradermacher/Stentor-30M-Instruct-GGUF" target="_blank" rel="noopener noreferrer">mradermacher</a> (Apache-2.0)</p>

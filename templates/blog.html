@@ -1,11 +1,12 @@
+{% import "chrome.html" as chrome %}
 <!doctype html>
 <html lang="en-US">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="theme-color" content="#0f1418">
-  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#f3f6fa">
+  <meta name="color-scheme" content="light">
   <meta name="format-detection" content="telephone=no">
   <meta name="author" content="Sharif Haason">
   <meta name="description" content="Notes and articles by Sharif Haason on Rust, compiler systems, quantitative finance, options pricing, risk management, and applied mathematics.">
@@ -45,31 +46,14 @@
   <meta name="twitter:image" content="https://sharifhsn.dev/static/img/profile.jpg">
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>Writing | Sharif Haason</title>
-  <link rel="stylesheet" href="/static/css/site.css?v=20261001-1">
+  {% include "styles.html" %}
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="site-shell">
-    <header class="site-header">
-      <a class="site-name" href="/">
-        <span>Sharif Haason</span>
-      </a>
-      <nav aria-label="Main navigation">
-        <a href="/blog/" aria-current="page">Writing</a>
-        <a href="/projects/">Projects</a>
-        <a href="/resume/">Resume</a>
-        <a href="/chat/">Chat</a>
-      </nav>
-    </header>
+    {% call chrome::header("blog") %}
     <main id="main" class="content blog-content writing-index">
-      <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <ol>
-          {% for breadcrumb in breadcrumbs %}
-          <li>{% if breadcrumb.current %}<span aria-current="page">{{ breadcrumb.name }}</span>{% else %}<a href="{{ breadcrumb.href }}">{{ breadcrumb.name }}</a>{% endif %}</li>
-          {% endfor %}
-        </ol>
-      </nav>
       <section class="page-intro" aria-labelledby="page-title">
         <h1 id="page-title">Writing</h1>
         <p>Essays and commentary on software, finance, economics, and policy.</p>
@@ -84,7 +68,7 @@
             <input id="writing-search" type="search" placeholder="Search writing" autocomplete="off" aria-describedby="filter-status">
           </label>
           <details class="topic-disclosure">
-            <summary>Browse by topic</summary>
+            <summary><span data-topic-label>Topics</span></summary>
           <fieldset class="tag-filter-set">
             <legend class="sr-only">Writing topics</legend>
             <div class="tag-all">
@@ -111,11 +95,11 @@
         </aside>
         <section class="blog-results" aria-labelledby="writing-results-title">
           <h2 id="writing-results-title" class="sr-only">Writing results</h2>
-          <p id="filter-status" class="filter-status" data-filter-status aria-live="polite">Showing {{ writing_total }} pieces.</p>
+          <div class="results-heading"><p id="filter-status" class="filter-status" data-filter-status aria-live="polite">Showing {{ writing_total }} pieces.</p>
+          <button class="filter-clear" type="button" data-clear-filters hidden>Clear filters</button></div>
           <div class="search-empty" data-search-empty hidden>
             <h2>No matching writing</h2>
             <p>Try another search or clear the filters to browse writing.</p>
-            <button type="button" data-clear-filters>Clear filters</button>
           </div>
           <ol id="writing-results" class="post-list">
         {% for post in posts %}
@@ -127,7 +111,7 @@
               <p class="post-description p-summary">{{ post.description }}</p>
               {% if post.source_url != "" || post.display_tags.len() > 0 %}
               <ul class="post-labels" aria-label="Post type and topics">
-                {% if post.source_url != "" %}<li class="post-source"><a class="post-source-link" href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer" aria-label="View original {{ post.source }} source">{% if post.source == "LinkedIn" %}<span class="linkedin-mark" aria-hidden="true">in</span>{% endif %}<span>{{ post.source }}</span></a></li>{% endif %}
+                {% if post.source_url != "" %}<li class="post-source"><a class="post-source-link" href="{{ post.source_url }}" target="_blank" rel="noopener noreferrer" aria-label="View original {{ post.source }} source"><span>{{ post.source }}</span></a></li>{% endif %}
                 {% for tag in post.display_tags %}<li><button class="post-tag" type="button" data-tag-select="{{ tag }}">{{ tag }}</button></li>{% endfor %}
               </ul>
               {% endif %}
@@ -143,22 +127,8 @@
         </section>
       </div>
     </main>
-    <footer class="site-footer">
-      <a href="/feed.xml">Subscribe to the writing</a>
-      <details class="site-resources">
-        <summary>Site resources</summary>
-        <nav aria-label="Machine-readable resources">
-          <a href="/feed.xml">Atom feed</a>
-          <a href="/feed.json">JSON feed</a>
-          <a href="/llms.txt">LLM guide</a>
-          <a href="/api/openapi.json">API</a>
-          <a href="/.well-known/agent.json">Agent manifest</a>
-          <a href="/.well-known/security.txt">Security</a>
-          <a href="/sitemap.xml">Sitemap</a>
-        </nav>
-      </details>
-    </footer>
+    {% call chrome::footer() %}
   </div>
-  <script src="/static/js/blog-filter.js?v=20261001-1" defer></script>
+  <script src="/static/js/blog-filter.js?v=20261002-1" defer></script>
 </body>
 </html>
