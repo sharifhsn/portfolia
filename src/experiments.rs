@@ -36,14 +36,6 @@ impl Category {
     }
 }
 
-pub(super) const CATEGORIES: &[Category] = &[
-    Category::Numbers,
-    Category::Languages,
-    Category::Media,
-    Category::Tools,
-    Category::Knowledge,
-];
-
 #[derive(Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
 enum Status {
@@ -69,7 +61,6 @@ pub(super) struct Experiment {
     pub(super) next_step: String,
     pub(super) rust_plan: String,
     pub(super) credit: String,
-    pub(super) phase: u8,
     pub(super) demo_href: Option<String>,
     #[serde(skip)]
     pub(super) preview_svg: String,
@@ -83,7 +74,7 @@ impl Experiment {
     }
 
     pub(super) fn featured(&self) -> bool {
-        matches!(self.slug.as_str(), "hornet" | "wedeo" | "rustlyn")
+        matches!(self.slug.as_str(), "ldsc" | "rustlyn" | "oboromi")
     }
 
     pub(super) fn has_demo(&self) -> bool {
@@ -109,9 +100,6 @@ struct Document {
 static CATALOG: LazyLock<Vec<Experiment>> = LazyLock::new(|| {
     let mut document: Document = toml::from_str(include_str!("../content/experiments.toml"))
         .expect("The experiments catalog must contain valid TOML");
-    document
-        .experiments
-        .sort_by_key(|experiment| experiment.phase);
     for experiment in &mut document.experiments {
         if let Some(preview) = studies::preview(&experiment.slug) {
             experiment.preview_svg = preview;
@@ -215,7 +203,6 @@ mod tests {
                     .bytes()
                     .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-')
             );
-            assert!((1..=4).contains(&experiment.phase));
             assert_eq!(experiment.has_demo(), experiment.demo_href.is_some());
             if let Some(href) = &experiment.demo_href
                 && !["/chat/", "/projects/hornet/"].contains(&href.as_str())
@@ -245,7 +232,7 @@ mod tests {
     fn every_selected_entry_has_a_complete_example_and_resolvable_sources() {
         for experiment in all() {
             assert!(experiment.has_demo());
-            if experiment.phase == 1 {
+            if experiment.available() {
                 continue;
             }
             let study = study(&experiment.slug).expect("Each selected entry needs an example");

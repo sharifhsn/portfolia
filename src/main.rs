@@ -45,7 +45,6 @@ struct Site<'a> {
     structured_data: &'a str,
     projects: &'a [Project],
     experiments: &'a [experiments::Experiment],
-    experiment_categories: &'a [experiments::Category],
     selected_experiment: Option<&'a experiments::Experiment>,
     experiment_study: Option<experiments::Study>,
     ldsc_engine: Option<experiments::ldsc::Engine>,
@@ -2190,7 +2189,6 @@ fn render_site_with_experiment(
         structured_data: &structured_data,
         projects: &projects,
         experiments: experiments::all(),
-        experiment_categories: experiments::CATEGORIES,
         selected_experiment,
         experiment_study: selected_experiment
             .and_then(|experiment| experiments::study(&experiment.slug)),

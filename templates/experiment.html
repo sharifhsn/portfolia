@@ -23,5 +23,5 @@
   <section aria-labelledby="next-title"><h2 id="next-title">What comes next</h2><p>{{ experiment.next_step }}</p></section>
   <details class="experiment-implementation"><summary>Implementation and credits</summary><p>{{ experiment.question }}</p><p>{{ experiment.scope }}</p><p>{{ experiment.demo_plan }}</p><p>{{ experiment.rust_plan }}</p><p>{{ experiment.credit }}</p></details>
 </div>
-<p class="experiment-back"><a href="/experiments/#{{ experiment.category.key() }}">More in {{ experiment.category.label() }}</a></p>
+<p class="experiment-back"><a href="/experiments/#{{ experiment.slug }}">Back to the collection</a></p>
 {% endif %}

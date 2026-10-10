@@ -26,24 +26,17 @@
 <section class="experiment-catalog" id="catalog" aria-labelledby="catalog-title">
   <header class="section-heading"><h2 id="catalog-title">The collection</h2><span>{{ experiments.len() }} experiment pages</span></header>
   <p class="experiment-catalog-note">For each project, I explain what drew me to it, what I've built, and what comes next. Browser demos, recorded results, and visual studies put the implementation beside the idea.</p>
-  <nav class="experiment-topics" aria-label="Experiment topics">
-    {% for category in experiment_categories %}<a href="#{{ category.key() }}">{{ category.label() }}</a>{% endfor %}
-  </nav>
-  {% for category in experiment_categories %}
-  <section class="experiment-group" id="{{ category.key() }}" aria-labelledby="heading-{{ category.key() }}">
-    <h3 id="heading-{{ category.key() }}">{{ category.label() }}</h3>
-    <ul class="experiment-rows">
-      {% for experiment in experiments %}{% if experiment.category == *category %}
-      <li class="experiment-row">
-        <div class="experiment-thumbnail experiment-picture-{{ category.key() }}" aria-hidden="true">{{ experiment.preview_svg|safe }}</div>
-        <div>
-          <h4><a href="/experiments/{{ experiment.slug }}/">{{ experiment.name }}</a></h4>
-          <p>{{ experiment.summary }}</p>
-        </div>
-        <span class="experiment-state{% if experiment.has_demo() %} experiment-state-available{% endif %}">{{ experiment.status_label() }}</span>
-      </li>
-      {% endif %}{% endfor %}
-    </ul>
-  </section>
-  {% endfor %}
+  <ol class="experiment-rows">
+    {% for experiment in experiments %}
+    <li class="experiment-row" id="{{ experiment.slug }}">
+      <div class="experiment-thumbnail experiment-picture-{{ experiment.category.key() }}" aria-hidden="true">{{ experiment.preview_svg|safe }}</div>
+      <div>
+        <span class="experiment-row-category">{{ experiment.category.label() }}</span>
+        <h3><a href="/experiments/{{ experiment.slug }}/">{{ experiment.name }}</a></h3>
+        <p>{{ experiment.summary }}</p>
+      </div>
+      <span class="experiment-state{% if experiment.has_demo() %} experiment-state-available{% endif %}">{{ experiment.status_label() }}</span>
+    </li>
+    {% endfor %}
+  </ol>
 </section>

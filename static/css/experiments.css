@@ -19,21 +19,18 @@
 .experiment-picture-tools { color: #386675; }
 .experiment-picture-knowledge { color: #576297; }
 .experiment-feature h3 { margin: 1.2rem 0 .65rem; font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; }
-.experiment-feature h3 a, .experiment-row h4 a { color: var(--ink); text-decoration: none; }
-.experiment-feature h3 a:hover, .experiment-row h4 a:hover { color: var(--link); text-decoration: underline; }
+.experiment-feature h3 a, .experiment-row h3 a { color: var(--ink); text-decoration: none; }
+.experiment-feature h3 a:hover, .experiment-row h3 a:hover { color: var(--link); text-decoration: underline; }
 .experiment-feature p { max-width: 35ch; color: var(--muted); font-size: .95rem; }
 .experiment-catalog { margin-top: 3rem; }
 .experiment-catalog-note { max-width: 68ch; color: var(--muted); font-size: .95rem; }
-.experiment-topics { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: 1.5rem 0 2rem; }
-.experiment-topics a { display: inline-flex; align-items: center; min-height: 2.75rem; font-size: .88rem; }
-.experiment-group { scroll-margin-top: 2rem; margin-top: 2.5rem; }
-.experiment-group > h3 { margin: 0 0 1rem; font-size: 1.2rem; font-weight: 600; }
-.experiment-rows { margin: 0; padding: 0; list-style: none; }
-.experiment-row { display: grid; grid-template-columns: 7rem minmax(0, 1fr) 7.5rem; align-items: center; gap: 1.5rem; padding: 1rem 0; border-top: 1px solid var(--rule); }
+.experiment-rows { margin: 2rem 0 0; padding: 0; list-style: none; }
+.experiment-row { display: grid; grid-template-columns: 7rem minmax(0, 1fr) 7.5rem; align-items: center; gap: 1.5rem; padding: 1rem 0; border-top: 1px solid var(--rule); scroll-margin-top: 2rem; }
 .experiment-thumbnail { height: 5rem; background: var(--paper); }
 .experiment-thumbnail svg { width: 100%; height: 100%; }
-.experiment-row h4 { margin: 0 0 .35rem; font-size: 1.08rem; font-weight: 600; }
-.experiment-row h4 a { display: inline-block; padding-block: .15rem; }
+.experiment-row-category { display: block; margin-bottom: .25rem; color: var(--muted); font-size: .75rem; }
+.experiment-row h3 { margin: 0 0 .35rem; font-size: 1.08rem; font-weight: 600; }
+.experiment-row h3 a { display: inline-block; padding-block: .15rem; }
 .experiment-row p { margin: 0; color: var(--muted); font-size: .9rem; }
 .experiment-state { margin: 0; color: var(--muted); font-size: .82rem; }
 .experiment-state-available { color: #315d46; }
