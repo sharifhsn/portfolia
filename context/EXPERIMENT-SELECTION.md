@@ -65,6 +65,9 @@ They do not establish that no other work exists.
 `archived-experiments.toml` preserves the removed drafts outside the active catalog.
 The runtime returns 404 for their old experiment routes.
 The export and sitemap omit those routes.
+Cloudflare Pages redirects the eleven entries excluded by Sharif's selection to `/experiments/`.
+The deployment exports `experiment-redirects.txt` as `_redirects` to replace cached pages at those URLs.
+The rules use HTTP 302 so a later selection change can restore a route.
 
 The current browser chat remains a separate site utility outside this collection.
 The selected upstream entries now describe the local contribution and preserve the original project authorship.

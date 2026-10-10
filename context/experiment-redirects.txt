@@ -1,0 +1,23 @@
+# Retired experiment pages return to the current collection.
+/experiments/oboromi /experiments/ 302
+/experiments/oboromi/ /experiments/ 302
+/experiments/system-health /experiments/ 302
+/experiments/system-health/ /experiments/ 302
+/experiments/bevy-switch /experiments/ 302
+/experiments/bevy-switch/ /experiments/ 302
+/experiments/plume /experiments/ 302
+/experiments/plume/ /experiments/ 302
+/experiments/wedeo /experiments/ 302
+/experiments/wedeo/ /experiments/ 302
+/experiments/volt /experiments/ 302
+/experiments/volt/ /experiments/ 302
+/experiments/guphub /experiments/ 302
+/experiments/guphub/ /experiments/ 302
+/experiments/ttfx /experiments/ 302
+/experiments/ttfx/ /experiments/ 302
+/experiments/raygeo /experiments/ 302
+/experiments/raygeo/ /experiments/ 302
+/experiments/factshort /experiments/ 302
+/experiments/factshort/ /experiments/ 302
+/experiments/booksharp /experiments/ 302
+/experiments/booksharp/ /experiments/ 302

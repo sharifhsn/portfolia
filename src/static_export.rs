@@ -102,6 +102,10 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     let not_found = super::render_not_found().map_err(render_status_error)?;
     fs::write(output_dir.join("404.html"), not_found.0)?;
     fs::write(
+        output_dir.join("_redirects"),
+        include_str!("../context/experiment-redirects.txt"),
+    )?;
+    fs::write(
         output_dir.join("_headers"),
         r#"/*
   X-Content-Type-Options: nosniff
@@ -274,10 +278,14 @@ mod tests {
         assert!(headers.contains("Content-Security-Policy:"));
         assert!(headers.contains("Content-Language: en-US"));
         assert!(headers.contains("Strict-Transport-Security:"));
-        assert!(
-            !output.join("_redirects").exists(),
-            "retired variants should not be exported"
-        );
+        let redirects = fs::read_to_string(output.join("_redirects")).unwrap();
+        assert!(redirects.contains("/experiments/oboromi/ /experiments/ 302"));
+        assert!(redirects.contains("/experiments/booksharp/ /experiments/ 302"));
+        assert!(!redirects.contains("/v/") && !redirects.contains("/designs"));
+        for experiment in super::super::experiments::all() {
+            assert!(!redirects.contains(&format!("/experiments/{} ", experiment.slug)));
+            assert!(!redirects.contains(&format!("/experiments/{}/ ", experiment.slug)));
+        }
         let not_found = fs::read_to_string(output.join("404.html")).unwrap();
         assert!(not_found.contains("Main navigation"));
         assert!(not_found.contains("Page not found"));
