@@ -74,7 +74,7 @@ impl Experiment {
     }
 
     pub(super) fn featured(&self) -> bool {
-        matches!(self.slug.as_str(), "ldsc" | "rustlyn" | "oboromi")
+        matches!(self.slug.as_str(), "ldsc" | "rustlyn" | "rust-dotnet")
     }
 
     pub(super) fn has_demo(&self) -> bool {

@@ -33,22 +33,6 @@ credit = "Independent work with Roslyn and other language servers as references.
 demo_href = "/experiments/rustlyn/#demo"
 
 [[experiments]]
-slug = "oboromi"
-name = "Oboromi systems work"
-category = "languages"
-status = "study"
-summary = "Work at the boundaries of IPC, CPU execution, and emulator diagnostics."
-interest = "An emulator has to make instruction execution, memory, and failure conditions agree. That makes its boundaries especially interesting: parse the wrong packet or let a register overflow, and the rest of the system inherits the mistake. My Oboromi work focuses on those boundaries and on diagnostics that make them visible."
-progress = "My local contributions cover IPC packet and schema parsing, bounded CPU configuration, shader diagnostics, and USB research tools. The browser example uses an original eight-bit instruction set to show successful execution, overflow, and a step-limit failure. Oboromi is the upstream experimental emulator."
-question = "How does an executor stop overflow and enforce a step limit?"
-scope = "Rust executes an original instruction set with one eight-bit register, checked addition, and a step limit."
-demo_plan = "Compare a complete program, arithmetic overflow, and a step-limit failure."
-next_step = "Add an IPC packet example from the local parser contributions and show the decoded fields beside the source bytes."
-rust_plan = "Rust executes the eight-bit example and records its register trace."
-credit = "0xNikilite authors Oboromi. My local contributions cover parser boundaries, runtime checks, and research tools."
-demo_href = "/experiments/oboromi/#demo"
-
-[[experiments]]
 slug = "rust-dotnet"
 name = "Rust to .NET"
 category = "languages"
@@ -63,6 +47,22 @@ next_step = "Repeat the same inputs with a build from the newer source checkout 
 rust_plan = "The Rust compiler backend produces the managed assembly. Rust exports the recorded comparison."
 credit = "FractalFir authors rustc_codegen_clr. My local fork covers compiler, linker, compatibility, and acceptance work."
 demo_href = "/experiments/rust-dotnet/#demo"
+
+[[experiments]]
+slug = "oboromi"
+name = "Oboromi systems work"
+category = "languages"
+status = "study"
+summary = "Work at the boundaries of IPC, CPU execution, and emulator diagnostics."
+interest = "An emulator has to make instruction execution, memory, and failure conditions agree. That makes its boundaries especially interesting: parse the wrong packet or let a register overflow, and the rest of the system inherits the mistake. My Oboromi work focuses on those boundaries and on diagnostics that make them visible."
+progress = "My local contributions cover IPC packet and schema parsing, bounded CPU configuration, shader diagnostics, and USB research tools. The browser example uses an original eight-bit instruction set to show successful execution, overflow, and a step-limit failure. Oboromi is the upstream experimental emulator."
+question = "How does an executor stop overflow and enforce a step limit?"
+scope = "Rust executes an original instruction set with one eight-bit register, checked addition, and a step limit."
+demo_plan = "Compare a complete program, arithmetic overflow, and a step-limit failure."
+next_step = "Add an IPC packet example from the local parser contributions and show the decoded fields beside the source bytes."
+rust_plan = "Rust executes the eight-bit example and records its register trace."
+credit = "0xNikilite authors Oboromi. My local contributions cover parser boundaries, runtime checks, and research tools."
+demo_href = "/experiments/oboromi/#demo"
 
 [[experiments]]
 slug = "system-health"
