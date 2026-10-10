@@ -1,6 +1,7 @@
 use serde::Deserialize;
 use std::sync::LazyLock;
 
+pub(super) mod ldsc;
 mod studies;
 
 #[derive(Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -216,11 +217,14 @@ mod tests {
             );
             assert!((1..=4).contains(&experiment.phase));
             assert_eq!(experiment.has_demo(), experiment.demo_href.is_some());
-            if let Some(href) = &experiment.demo_href {
-                assert!(
-                    ["/chat/", "/projects/hornet/"].contains(&href.as_str())
-                        || href == &format!("/experiments/{}/#demo", experiment.slug)
-                );
+            if let Some(href) = &experiment.demo_href
+                && !["/chat/", "/projects/hornet/"].contains(&href.as_str())
+            {
+                let (route, fragment) = href.split_once('#').expect("An example anchor");
+                assert_eq!(route, format!("/experiments/{}/", experiment.slug));
+                let axum::response::Html(page) =
+                    crate::render_experiment(&experiment.slug).unwrap();
+                assert_eq!(page.matches(&format!("id=\"{fragment}\"")).count(), 1);
             }
             for text in [
                 &experiment.summary,

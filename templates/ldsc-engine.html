@@ -1,0 +1,47 @@
+{% if let Some(engine) = ldsc_engine %}
+<section class="ldsc-engine" id="engine" aria-labelledby="engine-title">
+  <div class="ldsc-engine-heading">
+    <div><h2 id="engine-title">From reference genomes to reusable answers</h2><p>1000 Genomes supplies the map of correlated variants. Published GWAS summaries supply the evidence about a trait. LDSC connects the two.</p><p>One suitable reference can serve many studies. Their summary statistics let us ask new questions without access to the original study participants’ genomes.</p></div>
+    <a href="#engine-results">See the BMI result</a>
+  </div>
+  <section class="ldsc-performance" aria-labelledby="performance-title">
+    <div class="ldsc-performance-heading"><h3 id="performance-title">The expensive step, made faster</h3><p><strong>{{ engine.speedup }}×</strong> faster LD scores</p></div>
+    <p>The recorded Rust f64 run reduced 25 minutes 49 seconds to about 85 seconds. That saves {{ engine.saved_minutes }} minutes per reference calculation.</p>
+    <figure class="ldsc-runtime">
+      <figcaption>Recorded wall time on the same workstation. Shorter bars mean less time.</figcaption>
+      <dl>{% for runtime in engine.runtimes %}<div class="ldsc-runtime-row" data-runs="{{ runtime.runs }}"><dt>{{ runtime.label }}</dt><dd><span class="ldsc-runtime-track" aria-hidden="true"><span style="width: {{ runtime.width }}%"></span></span><span class="ldsc-runtime-value">{{ runtime.time }}</span></dd></div>{% endfor %}</dl>
+    </figure>
+    <p class="ldsc-evidence-note">{{ engine.benchmark_context }}. Recorded {{ engine.benchmark_date }} with hyperfine: one Python run and three Rust runs. ± values show standard deviations.</p>
+    <p>Rust reuses memory and distributes matrix work across CPU threads. Faster reference calculations make different windows, panels, and accuracy checks easier to compare.</p>
+    <details class="ldsc-disclosure"><summary>Accuracy and benchmark conditions</summary>
+      <p>The log reports zero maximum absolute difference for this f64 comparison. This result applies to the recorded build and settings.</p>
+      <p>The faster f32 path changes precision. Its recorded maximum absolute difference was {{ engine.f32_error }} LD-score units. Sketch modes add approximation error.</p>
+      <p>This is a historical CPU benchmark. The page does not claim the same speed on every machine or run a genome analysis in your browser.</p>
+      <p><a href="/static/experiments/fixtures/ldsc/benchmark.txt">Read the benchmark extract</a> or <a href="https://github.com/sharifhsn/ldsc/blob/413a7c3254fcb5c9283e17c8b8050178231aef22/docs/perf-log.md#L1148-L1152">inspect the pinned performance log</a>.</p>
+    </details>
+  </section>
+  <section class="ldsc-reference" aria-labelledby="reference-title">
+    <div class="ldsc-reference-copy"><h3 id="reference-title">What 1000G actually contributes</h3>
+      <p>Nearby variants often travel together through inheritance. An LD score measures the correlation around each variant, including its self-correlation.</p>
+      <p>This distribution comes from the Rust engine’s retained chromosome 22 output. Most scores are modest. A smaller tail marks variants with much stronger surrounding LD.</p>
+      <dl class="study-metrics"><div><dt>Mean LD score</dt><dd>{{ engine.reference_mean }}</dd></div><div><dt>Median</dt><dd>{{ engine.reference_median }}</dd></div><div><dt>Maximum</dt><dd>{{ engine.reference_maximum }}</dd></div></dl>
+      <p>High LD means a variant can carry evidence about many neighbors. It does not establish that the variant causes a disease.</p>
+    </div>
+    <div><figure class="ldsc-histogram">{{ engine.reference_svg|safe }}<figcaption>{{ engine.reference_context }}. The last bin includes all scores of 100 or more.</figcaption></figure>
+      <details class="ldsc-disclosure"><summary>Read the distribution as a table</summary><table class="ldsc-bin-table"><caption>Recorded chromosome 22 LD scores</caption><thead><tr><th scope="col">LD score interval</th><th scope="col">Variants</th></tr></thead><tbody>{% for bin in engine.bins %}<tr><th scope="row">{{ bin.range }}</th><td>{{ bin.count }}</td></tr>{% endfor %}</tbody></table><p>Intervals include the lower bound and exclude the upper bound.</p></details>
+    </div>
+  </section>
+  <section class="ldsc-results" id="engine-results" aria-labelledby="engine-results-title">
+    <h3 id="engine-results-title">A real example: the genetic contribution to BMI</h3>
+    <p>The native pipeline combined a 503-person 1000G European reference with <a href="https://pubmed.ncbi.nlm.nih.gov/30124842/">Yengo et al.’s published BMI study</a>. The GWAS covers roughly 700,000 people. They are separate datasets with different jobs.</p>
+    <ol class="ldsc-pipeline"><li><h4>Calculate the reference</h4><p>Correlations across 1.66 million variants produce LD scores.</p><span>{{ engine.pipeline[0] }} s</span></li><li><h4>Prepare the study</h4><p>Alleles, sample counts, and association statistics enter a common format.</p><span>{{ engine.pipeline[1] }} s</span></li><li><h4>Estimate heritability</h4><p>Regress the study’s association signal against the reference LD scores.</p><span>{{ engine.pipeline[2] }} s</span></li></ol>
+    <p class="ldsc-evidence-note">Recorded pipeline total: {{ engine.pipeline_total }} seconds on an Apple M5 Pro. This is separate from the Ryzen benchmark above.</p>
+    <div class="ldsc-bmi-result"><p><strong>{{ engine.bmi_share }}%</strong> of BMI variation tagged by common genetic variants in this analysis</p><div class="ldsc-share-track" aria-hidden="true"><span style="width: {{ engine.bmi_share }}%"></span></div><p>Standard error: {{ engine.bmi_se }} percentage points. The regression merged {{ engine.bmi_variants }} variants.</p></div>
+    <p>This estimates variation across a population. It does not assign a genetic percentage to a person’s weight or include every genetic effect.</p>
+    <details class="ldsc-disclosure"><summary>How much signal could come from study bias?</summary><p>The BMI intercept was {{ engine.bmi_intercept }}. The confounding ratio was {{ engine.bmi_ratio }} percentage points, with one standard error.</p><p>Under the LDSC model, that ratio assigns about 3.3% of the mean association statistic’s excess over 1 to confounding. The remainder reflects the model’s genetic signal.</p><p>Population structure, relatedness, reference choice, and study corrections affect this interpretation. The intercept helps separate these effects from many small genetic contributions.</p></details>
+    <details class="ldsc-disclosure"><summary>Which traits share genetic influences?</summary><p>Cross-trait LDSC uses two GWAS summaries and an appropriate LD reference to estimate genetic correlation. It can compare metabolic, psychiatric, and other traits.</p><p>A positive correlation indicates shared genetic influences in the same direction. A negative correlation indicates opposing directions. Neither result alone establishes causality.</p><p><a href="https://pubmed.ncbi.nlm.nih.gov/26414676/">The original cross-trait paper</a> explains the method. This BMI example contains one trait and does not calculate a cross-trait result.</p></details>
+    <p><a href="/static/experiments/fixtures/ldsc/worked-example-bmi.txt">Read the retained BMI regression output</a></p>
+  </section>
+  <div class="ldsc-engine-sources"><h3>Where these results come from</h3><p>The charts use retained native results. Rust calculates the displayed ratios and draws the histogram from the saved counts.</p><p>The small selectable example below uses synthetic genotypes. It illustrates the formula independently of the recorded results.</p><ul><li><a href="/static/experiments/fixtures/ldsc/results.json">Download the results and source hashes</a></li><li><a href="https://www.internationalgenome.org/data-portal/data-collection/phase3/">1000 Genomes Phase 3 reference data</a></li><li><a href="https://github.com/sharifhsn/ldsc">Rust engine source</a></li></ul></div>
+</section>
+{% endif %}

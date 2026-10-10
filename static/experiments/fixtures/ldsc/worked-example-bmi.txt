@@ -1,0 +1,8 @@
+Loaded 1030015 SNPs from '/tmp/BMI_munged.sumstats.gz' after merging with LD scores
+  Read M = 1264873 from .l2.M_5_50 files
+Using two-step estimator with cutoff at 30.
+Total Observed scale h2: 0.2032 (0.0055)
+Lambda GC: 2.7674
+Mean Chi^2: 3.9478
+Intercept: 1.0972 (0.0193)
+Ratio: 0.0330 (0.0065)

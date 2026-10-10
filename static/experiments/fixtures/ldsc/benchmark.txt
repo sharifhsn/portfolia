@@ -1,0 +1,5 @@
+### Headline: Python vs Rust, full 1000G (1,664,852 SNPs, 2,490 indiv, --ld-wind-kb 1000)
+- Machine: Ryzen 5 5600X (6C/12T), 32 GB RAM
+- Python (hyperfine, 1 run): **1548.5s** (25m49s wall, 25m35s user)
+- Rust f64 (hyperfine, 3 runs): **85.4s ± 1.2s** (8m07s user) — **18× speedup**, `max_abs_diff=0` ✓
+- Rust f32 (hyperfine, 3 runs): **66.3s ± 3.3s** (4m54s user) — **23× speedup**, `max_abs_diff=0.008`

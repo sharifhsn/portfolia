@@ -48,6 +48,7 @@ struct Site<'a> {
     experiment_categories: &'a [experiments::Category],
     selected_experiment: Option<&'a experiments::Experiment>,
     experiment_study: Option<experiments::Study>,
+    ldsc_engine: Option<experiments::ldsc::Engine>,
     recent_posts: Vec<&'a BlogPost>,
     resume_html: &'a str,
     pdf_available: bool,
@@ -2193,6 +2194,9 @@ fn render_site_with_experiment(
         selected_experiment,
         experiment_study: selected_experiment
             .and_then(|experiment| experiments::study(&experiment.slug)),
+        ldsc_engine: selected_experiment
+            .filter(|experiment| experiment.slug == "ldsc")
+            .map(|_| experiments::ldsc::build()),
         recent_posts: posts
             .iter()
             .filter(|post| !post.study_note)
@@ -2502,6 +2506,14 @@ mod tests {
         assert!(wedeo.contains("Recorded result"));
         assert!(wedeo.contains("id=\"demo\""));
         assert!(wedeo.contains("Wedeo | Experiments | Sharif Haason"));
+        assert!(!wedeo.contains("id=\"engine\""));
+        let Html(ldsc) = render_experiment("ldsc").unwrap();
+        assert!(ldsc.contains("id=\"engine\""));
+        assert!(ldsc.contains("id=\"demo\""));
+        assert!(ldsc.contains("<strong>18.1×</strong>"));
+        assert!(ldsc.contains("<strong>20.32%</strong>"));
+        assert_eq!(ldsc.matches("class=\"ldsc-runtime-row\"").count(), 3);
+        assert!(ldsc.contains("/static/experiments/fixtures/ldsc/results.json"));
         for slug in [
             "browser-model",
             "fractal-study",

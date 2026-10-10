@@ -103,6 +103,54 @@
   .study-control { display: none; }
   .study-scene { display: block; margin-block: 2rem; }
 }
+.ldsc-engine { margin: 1rem 0 3rem; padding: 2rem; background: var(--paper); scroll-margin-top: 1rem; }
+.ldsc-engine h2 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 2rem; font-weight: 400; }
+.ldsc-engine h3 { margin: 0 0 1rem; font-size: 1.25rem; }
+.ldsc-engine p { max-width: 72ch; color: var(--muted); }
+.ldsc-engine-heading { display: flex; align-items: start; justify-content: space-between; gap: 2rem; }
+.ldsc-engine-heading > div { max-width: 44rem; }
+.ldsc-engine-heading > a { flex-shrink: 0; padding-block: .4rem; font-size: .9rem; }
+.ldsc-engine > section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--rule); }
+.ldsc-performance-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; }
+.ldsc-performance-heading p { color: var(--link); white-space: nowrap; }
+.ldsc-performance-heading strong { font-family: var(--font-display); font-size: 2.8rem; font-weight: 400; }
+.ldsc-runtime { margin: 1.5rem 0; }
+.ldsc-runtime figcaption { margin-bottom: 1rem; color: var(--muted); font-size: .85rem; }
+.ldsc-runtime dl { margin: 0; }
+.ldsc-runtime-row { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 1rem; align-items: center; margin: 1rem 0; }
+.ldsc-runtime-row dt { font-size: .95rem; }
+.ldsc-runtime-row dd { display: grid; grid-template-columns: minmax(0, 1fr) 9.5rem; align-items: center; gap: 1rem; margin: 0; }
+.ldsc-runtime-track { display: block; height: 1.6rem; background: var(--paper-raised); }
+.ldsc-runtime-track > span { display: block; height: 100%; background: var(--link); }
+.ldsc-runtime-row:first-child .ldsc-runtime-track > span { background: var(--muted); }
+.ldsc-runtime-value { text-align: right; font-variant-numeric: tabular-nums; font-size: .95rem; }
+.ldsc-engine .ldsc-evidence-note { font-size: .85rem; }
+.ldsc-disclosure { margin: 1.25rem 0; padding-top: .75rem; border-top: 1px solid var(--rule); }
+.ldsc-disclosure summary { min-height: 2.75rem; padding-block: .4rem; color: var(--link); }
+.ldsc-disclosure p { margin: .75rem 0; font-size: .95rem; }
+.ldsc-reference { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; }
+.ldsc-reference > div { min-width: 0; }
+.ldsc-histogram { margin: 0; color: var(--link); }
+.ldsc-histogram svg { display: block; width: 100%; height: auto; }
+.ldsc-histogram figcaption { margin-top: 1rem; color: var(--muted); font-size: .85rem; }
+.ldsc-bin-table { width: 100%; border-collapse: collapse; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.ldsc-bin-table caption { margin: .75rem 0; text-align: left; }
+.ldsc-bin-table th, .ldsc-bin-table td { padding: .3rem .5rem; border-bottom: 1px solid var(--rule); text-align: left; font-weight: 400; }
+.ldsc-bin-table td, .ldsc-bin-table th:last-child { text-align: right; }
+.ldsc-results { scroll-margin-top: 1rem; }
+.ldsc-pipeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin: 1.5rem 0; padding-left: 1.4rem; }
+.ldsc-pipeline li { padding-left: .2rem; }
+.ldsc-pipeline h4 { margin: 0 0 .5rem; font-size: 1rem; }
+.ldsc-pipeline p { margin-bottom: .5rem; font-size: .9rem; }
+.ldsc-pipeline span { color: var(--link); font-variant-numeric: tabular-nums; }
+.ldsc-bmi-result { margin: 2rem 0 1.5rem; }
+.ldsc-bmi-result strong { display: block; color: var(--link); font-family: var(--font-display); font-size: 3rem; font-weight: 400; }
+.ldsc-share-track { height: .8rem; margin: 1rem 0; background: var(--paper-raised); }
+.ldsc-share-track span { display: block; height: 100%; background: var(--link); }
+.ldsc-engine-sources { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+.ldsc-engine-sources p, .ldsc-engine-sources ul { font-size: .9rem; }
+.ldsc-engine-sources ul { padding-left: 1.25rem; }
+.ldsc-engine-sources li + li { margin-top: .5rem; }
 @media (max-width: 760px) {
   .experiment-intro, .experiment-detail-intro { grid-template-columns: 1fr; gap: 2rem; }
   .experiment-intro h1 br { display: none; }
@@ -119,4 +167,13 @@
   .experiment-study { padding: 1.25rem; }
   .experiment-study > h2 { font-size: 1.7rem; }
   .study-code-pair { grid-template-columns: minmax(0, 1fr); }
+  .ldsc-engine { padding: 1.25rem; }
+  .ldsc-engine h2 { font-size: 1.7rem; }
+  .ldsc-engine-heading, .ldsc-performance-heading { display: block; }
+  .ldsc-engine-heading > a { display: inline-block; }
+  .ldsc-runtime-row { display: block; margin: 1.25rem 0; }
+  .ldsc-runtime-row dt { margin-bottom: .4rem; }
+  .ldsc-runtime-row dd { grid-template-columns: minmax(0, 1fr) 8.5rem; gap: .75rem; }
+  .ldsc-runtime-value { font-size: .85rem; }
+  .ldsc-reference, .ldsc-pipeline { grid-template-columns: minmax(0, 1fr); }
 }

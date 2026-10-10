@@ -1,0 +1,121 @@
+{
+  "snapshot_date": "2026-10-10",
+  "source_checkout": "52ce733a3d26cdc2dda53de690bb2ea3b167f9cc",
+  "benchmark": {
+    "date": "2026-03-07",
+    "machine": "Ryzen 5 5600X (6 cores / 12 threads), 32 GB RAM",
+    "samples": 2490,
+    "variants": 1664852,
+    "window_kb": 1000,
+    "python_seconds": 1548.5,
+    "python_runs": 1,
+    "rust_f64_seconds": 85.4,
+    "rust_f64_sd": 1.2,
+    "rust_f32_seconds": 66.3,
+    "rust_f32_sd": 3.3,
+    "rust_runs": 3,
+    "f32_max_abs_difference": 0.008
+  },
+  "reference": {
+    "population": "European ancestry",
+    "samples": 503,
+    "chromosome": 22,
+    "variants": 18627,
+    "maf_min": 0.05,
+    "window_kb": 1000,
+    "mean": 18.671893971117196,
+    "median": 13.84,
+    "maximum": 110.815,
+    "bins": [
+      {
+        "lower": 0,
+        "upper": 10,
+        "count": 6173
+      },
+      {
+        "lower": 10,
+        "upper": 20,
+        "count": 6640
+      },
+      {
+        "lower": 20,
+        "upper": 30,
+        "count": 2742
+      },
+      {
+        "lower": 30,
+        "upper": 40,
+        "count": 1227
+      },
+      {
+        "lower": 40,
+        "upper": 50,
+        "count": 892
+      },
+      {
+        "lower": 50,
+        "upper": 60,
+        "count": 356
+      },
+      {
+        "lower": 60,
+        "upper": 70,
+        "count": 309
+      },
+      {
+        "lower": 70,
+        "upper": 80,
+        "count": 181
+      },
+      {
+        "lower": 80,
+        "upper": 90,
+        "count": 10
+      },
+      {
+        "lower": 90,
+        "upper": 100,
+        "count": 9
+      },
+      {
+        "lower": 100,
+        "upper": null,
+        "count": 88
+      }
+    ]
+  },
+  "bmi": {
+    "merged_variants": 1030015,
+    "h2": 0.2032,
+    "h2_se": 0.0055,
+    "intercept": 1.0972,
+    "intercept_se": 0.0193,
+    "mean_chi2": 3.9478,
+    "ratio": 0.033,
+    "ratio_se": 0.0065,
+    "reference_samples": 503,
+    "pipeline_seconds": [
+      29,
+      10,
+      2
+    ]
+  },
+  "sources": [
+    {
+      "path": "docs/perf-log.md",
+      "sha256": "8ae24fda5a86e4b768f4af792633e46871d556d80de2bdf552a3e41d5849b2c9"
+    },
+    {
+      "path": "preprint/data/sim_ldscores_sketch/1000g_exact_masked22.l2.ldscore.gz",
+      "sha256": "1f43f612f2daf86a91d4037de9b615007d5a7f075098397d0c20018a34d57c90"
+    },
+    {
+      "path": "preprint/data/worked_example_bmi.txt",
+      "sha256": "9c3b5b0e80493ef5709327df4c6f93b71c2e6f52db9c0565e05f03cf52a6fa14"
+    },
+    {
+      "path": "preprint/main.typ",
+      "sha256": "ba848702c2316e1b8e8aafaec31d6396611af374a3048d8543efba6ad7bce42e"
+    }
+  ]
+}

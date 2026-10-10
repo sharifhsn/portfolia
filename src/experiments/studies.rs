@@ -4,6 +4,9 @@ use super::{Metric, Scene, Source, Study, StudyImage};
 mod additions;
 
 pub(super) fn preview(slug: &str) -> Option<String> {
+    if slug == "ldsc" {
+        return Some(super::ldsc::build().reference_svg);
+    }
     build(slug)?.scenes.into_iter().find_map(|scene| {
         if !scene.svg.is_empty() {
             Some(scene.svg)
@@ -79,7 +82,7 @@ fn escape(text: &str) -> String {
         .replace('"', "&quot;")
 }
 
-fn svg(label: &str, drawing: &str) -> String {
+pub(super) fn svg(label: &str, drawing: &str) -> String {
     format!(
         r#"<svg viewBox="0 0 480 280" role="img" aria-label="{}" xmlns="http://www.w3.org/2000/svg"><g font-family="sans-serif" font-size="15" fill="currentColor">{drawing}</g></svg>"#,
         escape(label)
@@ -154,11 +157,24 @@ fn ldsc() -> Study {
         result
     }).collect();
     Study {
-        title: "Inspect the LD score kernel",
-        intro: "Compare the correlation sum, its finite-sample correction, and a shorter variant window.",
+        title: "See how correlated variants add up",
+        intro: "An LD score measures how strongly a variant correlates with its neighbors. Compare the raw sum, sample correction, and neighborhood size.",
         method: "The site calculates this small kernel in Rust. It does not run the full LDSC regression or the repository's sketch mode.",
         scenes,
-        sources: vec![],
+        sources: vec![
+            source(
+                "ldsc-method",
+                "LD Score regression distinguishes confounding from polygenicity",
+                "quantifies the contribution of each by examining the relationship between test statistics and linkage disequilibrium (LD).",
+                Some("https://www.nature.com/articles/ng.3211"),
+            ),
+            source(
+                "ldsc-cross-trait",
+                "An atlas of genetic correlations across human diseases and traits",
+                "estimating genetic correlation that requires only GWAS summary statistics and is not biased by sample overlap.",
+                Some("https://pubmed.ncbi.nlm.nih.gov/26414676/"),
+            ),
+        ],
         audio: None,
     }
 }
