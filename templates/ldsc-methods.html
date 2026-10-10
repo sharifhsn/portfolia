@@ -1,0 +1,47 @@
+<section class="ldsc-methods" id="engine-methods" aria-labelledby="methods-title">
+  <h3 id="methods-title">How the engine saves work</h3>
+  <p>The goal is to spend less time on repeated arithmetic and memory traffic. These diagrams explain the CPU paths in the Rust engine.</p>
+  <p class="ldsc-evidence-note">The diagrams are small schematics. The 18.1× result measures the complete recorded f64 path. It does not measure each optimization separately.</p>
+  <fieldset class="ldsc-method-control"><legend>Choose a computational method</legend><div class="study-options"><label><input type="radio" name="ldsc-method" id="ldsc-method-window" checked><span>Windows</span></label><label><input type="radio" name="ldsc-method" id="ldsc-method-precision"><span>Precision</span></label><label><input type="radio" name="ldsc-method" id="ldsc-method-sketch"><span>CountSketch</span></label></div></fieldset>
+  <div class="ldsc-method-scene" data-method="window">
+    <div class="ldsc-method-copy">
+      <h4>Keep the neighborhood. Batch the arithmetic.</h4>
+      <p>The engine reads consecutive variants in chunks. A ring buffer retains normalized columns that the next chunk still needs.</p>
+      <p>Let <strong>B</strong> be the new chunk and <strong>A</strong> be its retained neighbors. Two matrix products calculate their correlations:</p>
+      <ul class="ldsc-method-products"><li><strong>BᵀB</strong> compares variants inside the new chunk.</li><li><strong>AᵀB</strong> compares retained neighbors with new variants. The engine adds each cross-chunk pair to both LD scores.</li></ul>
+      <p>The <a href="https://faer.veganb.tw/">faer</a> matrix kernels handle these blocks and use multiple CPU threads on native builds. Contiguous columns help the CPU reuse cached data.</p>
+      <p>Scratch matrices also survive between chunks. Full overwrites remove the need for a new allocation and zero fill at each product.</p>
+      <details class="ldsc-disclosure"><summary>Window accuracy and work per chunk</summary><p>The optional <code>--snp-level-masking</code> flag removes pairs outside each variant’s true window. The default preserves Python’s chunk-level window convention.</p><p>A chunk of c variants, w retained neighbors, and N samples needs approximately N × c × (w + c) arithmetic work. Local variant density affects w.</p><p><a href="https://github.com/sharifhsn/ldsc/blob/413a7c3254fcb5c9283e17c8b8050178231aef22/src/l2/compute.rs">Inspect the ring buffer, scratch matrices, and matrix products</a>.</p></details>
+    </div>
+    <div class="ldsc-window-demo">
+      <fieldset class="ldsc-method-control"><legend>Advance a two-variant chunk</legend><div class="study-options">{% for window in engine.methods.windows %}<label><input type="radio" name="ldsc-window" id="ldsc-window-{{ window.index }}"{% if window.index == 0 %} checked{% endif %}><span>{{ window.label }}</span></label>{% endfor %}</div></fieldset>
+      {% for window in engine.methods.windows %}<figure class="ldsc-window-frame" data-window="{{ window.index }}">{{ window.svg|safe }}<figcaption>{{ window.description }}</figcaption></figure>{% endfor %}
+      <p class="ldsc-method-legend"><span><i class="ldsc-key-new" aria-hidden="true"></i>Blue: BᵀB</span><span><i class="ldsc-key-retained" aria-hidden="true"></i>Green: AᵀB and its symmetric contribution</span></p>
+    </div>
+  </div>
+  <div class="ldsc-method-scene" data-method="precision">
+    <div class="ldsc-method-copy">
+      <h4>Move fewer bytes through the same calculation.</h4>
+      <p>The <code>--fast-f32</code> option keeps the same window and matrix algorithm. Genotype storage and matrix products use 32-bit floats instead of 64-bit floats.</p>
+      <p>A normalized value occupies four bytes instead of eight. Smaller genotype matrices reduce memory traffic and leave more room in the CPU cache.</p>
+      <p>A chunk contains 200 variants and 2,490 reference samples. Its genotype matrix needs <strong>{{ engine.methods.chunk_f64_mib }} MiB in f64</strong> or <strong>{{ engine.methods.chunk_f32_mib }} MiB in f32</strong>.</p><p>These are calculated matrix sizes, not total process memory.</p>
+      <p>The engine keeps normalization statistics and corrected LD-score accumulation in f64. The f32 matrix products still change numerical precision.</p>
+      <p>The recorded f32 run took 66.3 seconds and differed by at most {{ engine.f32_error }} LD-score units. A smaller format does not guarantee the same accuracy for every dataset.</p>
+      <p class="ldsc-evidence-note"><a href="https://github.com/sharifhsn/ldsc/blob/413a7c3254fcb5c9283e17c8b8050178231aef22/src/l2/normalize.rs">Normalization</a> · <a href="https://github.com/sharifhsn/ldsc/blob/413a7c3254fcb5c9283e17c8b8050178231aef22/src/la.rs">Matrix kernels and parallel execution</a></p>
+    </div>
+    <figure class="ldsc-method-figure">{{ engine.methods.precision_svg|safe }}<figcaption>Each square represents one byte. The input BED format is separate: four two-bit genotype calls fit in one byte.</figcaption></figure>
+  </div>
+  <div class="ldsc-method-scene" data-method="sketch">
+    <div class="ldsc-method-copy">
+      <h4>Shorten the sample dimension before matrix work.</h4>
+      <p>CountSketch assigns each sample to a bucket and a random sign. It sums signed, normalized values into d bucket rows instead of N sample rows.</p>
+      <p>The contiguous input path first calculates variant statistics from packed BED bytes. A second pass combines genotype decode, normalization, and the signed sum.</p>
+      <p>That fused pass writes directly into the sketch. It avoids a full decoded matrix in the hot path. Irregular variant extraction still uses a full-size fallback buffer.</p>
+      <p>The next matrix products use d rows. For 2,490 samples and d = 500, each dot product uses approximately five times fewer row terms.</p>
+      <p class="ldsc-evidence-note">This is a work estimate, not a measured fivefold speedup. The engine still reads the full input. The 18.1× benchmark above uses the exact f64 path.</p>
+      <details class="ldsc-disclosure"><summary>What compression changes</summary><p>The schematic uses one normalized synthetic variant and an illustrative hash assignment. Its six sample values enter three buckets, then rescale to squared norm N = 6.</p><p>Bucket collisions add noise. Larger d usually reduces that noise but increases matrix work. The engine rescales columns and applies a quadratic bias correction before the finite-sample correction.</p><p>These corrections do not remove all approximation error. LD-score error and downstream heritability error need separate comparisons against exact results.</p><p>The work per chunk becomes approximately N × c + d × c × (w + c). The full input scan remains proportional to N.</p><p><a href="https://github.com/sharifhsn/ldsc/blob/413a7c3254fcb5c9283e17c8b8050178231aef22/src/l2/compute.rs">Inspect the fused CountSketch path and bias correction</a>.</p></details>
+    </div>
+    <figure class="ldsc-method-figure">{{ engine.methods.sketch_svg|safe }}<figcaption>Lines connect samples to the three buckets. Plus and minus signs determine each contribution. The bucket values precede the final rescale.</figcaption></figure>
+  </div>
+  <details class="ldsc-disclosure ldsc-visualization-credit"><summary>Visualization tools and source</summary><p>Rust creates these SVG diagrams with <a href="https://docs.rs/plotters/0.3.7/plotters/">Plotters 0.3.7</a>. Native controls select the diagrams.</p><p><a href="https://github.com/voxell-tech/motiongfx">MotionGfx</a> provides procedural animation in Rust. Its <a href="https://github.com/voxell-tech/bevy_motiongfx">Bevy integration</a> is a candidate for a future animated walkthrough. This page uses SVG diagrams.</p></details>
+</section>

@@ -2,6 +2,8 @@
 use serde::Deserialize;
 use std::sync::LazyLock;
 
+mod methods;
+
 const RESULTS: &str = include_str!("../../static/experiments/fixtures/ldsc/results.json");
 
 #[derive(Deserialize)]
@@ -121,6 +123,7 @@ impl Records {
 }
 
 pub(crate) struct Engine {
+    pub(crate) methods: methods::Methods,
     pub(crate) speedup: String,
     pub(crate) saved_minutes: String,
     pub(crate) benchmark_context: String,
@@ -218,6 +221,7 @@ pub(crate) fn build() -> Engine {
         runs,
     };
     Engine {
+        methods: methods::build(b.samples),
         speedup: format!("{:.1}", b.python_seconds / b.rust_f64_seconds),
         saved_minutes: format!("{:.1}", (b.python_seconds - b.rust_f64_seconds) / 60.0),
         benchmark_context: format!(

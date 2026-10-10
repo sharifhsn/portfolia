@@ -17,3 +17,4 @@ markdown = "1.0.0"
 glob = "0.3.1"
 lazy_static = "1.4.0"
 toml = "0.8"
+plotters = { version = "=0.3.7", default-features = false, features = ["svg_backend"] }

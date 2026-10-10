@@ -59,3 +59,32 @@ The website reports this historical result, not a fresh reproduction.
 The 1000G reference supplies LD information.
 It does not establish trait heritability without a GWAS input.
 This BMI result does not calculate genetic correlation between traits.
+
+## Computational diagrams
+
+The methods section uses Plotters 0.3.7 with its SVG backend.
+Rust creates all diagram geometry and values during the site build.
+Native radio controls select the method and the current chunk.
+The SVG output uses presentation attributes that obey the production content security policy.
+
+The source is the engine at commit `52ce733a3d26cdc2dda53de690bb2ea3b167f9cc`.
+The public links use commit `413a7c3254fcb5c9283e17c8b8050178231aef22`.
+That public revision contains the same computational methods that these diagrams explain.
+`src/l2/compute.rs` defines the ring buffer, reusable scratch matrices, and blocked matrix products.
+`src/l2/normalize.rs` and `src/la.rs` define normalization and matrix execution.
+
+The window diagram uses 12 synthetic variants, three retained columns, and two new columns.
+It illustrates chunk reuse and symmetric contributions, not a real chromosome window.
+The precision diagram calculates storage for 200 variants and 2,490 samples.
+These matrix sizes exclude scratch storage, allocation padding, and all other process memory.
+
+The CountSketch diagram uses six normalized synthetic values and an illustrative signed hash.
+Rust calculates the bucket sums and the final rescale.
+The engine uses its own seeded assignment.
+For contiguous reads, its fused path avoids the decoded intermediate matrix in the hot path.
+The engine still allocates a full-size fallback buffer for irregular variant extraction.
+The reduction in dot-product terms is an arithmetic estimate, not a measured runtime improvement.
+The March 7 runtime comparison uses the exact f64 path, not CountSketch.
+
+MotionGfx and its Bevy integration provide an animation option for later work.
+The current diagrams use Plotters and SVG, without a GPU runtime.

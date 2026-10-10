@@ -13,6 +13,7 @@
     </figure>
     <p class="ldsc-evidence-note">{{ engine.benchmark_context }}. Recorded {{ engine.benchmark_date }} with hyperfine: one Python run and three Rust runs. ± values show standard deviations.</p>
     <p>Rust reuses memory and distributes matrix work across CPU threads. Faster reference calculations make different windows, panels, and accuracy checks easier to compare.</p>
+    <p><a href="#engine-methods">Explore the computational methods</a></p>
     <details class="ldsc-disclosure"><summary>Accuracy and benchmark conditions</summary>
       <p>The log reports zero maximum absolute difference for this f64 comparison. This result applies to the recorded build and settings.</p>
       <p>The faster f32 path changes precision. Its recorded maximum absolute difference was {{ engine.f32_error }} LD-score units. Sketch modes add approximation error.</p>
@@ -20,6 +21,7 @@
       <p><a href="/static/experiments/fixtures/ldsc/benchmark.txt">Read the benchmark extract</a> or <a href="https://github.com/sharifhsn/ldsc/blob/413a7c3254fcb5c9283e17c8b8050178231aef22/docs/perf-log.md#L1148-L1152">inspect the pinned performance log</a>.</p>
     </details>
   </section>
+  {% include "ldsc-methods.html" %}
   <section class="ldsc-reference" aria-labelledby="reference-title">
     <div class="ldsc-reference-copy"><h3 id="reference-title">What 1000G actually contributes</h3>
       <p>Nearby variants often travel together through inheritance. An LD score measures the correlation around each variant, including its self-correlation.</p>

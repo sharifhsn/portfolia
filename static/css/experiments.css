@@ -147,6 +147,31 @@
 .ldsc-bmi-result strong { display: block; color: var(--link); font-family: var(--font-display); font-size: 3rem; font-weight: 400; }
 .ldsc-share-track { display: block; width: 100%; height: .8rem; margin: 1rem 0; background: var(--paper-raised); }
 .ldsc-share-track rect { fill: var(--link); }
+.ldsc-methods { scroll-margin-top: 1rem; }
+.ldsc-method-control { margin: 1.5rem 0; padding: 0; border: 0; }
+.ldsc-method-control legend { margin-bottom: .6rem; font-size: .9rem; }
+.ldsc-method-control .study-options { gap: .4rem; }
+.ldsc-method-scene { display: none; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 3rem; }
+.ldsc-method-scene > * { min-width: 0; }
+.ldsc-method-copy h4 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 1.65rem; font-weight: 400; line-height: 1.2; }
+.ldsc-method-products { padding-left: 1.25rem; color: var(--muted); }
+.ldsc-method-products li + li { margin-top: .6rem; }
+.ldsc-method-figure, .ldsc-window-frame { margin: 0; }
+.ldsc-method-svg { display: block; width: min(100%, 25rem); height: auto; margin-inline: auto; }
+.ldsc-method-figure figcaption, .ldsc-window-frame figcaption { margin: 1rem 0; color: var(--muted); font-size: .9rem; }
+.ldsc-window-demo > .ldsc-method-control { margin-top: 0; }
+.ldsc-window-frame { display: none; }
+.ldsc-method-legend { display: flex; flex-wrap: wrap; gap: .5rem 1rem; font-size: .85rem; }
+.ldsc-method-legend span { display: inline-flex; align-items: center; gap: .4rem; }
+.ldsc-method-legend i { width: .8rem; height: .8rem; flex-shrink: 0; }
+.ldsc-key-new { background: #324b94; }
+.ldsc-key-retained { background: #31675c; }
+.ldsc-methods:has(#ldsc-method-window:checked) [data-method="window"],
+.ldsc-methods:has(#ldsc-method-precision:checked) [data-method="precision"],
+.ldsc-methods:has(#ldsc-method-sketch:checked) [data-method="sketch"] { display: grid; }
+.ldsc-window-demo:has(#ldsc-window-0:checked) [data-window="0"],
+.ldsc-window-demo:has(#ldsc-window-1:checked) [data-window="1"],
+.ldsc-window-demo:has(#ldsc-window-2:checked) [data-window="2"] { display: block; }
 .ldsc-engine-sources { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
 .ldsc-engine-sources p, .ldsc-engine-sources ul { font-size: .9rem; }
 .ldsc-engine-sources ul { padding-left: 1.25rem; }
@@ -176,4 +201,6 @@
   .ldsc-runtime-row dd { grid-template-columns: minmax(0, 1fr) 8.5rem; gap: .75rem; }
   .ldsc-runtime-value { font-size: .85rem; }
   .ldsc-reference, .ldsc-pipeline { grid-template-columns: minmax(0, 1fr); }
+  .ldsc-method-scene { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .ldsc-method-figure, .ldsc-window-demo { grid-row: 1; }
 }
