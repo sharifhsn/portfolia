@@ -31,7 +31,7 @@
   </div>
   <p class="study-method">{{ study.method }}</p>
   {% if !study.sources.is_empty() %}
-  <div class="study-sources"><h3>Source passages</h3>
+  <div class="study-sources"><h3>Sources and reference notes</h3>
     {% for source in study.sources %}<article id="source-{{ source.key }}"><h4>{{ source.title }}</h4><blockquote>{{ source.text }}</blockquote>{% if let Some(href) = source.href %}<a href="{{ href }}">Read the original source</a>{% endif %}</article>{% endfor %}
   </div>
   {% endif %}

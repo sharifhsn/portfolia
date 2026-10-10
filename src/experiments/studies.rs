@@ -203,9 +203,9 @@ fn system_health() -> Study {
     let scenes = [("Current", Some(18.0), Some(4)), ("Stale", Some(82.0), Some(420)), ("Missing", None, None)].into_iter().map(|(label, cpu, age)| {
         let state = measurement_state(cpu, age);
         let mut result = scene(label, format!("Synthetic host: {label}"), match state {
-            MeasurementState::Current => "The sample is four seconds old. Its CPU value belongs to the current fixture.",
-            MeasurementState::Stale => "The CPU value is seven minutes old. The panel retains its age and marks the value as stale.",
-            MeasurementState::Missing => "No CPU sample exists. A missing measurement does not become a zero-percent reading.",
+            MeasurementState::Current => "The CPU sample is four seconds old. Its age keeps the value tied to the time of measurement.",
+            MeasurementState::Stale => "Seven minutes passed since this CPU sample. The panel keeps the value visible and marks it stale, so its age travels with it.",
+            MeasurementState::Missing => "The CPU sample is missing. The panel reports that state explicitly instead of substituting a zero-percent reading.",
         });
         result.svg = svg("Synthetic memory, disk, and CPU measurements", &format!("{}{}{}", bar("Memory %", 56.0, 100.0, 45), bar("Disk %", 31.0, 100.0, 115), cpu.map_or_else(|| "<text x=\"16\" y=\"208\">CPU: unavailable</text>".into(), |value| bar("CPU %", value, 100.0, 185))));
         result.metrics = vec![metric("CPU state", label), metric("CPU sample age", age.map_or_else(|| "Unknown".into(), |seconds| format!("{seconds} seconds"))), metric("Memory", "56% of 16 GiB")];
@@ -215,8 +215,8 @@ fn system_health() -> Study {
     }).collect();
     Study {
         title: "A measurement needs an age",
-        intro: "Switch between current, stale, and missing CPU samples. All host data is synthetic.",
-        method: "Rust validates the value and age before it classifies the measurement. This page does not inspect your computer.",
+        intro: "The same panel tells a different story when its sample is fresh, seven minutes old, or missing. Switch between those states with synthetic host data.",
+        method: "Rust checks each synthetic value and its sample age, then classifies the measurement as current, stale, or missing.",
         scenes,
         sources: vec![],
         audio: None,
@@ -227,7 +227,7 @@ fn volt() -> Study {
     let mut original = scene(
         "Input",
         "32 bytes to preserve",
-        "The input is an original text fixture. The native Volt encoder produced three QR frames.",
+        "The file starts as 32 bytes of text. Volt's native Rust encoder turns it into three QR frames.",
     );
     original.input = include_str!("../../content/experiment-fixtures/volt-message.txt").into();
     original.metrics = vec![
@@ -237,8 +237,8 @@ fn volt() -> Study {
     ];
     let mut encoded = scene(
         "Frame",
-        "An actual Volt frame",
-        "This PNG comes from the native Rust encoder. A still-image decode supplies the result below.",
+        "The encoded QR frame",
+        "The native Rust encoder produced this PNG. The decoder reads the generated image to recover the file.",
     );
     encoded.image = Some(StudyImage {
         src: "/static/experiments/volt/frame.png".into(),
@@ -248,7 +248,7 @@ fn volt() -> Study {
     let mut recovered = scene(
         "Recovered",
         "The original bytes returned",
-        "The native Rust decoder accepted one frame. The recovered file matched the input byte for byte.",
+        "One accepted frame was enough for the native Rust decoder to recover the file. Every byte matches the original input.",
     );
     recovered.output = include_str!("../../content/experiment-fixtures/volt-message.txt").into();
     recovered.metrics = vec![
@@ -259,8 +259,8 @@ fn volt() -> Study {
         "SHA-256\n1f616d44328815fcf2cabb78bf3ebf33803c1337ab963bd983f76bf9b77ec85d".into();
     Study {
         title: "Follow the bytes through a frame",
-        intro: "Inspect the input, a real encoded QR frame, and the recovered bytes.",
-        method: "This recorded fixture uses Volt's native Rust encode and decode commands. A generated PNG round trip does not establish camera or real-device acceptance.",
+        intro: "Follow the file from text to a QR frame and back to the original bytes.",
+        method: "Volt's native Rust commands encode and decode this recorded example. The input to the decoder is the generated PNG. The next device test uses a camera capture.",
         scenes: vec![original, encoded, recovered],
         sources: vec![],
         audio: None,
@@ -270,7 +270,7 @@ fn volt() -> Study {
 fn wedeo() -> Study {
     let checksums = ["0xf1b9e679", "0x429be54f", "0x5566e611"];
     let scenes = checksums.into_iter().enumerate().map(|(index, checksum)| {
-        let mut result = scene(format!("Frame {}", index + 1), "A 32 × 32 synthetic H.264 frame", "Wedeo and FFmpeg produced equal raw YUV bytes for this three-frame input. The PNG is a display conversion of the Wedeo output.");
+        let mut result = scene(format!("Frame {}", index + 1), "A 32 × 32 synthetic H.264 frame", "Both decoders produced the same raw YUV bytes. The PNG displays Wedeo's decoded output, while the checksums compare the bytes behind it.");
         result.image = Some(StudyImage { src: format!("/static/experiments/wedeo/frame-{}.png", index + 1), width: 32, height: 32 });
         result.metrics = vec![metric("Frame bytes", 1536), metric("Frame checksum", checksum), metric("Reference", "Equal")];
         result.output = format!("Wedeo: {checksum}\nFFmpeg: {checksum}\nFormat: YUV420p\nDimensions: 32 × 32");
@@ -278,8 +278,8 @@ fn wedeo() -> Study {
     }).collect();
     Study {
         title: "Three frames, two decoders",
-        intro: "Select a frame from an original synthetic test pattern. Compare the decoded checksums.",
-        method: "The recorded native run uses baseline H.264 with three intra frames. It proves this fixture only. It does not establish full FFmpeg parity.",
+        intro: "Give Wedeo and FFmpeg the same synthetic H.264 input, then compare each decoded frame's checksum.",
+        method: "This native comparison uses baseline H.264 with three intra frames. The complete 4,608-byte YUV output matches FFmpeg. The next comparison adds another decoder fixture.",
         scenes,
         sources: vec![],
         audio: None,
@@ -308,7 +308,7 @@ fn tylax() -> Study {
         ),
     ];
     let scenes = examples.into_iter().map(|(label, name, input, output)| {
-        let mut result = scene(label, "From LaTeX source to Typst output", "Tylax converted this document. Its report marks the artifact Degraded because the amsmath package has no active handler. The visible math still compiles.");
+        let mut result = scene(label, "From LaTeX source to Typst output", "The source becomes a Typst document with a rendered preview. Tylax reports Degraded because amsmath has no active handler, even though the converted math compiles.");
         result.input = input.into(); result.output = output.into();
         let (width, height) = match name { "equation" => (77, 57), "matrix" => (72, 64), "sum" => (128, 67), _ => unreachable!("The fixed examples contain only three math fixtures") };
         result.image = Some(StudyImage { src: format!("/static/experiments/tylax/{name}.svg"), width, height });
@@ -316,14 +316,14 @@ fn tylax() -> Study {
         result
     }).collect();
     Study {
-        title: "Inspect a real conversion",
-        intro: "Choose an equation, matrix, or finite sum. Each example keeps its actual source and output.",
-        method: "The native Rust converter supplies the recorded output. Typst supplies the preview. Compilation confirms a readable result, not visual or semantic parity. SciPenAI authors Tylax.",
+        title: "Follow the mathematics into Typst",
+        intro: "Choose a fraction, matrix, or sum and compare its LaTeX source, converted Typst, and preview.",
+        method: "The native Rust converter produces the recorded output, and Typst 0.15.1 renders the preview. The artifact grade identifies the amsmath handler to fix next. SciPenAI authors Tylax.",
         scenes,
         sources: vec![source(
             "tylax",
             "Upstream converter",
-            "Tylax is upstream software. This page shows a local conversion fixture. It makes no claim of sole authorship or an attributed code contribution.",
+            "Reference: Tylax by SciPenAI. The examples record output from the native Rust converter and preserve its artifact grades.",
             Some("https://github.com/scipenai/tylax"),
         )],
         audio: None,
@@ -334,7 +334,7 @@ fn rustlyn() -> Study {
     let mut unresolved = scene(
         "Missing name",
         "Keep the error attached to its source",
-        "The Rustlyn binder fixture constructs an unresolved value named missingName. Its result preserves byte range 8..19.",
+        "The binder records missingName as an unresolved value and keeps its byte range, 8..19, with the error. The source line shows where that range points.",
     );
     unresolved.input = "var x = missingName;\n        ^^^^^^^^^^^".into();
     unresolved.output =
@@ -348,14 +348,14 @@ fn rustlyn() -> Study {
     let mut identity = scene(
         "Identity",
         "One error, one owning source",
-        "The fixture stores the resolution failure on the bound expression. A caller can inspect the same failure without a second name lookup.",
+        "The bound expression owns the resolution failure. The caller reads that error directly instead of repeating the name lookup.",
     );
     identity.input = "expression → owning body → source range".into();
     identity.output = "bound_body.resolution_failure_for_expr(...)\n  → NotFound { lookup: Value, name: missingName }".into();
     Study {
-        title: "A small semantic fixture",
-        intro: "Inspect one unresolved-name case from the native Rustlyn binder.",
-        method: "This is a recorded low-level binder fixture. The source line illustrates its assigned range. It does not run an editor or project loader in the browser.",
+        title: "Trace a diagnostic back to its source",
+        intro: "An unresolved name needs a useful location. Inspect the name, the bound expression, and the source range the Rustlyn binder attaches to it.",
+        method: "The native binder fixture constructs the unresolved expression and records its assigned range. The C# line illustrates that range. The next integration connects the result to a live editor.",
         scenes: vec![unresolved, identity],
         sources: vec![],
         audio: None,
@@ -365,11 +365,11 @@ fn rustlyn() -> Study {
 fn compiler(swift: bool) -> Study {
     let mut source_scene = scene(
         "Source",
-        "A function small enough to compare",
+        "The source function",
         if swift {
             "Rust and Swift each compile an independent add-one function. Their four native results agree."
         } else {
-            "The installed Rust-to-.NET backend compiled this fixture. The managed program produced the same four results as native Rust."
+            "The Rust-to-.NET backend compiles this function into a managed program. The recorded program returns the same four results as native Rust."
         },
     );
     source_scene.input = if swift {
@@ -412,7 +412,7 @@ fn compiler(swift: bool) -> Study {
         if swift {
             "Rust and Swift each produced these four lines. The inputs stay within the Int32 range."
         } else {
-            "The actual managed program produced these four lines. They match the native Rust reference byte for byte."
+            "The managed program produced these four lines. Its output matches the native Rust reference byte for byte."
         },
     );
     values.input = include_str!("../../content/experiment-fixtures/native-result.txt").into();
@@ -429,11 +429,11 @@ fn compiler(swift: bool) -> Study {
         } else {
             "One function on .NET"
         },
-        intro: "Select the source, compiler output, or result table.",
+        intro: "Follow the function from source to compiler output, then compare its execution results.",
         method: if swift {
             "The example compares two separate native programs. Rust generates the page. The historical MIR-to-SIL backend remains a design proposal."
         } else {
-            "This recorded run uses the installed experimental SDK, not the newer source checkout. FractalFir authors the upstream rustc_codegen_clr backend. Four equal results do not establish general compatibility."
+            "The recorded run uses cargo-dotnet 0.0.1 and nightly-2026-06-17. It compares four inputs within the Int32 range. The next run builds from the newer source checkout. FractalFir authors rustc_codegen_clr."
         },
         scenes: vec![source_scene, ir, values],
         sources: vec![],
@@ -450,7 +450,7 @@ fn battle() -> Study {
     let scenes = [("Before", 0, false), ("Attack", 18, false), ("Defend", 18, true)].into_iter().map(|(label, power, defending)| {
         let dealt = damage(power, 6, defending);
         let health = 40 - dealt;
-        let mut result = scene(label, "One deterministic turn", "This original rule subtracts armor from power. Defense halves the remaining damage, with integer division.");
+        let mut result = scene(label, "One deterministic turn", "Damage starts with attack power minus armor, with zero as the minimum. Defense halves that damage using integer division. The same inputs give the same result.");
         result.svg = svg("Two original game pieces and a target health bar", &format!(r#"<path d="M92 48l42 24v48l-42 24-42-24V72z" fill="currentColor" opacity=".8"/><path d="M345 48l42 24v48l-42 24-42-24V72z" fill="currentColor" opacity=".4"/><text x="53" y="175">Explorer</text><text x="308" y="175">Guardian</text><path d="M160 95H280" stroke="currentColor" stroke-width="3"/><text x="180" y="78">−{dealt} HP</text><rect x="280" y="201" width="140" height="18" fill="none" stroke="currentColor"/><rect x="280" y="201" width="{}" height="18"/><text x="282" y="246">{health} / 40 HP</text>"#, f64::from(health) / 40.0 * 140.0));
         result.input = format!("power: {power}\narmor: 6\ndefending: {defending}");
         result.output = format!("damage = {dealt}\nremaining_health = {health}");
@@ -458,8 +458,8 @@ fn battle() -> Study {
     }).collect();
     Study {
         title: "A battle, one action at a time",
-        intro: "Compare the untouched scene, an attack, and a defended attack.",
-        method: "Rust calculates the rule and draws original SVG pieces. This new study does not use Epic Battle Fantasy assets or establish Plume game parity.",
+        intro: "Keep the target's armor fixed and compare the starting scene, an attack, and a defended attack.",
+        method: "Rust calculates this original demonstration rule and draws the scene with original SVG pieces. The native Plume project implements the Rust/Bevy game rewrite.",
         scenes,
         sources: vec![],
         audio: None,
@@ -475,15 +475,15 @@ fn rotated_triangle(angle: f64) -> [(f64, f64); 3] {
 fn graphics() -> Study {
     let scenes = [0.0, 45.0, 90.0].into_iter().map(|angle| {
         let points = rotated_triangle(angle);
-        let mut result = scene(format!("{angle}°"), "A scene contract before a backend", "A rotation transforms each vertex around the center. The graphics layers then determine how a renderer presents the scene.");
+        let mut result = scene(format!("{angle}°"), "The same scene at a new angle", "Rotate each vertex around the center and the scene changes without changing its three-vertex structure. The renderer's job is to carry that scene to the platform.");
         result.svg = svg("A rotated triangle with a visible origin", &format!(r#"<path d="M40 140H440M240 20V260" stroke="currentColor" opacity=".2"/><polygon points="{}" opacity=".7"/><circle cx="240" cy="140" r="4"/>"#, points.iter().map(|(x,y)| format!("{x:.3},{y:.3}")).collect::<Vec<_>>().join(" ")));
-        result.output = "Scene data → Bevy → wgpu → platform backend\nThis view: Rust → SVG → browser\nConsole hardware: separate acceptance check".into();
+        result.output = "Native graphics path: scene → Bevy → wgpu → platform backend\nBrowser example: Rust → SVG → browser".into();
         result.metrics = vec![metric("Rotation", format!("{angle}°")), metric("Vertices", 3), metric("View", "SVG study")]; result
     }).collect();
     Study {
-        title: "Inspect the triangle contract",
-        intro: "Change the rotation and compare the same three vertices.",
-        method: "Rust calculates an SVG scene. The page explains the Bevy and wgpu boundary. It does not run Bevy or prove Switch support.",
+        title: "Follow a triangle through the graphics layers",
+        intro: "Change the rotation and compare the transformed vertices with the native renderer path.",
+        method: "Rust calculates the triangle and draws it as SVG for this browser view. The next integration runs the scene through Bevy, wgpu, and the platform backend.",
         scenes,
         sources: vec![],
         audio: None,
@@ -501,7 +501,7 @@ fn terminal() -> Study {
     ))
     .expect("The recorded terminal frames must be valid JSON");
     let scenes = frames.into_iter().map(|frame| {
-        let mut result = scene(format!("Frame {}", frame.frame), "An actual native ttfx frame", "The print effect uses the original text fixture, seed zero, and a 24 × 3 canvas. The selector shows four recorded stages.");
+        let mut result = scene(format!("Frame {}", frame.frame), "A native ttfx print-effect frame", "Text appears across a 24 × 3 canvas as the effect advances. These four stages come from the same native run with seed zero.");
         let drawing = frame.text.lines().enumerate().map(|(index,line)| format!(r#"<text x="35" y="{}" font-family="monospace" font-size="23" xml:space="preserve">{}</text>"#, 100 + index * 35, escape(line))).collect::<String>();
         result.svg = svg("A recorded print-effect frame", &drawing);
         result.input = "MAKE SMALL THINGS\nseed: 0\ncanvas: 24 × 3\neffect: print".into();
@@ -509,9 +509,9 @@ fn terminal() -> Study {
         result.metrics = vec![metric("Selected frame", frame.frame), metric("Captured frames", 30)]; result
     }).collect();
     Study {
-        title: "Scrub an actual terminal effect",
-        intro: "Choose four stages from a native Rust port of TerminalTextEffects.",
-        method: "ttfx supplies these recorded frames. ChrisBuilds authors the upstream effect and animation engine. The sample does not reproduce the earlier benchmark regression or establish a speed claim.",
+        title: "Follow the print effect frame by frame",
+        intro: "Select four stages from the native Rust port and watch the text take shape.",
+        method: "ttfx produced 30 frames in this recorded run. The page displays four of them. The next benchmark measures startup and frame throughput against TerminalTextEffects by ChrisBuilds.",
         scenes,
         sources: vec![source(
             "ttfx",
@@ -563,15 +563,15 @@ fn geometry() -> Study {
         let b = Rect { x, y: 2.0, w: 3.0, h: 3.0 };
         let intersection = a.intersection(b);
         let area = intersection.map_or(0.0, Rect::area);
-        let mut result = scene(label, "Two axis-aligned polygons", "The dark region shows the intersection. Edge contact has zero area. The union area subtracts the shared area once.");
+        let mut result = scene(label, "Two axis-aligned polygons", "The dark region is the area both rectangles share. Their union adds the two areas and subtracts that overlap once. A shared edge contributes zero area.");
         result.svg = svg("Two rectangles with their intersection highlighted", &format!("{}{}{}", a.drawing(0.25), b.drawing(0.4), intersection.map_or(String::new(), |r| r.drawing(1.0))));
         result.input = format!("A: origin (1, 1), size (4, 3)\nB: origin ({x}, 2), size (3, 3)");
         result.metrics = vec![metric("Intersection area", area), metric("Union area", a.area() + b.area() - area)]; result
     }).collect();
     Study {
         title: "See the shared region",
-        intro: "Compare overlap, edge contact, and separation.",
-        method: "This independent Rust example handles axis-aligned rectangles. It does not call Raygeo or demonstrate general polygon topology. Raygeo remains upstream software.",
+        intro: "Move the second rectangle from overlap to edge contact and then separation. Follow the change in intersection and union area.",
+        method: "Rust calculates this independent example with axis-aligned rectangles. The next example connects a general polygon to Raygeo by Samuel Abels.",
         scenes,
         sources: vec![],
         audio: None,
@@ -585,16 +585,16 @@ fn basketball() -> Study {
         (points.iter().map(|p| (p - mean).powi(2)).sum::<f64>() / points.len() as f64).sqrt();
     let scenes = [16.5, 18.5, 22.5].into_iter().map(|threshold| {
         let count = points.iter().filter(|value| **value > threshold).count();
-        let mut result = scene(format!("Above {threshold}"), "Five synthetic games", "The fraction counts only these five observations. It is not a forecast, a live player record, or a probability estimate.");
+        let mut result = scene(format!("Above {threshold}"), "Five synthetic games", "Keep the five scores fixed and move the threshold. The hit count changes with the line, while the mean and standard deviation stay the same. The fraction describes these five observations.");
         result.svg = svg("Points in five synthetic games", &points.iter().enumerate().map(|(i, points)| bar(&format!("Game {}", i + 1), *points, 30.0, 20 + i * 48)).collect::<String>());
         result.input = "Game points: 14, 20, 18, 24, 16".into();
         result.output = format!("{count} / 5 observations exceed {threshold}\nMean: {mean:.2}\nPopulation standard deviation: {deviation:.4}");
         result.metrics = vec![metric("Mean", format!("{mean:.1}")), metric("Above threshold", format!("{count} / 5")), metric("Standard deviation", format!("{deviation:.2}"))]; result
     }).collect();
     Study {
-        title: "Inspect the arithmetic",
-        intro: "Choose a threshold over the same five imaginary games.",
-        method: "Rust calculates the mean, population standard deviation, and observed fraction. This site fixture does not run BookSharp's service or use real odds.",
+        title: "See what the threshold changes",
+        intro: "Choose a points threshold and inspect the same five synthetic games, their mean, and their spread.",
+        method: "Rust calculates the mean, population standard deviation, and observed threshold fraction from the synthetic scores. The next integration runs the sample through BookSharp's analysis path.",
         scenes,
         sources: vec![],
         audio: None,
@@ -635,8 +635,8 @@ fn retrieve(query: &str, sources: &[Source]) -> Option<usize> {
 fn retrieval(kind: &str) -> Study {
     let (title, intro, sources, queries, method, audio) = match kind {
         "thread" => (
-            "Keep an answer near its comment",
-            "Choose a question over this original synthetic basketball thread.",
+            "Follow the answer back to the discussion",
+            "Choose a question about the synthetic basketball thread, then inspect the comment or reply behind the answer.",
             vec![
                 source(
                     "thread-1",
@@ -663,7 +663,7 @@ fn retrieval(kind: &str) -> Study {
                 "What did the center do?",
                 "Who won the championship?",
             ],
-            "Rust retrieves a source excerpt by word overlap. The result is extractive. It does not call Reddit or a language model.",
+            "Rust retrieves excerpts by word overlap and links each answer to its source in the synthetic thread. The historical service uses the LangChain retrieval flow.",
             None,
         ),
         "document" => (
@@ -750,7 +750,7 @@ fn retrieval(kind: &str) -> Study {
         ),
     };
     let scenes = queries.into_iter().enumerate().map(|(question, query)| {
-        let mut result = scene(query, "An answer you can inspect", if kind == "paper" { "The authored answer paraphrases the matching excerpt. A question without a source match returns an explicit no-match result." } else { "The result returns the matching source text. A question with no matching source returns an explicit no-match result." });
+        let mut result = scene(query, "The answer and its source", if kind == "paper" { "The authored answer paraphrases the matching excerpt. A question without a source match returns an explicit no-match result." } else if kind == "thread" { "The answer is the matching source text, with a link to its place in the discussion. A question without a match returns an explicit no-match result." } else { "The result returns the matching source text. A question with no matching source returns an explicit no-match result." });
         result.input = format!("$ sample-doc query {query:?}");
         if let Some(index) = retrieve(query, &sources) {
             result.output = if kind == "paper" { ["Proposal: the Transformer.", "Method: attention alone.", "The abstract states that the design removes recurrence and convolution."][question].into() } else { sources[index].text.clone() };

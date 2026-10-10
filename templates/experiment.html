@@ -10,7 +10,7 @@
   </div>
   <figure class="experiment-detail-visual experiment-picture-{{ experiment.category.key() }}">
     {{ experiment.preview_svg|safe }}
-    <figcaption>{% if experiment.preview_is_example %}A visual from the example below.{% else %}Concept illustration. The example is below.{% endif %}</figcaption>
+    <figcaption>{% if experiment.preview_is_example %}From the example below.{% else %}Project illustration. Open the example below.{% endif %}</figcaption>
   </figure>
 </section>
 <div class="experiment-detail-copy experiment-writeup" aria-label="Project writeup">
@@ -21,7 +21,7 @@
 {% include "experiment-study.html" %}
 <div class="experiment-detail-copy">
   <section aria-labelledby="next-title"><h2 id="next-title">What comes next</h2><p>{{ experiment.next_step }}</p></section>
-  <details class="experiment-implementation"><summary>Example scope and source credit</summary><p>{{ experiment.question }}</p><p>{{ experiment.scope }}</p><p>{{ experiment.demo_plan }}</p><p>{{ experiment.rust_plan }}</p><p>{{ experiment.credit }}</p></details>
+  <details class="experiment-implementation"><summary>Implementation and credits</summary><p>{{ experiment.question }}</p><p>{{ experiment.scope }}</p><p>{{ experiment.demo_plan }}</p><p>{{ experiment.rust_plan }}</p><p>{{ experiment.credit }}</p></details>
 </div>
 <p class="experiment-back"><a href="/experiments/#{{ experiment.category.key() }}">More in {{ experiment.category.label() }}</a></p>
 {% endif %}

@@ -11,11 +11,11 @@ pub(super) fn build(slug: &str) -> Option<Study> {
 }
 
 fn claims() -> Study {
-    let evidence = "The imaginary Sample Desk runs on macOS. It stores results locally. Linux support remains planned.";
+    let evidence = "The imaginary Sample Desk runs on macOS and stores results locally. Linux support is the next development task.";
     let scenes = [
-        ("Supported", "The Sample Desk stores results locally.", "Supported", "The source states this behavior directly."),
-        ("Contradicted", "Linux support is complete.", "Contradicted", "The source states that Linux support remains planned."),
-        ("No evidence", "The Sample Desk has ten thousand users.", "Insufficient evidence", "The source supplies no user count."),
+        ("Supported", "The Sample Desk stores results locally.", "Supported", "The source says the application stores results locally, so it supports the claim."),
+        ("Contradicted", "Linux support is complete.", "Contradicted", "The source lists Linux support as the next development task, which contradicts the claim that it is complete."),
+        ("No evidence", "The Sample Desk has ten thousand users.", "Insufficient evidence", "The source gives no user count. The assessment records the missing evidence."),
     ].into_iter().map(|(label, claim, decision, reason)| {
         let mut result = scene(label, "A claim stays beside its evidence", reason);
         result.input = claim.into();
@@ -26,8 +26,8 @@ fn claims() -> Study {
     }).collect();
     Study {
         title: "Three claims, one source",
-        intro: "Compare a supported claim, a contradiction, and a claim without evidence.",
-        method: "These authored assessments illustrate a FactShort report contract. Rust supplies the page. This fixed study does not research a live claim or call a model.",
+        intro: "Put three claims against the same synthetic note. Follow the evidence to see why each gets a different assessment.",
+        method: "The assessments are prewritten for this synthetic source. Rust exports the report views. FactShort's Python pipeline supplies the claim-research application.",
         scenes,
         sources: vec![source(
             "claim-1",
@@ -59,16 +59,16 @@ fn rooms() -> Study {
         ("Room closed", Role::Host, false, true),
     ].into_iter().map(|(label, role, open, accepted)| {
         let permitted = publish_audio(role, open, accepted);
-        let mut result = scene(label, "One room, explicit audio roles", "The sample rule permits an active host or an accepted speaker to publish audio. A listener cannot publish. A closed room denies every role.");
+        let mut result = scene(label, "One room, explicit audio roles", "An open room permits its host and accepted speakers to publish audio. Listeners receive audio. Close the room and every role loses publication access.");
         result.metrics = vec![metric("Room", if open { "Open" } else { "Closed" }), metric("Role", label), metric("Audio publication", if permitted { "Permitted" } else { "Denied" })];
         result.svg = svg("A control-plane decision precedes an audio connection", &format!(r#"<circle cx="90" cy="140" r="42" fill="none" stroke="currentColor"/><text x="58" y="145">Person</text><path d="M135 140h55m130 0h35" stroke="currentColor"/><rect x="190" y="90" width="130" height="100" fill="none" stroke="currentColor"/><text x="215" y="125">Role check</text><text x="216" y="157">{}</text><circle cx="399" cy="140" r="42" fill="none" stroke="currentColor"/><text x="376" y="145">Audio</text>"#, if permitted { "Allow" } else { "Deny" }));
         result.output = format!("can_publish_audio = {permitted}\nroom_open = {open}\ninvitation_accepted = {accepted}");
         result
     }).collect();
     Study {
-        title: "A room needs more than a microphone",
-        intro: "Choose a role and inspect its publication decision.",
-        method: "This new Rust policy study uses an imaginary room. It does not connect participants, issue LiveKit tokens, or run the Guphub control plane.",
+        title: "The role decides who gets the microphone",
+        intro: "Choose a role, then compare its publication permission with a closed room.",
+        method: "Rust evaluates this policy for an imaginary room. The next integration matches these decisions to the Guphub control plane's LiveKit grants.",
         scenes,
         sources: vec![],
         audio: None,
@@ -143,7 +143,7 @@ fn machine() -> Study {
         ("Overflow", vec![Instruction::Load(250), Instruction::Add(10), Instruction::Halt], "LOAD 250\nADD 10\nHALT", 8),
         ("Step limit", vec![Instruction::Load(7), Instruction::Add(5), Instruction::Halt], "LOAD 7\nADD 5\nHALT", 1),
     ].into_iter().map(|(label, program, input, limit)| {
-        let mut result = scene(label, "A tiny machine with explicit limits", "This original instruction set has one eight-bit register. Addition checks overflow. The executor also requires a halt within its step limit.");
+        let mut result = scene(label, "One register and explicit execution limits", "The machine has one eight-bit register. Checked addition stops an overflow, and the step limit bounds execution. A successful program reaches HALT within that limit.");
         result.input = format!("{input}\n\nstep limit: {limit}");
         result.output = match execute(&program, limit) {
             Ok(trace) => format!("register trace: {trace:?}\nresult: {}\nstate: Halted", trace.last().expect("The trace includes the initial register")),
@@ -154,13 +154,13 @@ fn machine() -> Study {
     }).collect();
     Study {
         title: "Make execution limits visible",
-        intro: "Compare a complete program, arithmetic overflow, and a step-limit failure.",
-        method: "Rust executes this original toy ISA. It is not ARM64, does not run firmware, and does not establish Oboromi emulator fidelity. 0xNikilite authors the upstream project.",
+        intro: "Run the same instruction set through successful execution, arithmetic overflow, and a step-limit failure. Each result shows where execution stops.",
+        method: "Rust executes this original eight-bit instruction set and records the register trace. The next example uses an IPC packet from the local Oboromi parser work. 0xNikilite authors Oboromi.",
         scenes,
         sources: vec![source(
             "oboromi",
             "Upstream emulator foundation",
-            "Oboromi is upstream software. This new machine study makes no emulator compatibility or ownership claim.",
+            "Reference: Oboromi by 0xNikilite. The browser example executes its own eight-bit instruction set.",
             Some("https://github.com/0xNikilite/oboromi"),
         )],
         audio: None,
