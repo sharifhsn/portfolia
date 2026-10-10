@@ -74,7 +74,10 @@ impl Experiment {
     }
 
     pub(super) fn featured(&self) -> bool {
-        matches!(self.slug.as_str(), "ldsc" | "rustlyn" | "rust-dotnet")
+        matches!(
+            self.slug.as_str(),
+            "ldsc" | "rustlyn" | "rust-dotnet" | "tylax"
+        )
     }
 
     pub(super) fn has_demo(&self) -> bool {
@@ -225,7 +228,7 @@ mod tests {
             }
         }
         assert_eq!(all().iter().filter(|e| e.available()).count(), 1);
-        assert_eq!(all().iter().filter(|e| e.featured()).count(), 3);
+        assert_eq!(all().iter().filter(|e| e.featured()).count(), 4);
     }
 
     #[test]

@@ -2500,11 +2500,11 @@ mod tests {
             index.matches("class=\"experiment-row\"").count(),
             experiments::all().len()
         );
-        let Html(wedeo) = render_experiment("wedeo").unwrap();
-        assert!(wedeo.contains("Recorded result"));
-        assert!(wedeo.contains("id=\"demo\""));
-        assert!(wedeo.contains("Wedeo | Experiments | Sharif Haason"));
-        assert!(!wedeo.contains("id=\"engine\""));
+        let Html(tylax) = render_experiment("tylax").unwrap();
+        assert!(tylax.contains("Recorded result"));
+        assert!(tylax.contains("id=\"demo\""));
+        assert!(tylax.contains("LaTeX to Typst | Experiments | Sharif Haason"));
+        assert!(!tylax.contains("id=\"engine\""));
         let Html(ldsc) = render_experiment("ldsc").unwrap();
         assert!(ldsc.contains("id=\"engine\""));
         assert!(ldsc.contains("id=\"demo\""));
@@ -2525,6 +2525,17 @@ mod tests {
             "rust-swift",
             "numerical-ports",
             "cugen-layout",
+            "oboromi",
+            "system-health",
+            "bevy-switch",
+            "plume",
+            "wedeo",
+            "volt",
+            "guphub",
+            "ttfx",
+            "raygeo",
+            "factshort",
+            "booksharp",
         ] {
             assert!(!index.contains(&format!("/experiments/{slug}/")));
             assert_eq!(render_experiment(slug).unwrap_err(), StatusCode::NOT_FOUND);

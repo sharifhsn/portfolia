@@ -9,7 +9,7 @@ and [design direction](DESIGN.md) for decisions and verification.
 ## For people and agents
 
 - [Writing index](https://sharifhsn.dev/blog/) — the complete article archive.
-- Experiments — the local draft at `/experiments/` contains 17 projects and contributions with substantial development work, short writeups, and visual examples. See [the selection notes](context/EXPERIMENT-SELECTION.md).
+- Experiments — the collection at `/experiments/` contains six selected projects and contributions with substantial development work, short writeups, and visual examples. See [the selection notes](context/EXPERIMENT-SELECTION.md).
 - [`llms.txt`](https://sharifhsn.dev/llms.txt) — concise site map and article
   descriptions.
 - [`llms-full.txt`](https://sharifhsn.dev/llms-full.txt) — the public writing
@@ -55,7 +55,7 @@ just pages-preview
 ```
 
 The experiment catalog is `content/experiments.toml`. Rust generates visual
-pages for 17 projects and contributions. The runtime and static export share the
+pages for six selected projects and contributions. The runtime and static export share the
 same page render functions. [Selection notes](context/EXPERIMENT-SELECTION.md)
 record the implementation evidence. The local draft is not a deployment record.
 

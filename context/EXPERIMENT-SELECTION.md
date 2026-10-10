@@ -1,6 +1,8 @@
 # Experiment selection — October 10, 2026
 
-The website collection contains 17 projects and contributions.
+The website collection contains six projects and contributions.
+Sharif selected LDSC, Rustlyn, Rust to .NET, LaTeX to Typst, Hornet, and DailyReddit.
+The first four have featured cards. Hornet and DailyReddit follow in the collection.
 Each has substantial implementation work attributable to Sharif before this section's visual examples.
 A small example on this website does not qualify an entry by itself.
 
@@ -15,18 +17,27 @@ The page must retain the original project's author credit.
 | --- | --- |
 | Hornet | Existing coursework plus the Rust pricing engine and browser worksheet. Portfolio commits `8aff7c7` and `932c432` contain the desk work. |
 | LDSC | A full Rust statistical pipeline, exact and sketch paths, and sustained local implementation history. |
-| Wedeo | A substantial Rust media port with codec implementation history and a reproduced native decoder result. |
 | Rustlyn | Native C# semantics, metadata, project preparation, managed compatibility, and editor work. |
-| System Health | The personal plugin contains a sampler, Codex panel, process/storage views, settings, and a disk index. |
-| Volt | Approximately 4,900 lines across the native core, clients, and checks, plus an executed encode/decode result. Git history remains unborn. |
 | Tylax | Local semantic conversion, package-contract, parser-expansion, and validation work on the upstream converter. Commit `b9feded` records a substantial refactor. |
 | Rust to .NET | Local compiler, linker, runtime-boundary, nightly-compatibility, and acceptance work on the upstream backend. |
+| DailyReddit | The saved repository audit contains Sharif-authored commits, a LangChain integration, and implementation revisions. It is historical source evidence. |
+
+## Entries excluded by Sharif's selection
+
+Sharif requested removal of the following entries on October 10, 2026.
+The earlier review established development work for these entries.
+Their exclusion reflects the requested public collection.
+
+| Entry | Implementation evidence from the earlier review |
+| --- | --- |
+| Wedeo | A substantial Rust media port with codec implementation history and a reproduced native decoder result. |
+| System Health | The personal plugin contains a sampler, Codex panel, process/storage views, settings, and a disk index. |
+| Volt | Approximately 4,900 lines across the native core, clients, and checks, plus an executed encode/decode result. Git history remains unborn. |
 | Plume | A substantial deterministic Rust/Bevy game rewrite and source comparisons. Full-game parity remains incomplete. |
 | Bevy on Switch | A reusable platform lab, backend work, runner, and emulator/hardware workflows. |
 | Terminal text effects | A Rust port with native animation code and dedicated performance work. |
 | Raygeo | Local zero-copy interface changes, geometry corrections, and a Rust/Python benchmark suite. Relevant branches include `d2fe965`, `5531001`, `3bf4211`, and `26f9683`. |
 | BookSharp | Player-prop analysis, injury/data pipelines, and strategy code with attributed implementation history. |
-| DailyReddit | The saved repository audit contains Sharif-authored commits, a LangChain integration, and implementation revisions. It is historical source evidence. |
 | FactShort | A substantive Python application with a shared claim-research pipeline, web desk, CLI, and adapters. |
 | Guphub | Local Rust backend, native iOS/Android clients, media integration, and developer-handoff work beyond the imported MVP. |
 | Oboromi | Local IPC parser/schema, bounded runtime, shader-diagnostic, and USB research-tool work. Commits `dfaf578`, `c59e65a`, and `95c3d70` record contributions. |
@@ -35,7 +46,7 @@ The source-line count for Volt describes the current local tree.
 It is not a measure of correctness, manual authorship, or product acceptance.
 Commit attribution supports local work. It does not prove an upstream merge.
 
-## Removed entries
+## Entries excluded by the development review
 
 | Entry | Reason |
 | --- | --- |
