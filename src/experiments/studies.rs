@@ -157,9 +157,9 @@ fn ldsc() -> Study {
         result
     }).collect();
     Study {
-        title: "See how correlated variants add up",
-        intro: "An LD score measures how strongly a variant correlates with its neighbors. Compare the raw sum, sample correction, and neighborhood size.",
-        method: "The site calculates this small kernel in Rust. It does not run the full LDSC regression or the repository's sketch mode.",
+        title: "Follow the calculation with three variants",
+        intro: "Start with six samples and three variants. Compare the raw sum, the finite-sample correction, and a shorter window to see why each choice changes the LD score.",
+        method: "Rust calculates this small example from synthetic genotypes. It illustrates the LD-score formula, while the full regression and sketch modes run in the native engine.",
         scenes,
         sources: vec![
             source(
