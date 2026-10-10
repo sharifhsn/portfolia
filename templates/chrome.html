@@ -4,6 +4,7 @@
   <nav aria-label="Main navigation">
     <a href="/blog/" {% if current == "blog" %}aria-current="page"{% endif %}>Writing</a>
     <a href="/projects/" {% if current == "projects" || current == "hornet" || current == "chat" %}aria-current="page"{% endif %}>Projects</a>
+    <a href="/experiments/" {% if current == "experiments" || current == "experiment" %}aria-current="page"{% endif %}>Experiments</a>
     <a href="/resume/" {% if current == "resume" %}aria-current="page"{% endif %}>Resume</a>
   </nav>
 </header>

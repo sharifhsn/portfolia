@@ -1,0 +1,8 @@
+# Native fixture records preserve the exact output bytes.
+content/experiment-fixtures/ttfx-frames.bin binary
+content/experiment-fixtures/equation.typ whitespace=-blank-at-eof
+content/experiment-fixtures/matrix.typ whitespace=-blank-at-eof
+content/experiment-fixtures/sum.typ whitespace=-blank-at-eof
+content/experiment-fixtures/equation-preview.typ whitespace=-blank-at-eof
+content/experiment-fixtures/matrix-preview.typ whitespace=-blank-at-eof
+content/experiment-fixtures/sum-preview.typ whitespace=-blank-at-eof

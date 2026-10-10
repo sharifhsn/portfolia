@@ -1,0 +1,17 @@
+// addOne(_:)
+// Isolation: unspecified
+sil [ossa] @$s7add_one0A3Oneys5Int32VADF : $@convention(thin) (Int32) -> Int32 {
+// %0 "x"                                         // users: %8, %1
+bb0(%0 : $Int32):
+  debug_value %0, let, name "x", argno 1          // id: %1
+  %2 = metatype $@thin Int32.Type                 // user: %8
+  %3 = integer_literal $Builtin.IntLiteral, 1     // user: %6
+  %4 = metatype $@thin Int32.Type                 // user: %6
+  // function_ref Int32.init(_builtinIntegerLiteral:)
+  %5 = function_ref @$ss5Int32V22_builtinIntegerLiteralABBI_tcfC : $@convention(method) (Builtin.IntLiteral, @thin Int32.Type) -> Int32 // user: %6
+  %6 = apply %5(%3, %4) : $@convention(method) (Builtin.IntLiteral, @thin Int32.Type) -> Int32 // user: %8
+  // function_ref static Int32.+ infix(_:_:)
+  %7 = function_ref @$ss5Int32V1poiyA2B_ABtFZ : $@convention(method) (Int32, Int32, @thin Int32.Type) -> Int32 // user: %8
+  %8 = apply %7(%0, %6, %2) : $@convention(method) (Int32, Int32, @thin Int32.Type) -> Int32 // user: %9
+  return %8                                       // id: %9
+}

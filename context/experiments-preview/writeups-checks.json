@@ -1,0 +1,25 @@
+{
+  "reviewed": "2026-10-10",
+  "pages": 26,
+  "exportedParagraphs": 52,
+  "words": {
+    "minimum": 61,
+    "maximum": 75,
+    "average": 68
+  },
+  "desktop": {
+    "route": "/experiments/rustlyn/",
+    "width": 1440,
+    "height": 900,
+    "overflow": false
+  },
+  "mobile": {
+    "route": "/experiments/wedeo/#interest-title",
+    "width": 390,
+    "height": 844,
+    "overflow": false
+  },
+  "demoLink": "/experiments/rustlyn/#demo",
+  "selectedRadio": "Identity",
+  "visibleCase": "1"
+}

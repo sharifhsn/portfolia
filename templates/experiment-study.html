@@ -1,0 +1,39 @@
+{% if let Some(study) = experiment_study %}
+<section class="experiment-study" id="demo" aria-labelledby="study-title">
+  <h2 id="study-title">{{ study.title }}</h2>
+  <p>{{ study.intro }}</p>
+  {% if let Some(audio) = study.audio %}
+  <audio controls preload="none" aria-label="Original synthetic speech sample"><source src="{{ audio }}" type="audio/mpeg"><a href="{{ audio }}">Download the speech sample</a></audio>
+  {% endif %}
+  <fieldset class="study-control">
+    <legend>Choose an example</legend>
+    <div class="study-options">
+      {% for scene in study.scenes %}<label><input type="radio" name="example" value="{{ loop.index0 }}" {% if loop.first %}checked{% endif %}><span>{{ scene.label }}</span></label>{% endfor %}
+    </div>
+  </fieldset>
+  <div class="study-scenes">
+    {% for scene in study.scenes %}
+    <section class="study-scene" data-case="{{ loop.index0 }}" aria-labelledby="case-title-{{ loop.index0 }}">
+      <h3 id="case-title-{{ loop.index0 }}">{{ scene.title }}</h3>
+      <p>{{ scene.explanation }}</p>
+      {% if !scene.svg.is_empty() %}<figure class="study-visual">{{ scene.svg|safe }}</figure>{% endif %}
+      {% if let Some(image) = scene.image %}<figure class="study-visual"><img src="{{ image.src }}" width="{{ image.width }}" height="{{ image.height }}" alt="{{ scene.title }}" loading="lazy"></figure>{% endif %}
+      {% if !scene.metrics.is_empty() %}
+      <dl class="study-metrics">{% for metric in scene.metrics %}<div><dt>{{ metric.label }}</dt><dd>{{ metric.value }}</dd></div>{% endfor %}</dl>
+      {% endif %}
+      <div class="study-code-pair">
+        {% if !scene.input.is_empty() %}<div><h4>Input</h4><pre><code>{{ scene.input }}</code></pre></div>{% endif %}
+        {% if !scene.output.is_empty() %}<div><h4>Result</h4><pre><code>{{ scene.output }}</code></pre></div>{% endif %}
+      </div>
+      {% if !scene.citations.is_empty() %}<p class="study-citations">Source: {% for key in scene.citations %}<a href="#source-{{ key }}">Read the matching passage</a>{% endfor %}</p>{% endif %}
+    </section>
+    {% endfor %}
+  </div>
+  <p class="study-method">{{ study.method }}</p>
+  {% if !study.sources.is_empty() %}
+  <div class="study-sources"><h3>Source passages</h3>
+    {% for source in study.sources %}<article id="source-{{ source.key }}"><h4>{{ source.title }}</h4><blockquote>{{ source.text }}</blockquote>{% if let Some(href) = source.href %}<a href="{{ href }}">Read the original source</a>{% endif %}</article>{% endfor %}
+  </div>
+  {% endif %}
+</section>
+{% endif %}

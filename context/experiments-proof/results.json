@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-09",
+  "source_checkouts": {
+    "volt": {
+      "head": null,
+      "owned_rust_source_sha256": "1c0122ce210447429ceaa11c93901ef1e5c1fa95101195c8fdd1424db3d48063",
+      "source_files": 13,
+      "hash_scope": "Owned Rust sources plus root Cargo manifest and lock. Vendored sources are excluded."
+    },
+    "wedeo": {
+      "head": "90b50cfc6a85cb4acb643c7805bb3fed7af2f95c",
+      "owned_rust_source_sha256": "167d9858a4a4cd68e66702a32562f7003fdc1d218c252843050e850c132591e3",
+      "source_files": 184,
+      "hash_scope": "Owned Rust sources plus root Cargo manifest and lock. Vendored sources are excluded."
+    },
+    "tylax": {
+      "head": "b9fededac35dbe85ba8ce76190b9d179f6dd1eaf",
+      "owned_rust_source_sha256": "065fcbff4bdd70ba04244359dce56d6bd976124cd6384889be537caacd886006",
+      "source_files": 155,
+      "hash_scope": "Owned Rust sources plus root Cargo manifest and lock. Vendored sources are excluded."
+    },
+    "rustlyn": {
+      "head": "3b55ef035db3a53cf29033ac5f5aafdda7d9ec09",
+      "owned_rust_source_sha256": "cf2577b7413d8d9f2a33377a2a64d9bc8b96fc94f47555dd8d7c629e50d4661a",
+      "source_files": 337,
+      "hash_scope": "Owned Rust sources plus root Cargo manifest and lock. Vendored sources are excluded."
+    },
+    "ttfx": {
+      "head": "a96ff5d0b00cb0528f34da42ee3d52171b6ea875",
+      "owned_rust_source_sha256": "794c2abe16b4b491c038d1fdd68b955c5b9c0eea61771e7a74b51d0f9202dd03",
+      "source_files": 84,
+      "hash_scope": "Owned Rust sources plus root Cargo manifest and lock. Vendored sources are excluded."
+    },
+    "rustc_codegen_clr": {
+      "head": "6a3508f98fa04253a277ce18e406c54f15988712",
+      "owned_rust_source_sha256": "4fc02f22eda39622c54e475e1e25cdf50b735af38e178265892d3b512055d701",
+      "source_files": 68,
+      "hash_scope": "Owned Rust sources plus root Cargo manifest and lock. Vendored sources are excluded."
+    }
+  },
+  "limits": [
+    "Native recordings are fixed fixtures.",
+    "The installed cargo-dotnet SDK differs from the newer source checkout.",
+    "No recorded result establishes whole-project parity."
+  ],
+  "asset_sha256": {
+    "experiments/audio/sample.mp3": "af5bc95fcc49eb1b3c26f26c287c5815524b5d353e7b10333c844557240f46e7",
+    "experiments/tylax/equation.svg": "9d67446d9f8b7a25afc8cdf0bf35ba17558add81099c295431b12fa6e7d45483",
+    "experiments/tylax/matrix.svg": "f7da4af7ef0ef72342260b69330edffc56def66020befa8a125eb0959e7a84d4",
+    "experiments/tylax/sum.svg": "9ad15b53d47274a499c9ef7b6ed23ed1bd44bc69729666d588cd6fa6d4480ca6",
+    "experiments/volt/frame.png": "4806f02ff3535e0144a17fa2a63043c798e27a32699c21505d902e0246544a39",
+    "experiments/wedeo/frame-1.png": "97b0234963a6dfde352fbde42798cebce8cd129115da0818acb7278e9213bd9f",
+    "experiments/wedeo/frame-2.png": "cedba92462ae29e45906273de0d16b7c176c84f1008a109bd97ae16e7c78a556",
+    "experiments/wedeo/frame-3.png": "2298c4e9f82047bdfd84cfc8581445642b5789fc92be5e8dc0f2b60913c1c0ee",
+    "experiments/wedeo/pattern.h264": "33a3e846957e1dc45a1bafce82fe305f2d8627a372cd66f03658ad5abe8a6050"
+  },
+  "results": {
+    "volt": {
+      "input_bytes": 32,
+      "recovered_equal": true,
+      "sha256": "1f616d44328815fcf2cabb78bf3ebf33803c1337ab963bd983f76bf9b77ec85d"
+    },
+    "wedeo": {
+      "frames": 3,
+      "raw_bytes": 4608,
+      "framecrc_equal": true,
+      "raw_bytes_equal": true
+    },
+    "rustlyn": {
+      "test": "records_unresolved_name_diagnostic_with_source_range",
+      "passed": 1,
+      "filtered": 519
+    },
+    "tylax": {
+      "version": "0.3.6",
+      "fixtures": 3,
+      "artifact_grade": "Degraded",
+      "diagnostic": "L2T-PKG-001 unsupported amsmath package",
+      "preview_compiler": "Typst 0.15.1"
+    },
+    "ttfx": {
+      "effect": "print",
+      "seed": 0,
+      "canvas": [
+        24,
+        3
+      ],
+      "frames": 30,
+      "sample_frames": [
+        0,
+        10,
+        20,
+        29
+      ]
+    },
+    "rust_dotnet": {
+      "sdk": "0.0.1",
+      "toolchain": "nightly-2026-06-17",
+      "runtime": ".NET 10",
+      "release_overflow_checks": true,
+      "managed_equals_native": true,
+      "assembly_sha256": "b99899d5ba09a3792577b9d5a7a0c9ede44499411e6773c49b937b8d4166ff45"
+    },
+    "rust_swift": {
+      "swift": "Apple Swift 6.4",
+      "native_results_equal": true,
+      "translator": false
+    }
+  }
+}

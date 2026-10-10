@@ -9,6 +9,7 @@ and [design direction](DESIGN.md) for decisions and verification.
 ## For people and agents
 
 - [Writing index](https://sharifhsn.dev/blog/) — the complete article archive.
+- Experiments — the local draft at `/experiments/` contains 17 projects and contributions with substantial development work, short writeups, and visual examples. See [the selection notes](context/EXPERIMENT-SELECTION.md).
 - [`llms.txt`](https://sharifhsn.dev/llms.txt) — concise site map and article
   descriptions.
 - [`llms-full.txt`](https://sharifhsn.dev/llms-full.txt) — the public writing
@@ -52,6 +53,11 @@ just preview     # serve locally on 127.0.0.1:8095
 just static      # export dist/ for Cloudflare Pages
 just pages-preview
 ```
+
+The experiment catalog is `content/experiments.toml`. Rust generates visual
+pages for 17 projects and contributions. The runtime and static export share the
+same page render functions. [Selection notes](context/EXPERIMENT-SELECTION.md)
+record the implementation evidence. The local draft is not a deployment record.
 
 The page templates are `templates/site.html`, `templates/blog.html`, and
 `templates/article.html`, with shared chrome/styles and separate page partials.

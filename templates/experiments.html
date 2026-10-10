@@ -1,0 +1,49 @@
+<section class="experiment-intro" aria-labelledby="page-title">
+  <div class="page-intro">
+    <h1 id="page-title">Vibe coded <br>experiments</h1>
+    <p>Tools, ambitious ports, and upstream contributions I’ve put substantial development work into. Each one starts with a question and has an implementation behind it.</p>
+    <p class="experiment-intro-note">Rust wherever it fits. Small demos, honest limits.</p>
+    <a class="text-action" href="#catalog">Browse the collection</a>
+  </div>
+  <figure class="experiment-hero-visual">
+    {% for experiment in experiments %}{% if experiment.slug == "ldsc" %}{{ experiment.preview_svg|safe }}{% endif %}{% endfor %}
+    <figcaption>A small view into a larger numerical port.<br><a href="/experiments/ldsc/">Explore LDSC</a></figcaption>
+  </figure>
+</section>
+<section class="experiment-featured" aria-labelledby="try-title">
+  <header class="section-heading"><h2 id="try-title">Explore a project</h2><span>Start with these three</span></header>
+  <div class="experiment-featured-grid">
+    {% for experiment in experiments %}{% if experiment.featured() %}
+    <article class="experiment-feature">
+      <a class="experiment-picture experiment-picture-{{ experiment.category.key() }}" href="/experiments/{{ experiment.slug }}/" aria-label="Explore {{ experiment.name }}">{{ experiment.preview_svg|safe }}</a>
+      <h3><a href="/experiments/{{ experiment.slug }}/">{{ experiment.name }}</a></h3>
+      <p>{{ experiment.summary }}</p>
+      {% if let Some(href) = experiment.demo_href %}<a class="text-action" href="{{ href }}">{% if experiment.available() %}Try the demo{% else %}Inspect the result{% endif %}</a>{% endif %}
+    </article>
+    {% endif %}{% endfor %}
+  </div>
+</section>
+<section class="experiment-catalog" id="catalog" aria-labelledby="catalog-title">
+  <header class="section-heading"><h2 id="catalog-title">The collection</h2><span>{{ experiments.len() }} experiment pages</span></header>
+  <p class="experiment-catalog-note">Each page explains my interest and the project’s progress. The examples show a small part of the work through a browser demo, recorded result, or visual study.</p>
+  <nav class="experiment-topics" aria-label="Experiment topics">
+    {% for category in experiment_categories %}<a href="#{{ category.key() }}">{{ category.label() }}</a>{% endfor %}
+  </nav>
+  {% for category in experiment_categories %}
+  <section class="experiment-group" id="{{ category.key() }}" aria-labelledby="heading-{{ category.key() }}">
+    <h3 id="heading-{{ category.key() }}">{{ category.label() }}</h3>
+    <ul class="experiment-rows">
+      {% for experiment in experiments %}{% if experiment.category == *category %}
+      <li class="experiment-row">
+        <div class="experiment-thumbnail experiment-picture-{{ category.key() }}" aria-hidden="true">{{ experiment.preview_svg|safe }}</div>
+        <div>
+          <h4><a href="/experiments/{{ experiment.slug }}/">{{ experiment.name }}</a></h4>
+          <p>{{ experiment.summary }}</p>
+        </div>
+        <span class="experiment-state{% if experiment.has_demo() %} experiment-state-available{% endif %}">{{ experiment.status_label() }}</span>
+      </li>
+      {% endif %}{% endfor %}
+    </ul>
+  </section>
+  {% endfor %}
+</section>

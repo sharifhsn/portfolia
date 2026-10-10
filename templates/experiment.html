@@ -1,0 +1,26 @@
+{% if let Some(experiment) = selected_experiment %}
+<nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/experiments/">All experiments</a></nav>
+<section class="experiment-detail-intro" aria-labelledby="page-title">
+  <div class="page-intro">
+    <p class="experiment-detail-topic">{{ experiment.category.label() }}</p>
+    <h1 id="page-title">{{ experiment.name }}</h1>
+    <p>{{ experiment.summary }}</p>
+    <p class="experiment-state{% if experiment.has_demo() %} experiment-state-available{% endif %}">{{ experiment.status_label() }}</p>
+    {% if let Some(href) = experiment.demo_href %}<a class="text-action" href="{{ href }}">Explore the example</a>{% endif %}
+  </div>
+  <figure class="experiment-detail-visual experiment-picture-{{ experiment.category.key() }}">
+    {{ experiment.preview_svg|safe }}
+    <figcaption>{% if experiment.preview_is_example %}A visual from the example below.{% else %}Concept illustration. The example is below.{% endif %}</figcaption>
+  </figure>
+</section>
+<div class="experiment-detail-copy experiment-writeup" aria-label="Project writeup">
+  <section aria-labelledby="interest-title"><h2 id="interest-title">Why I’m interested</h2><p>{{ experiment.interest }}</p></section>
+  <section aria-labelledby="progress-title"><h2 id="progress-title">Progress</h2><p>{{ experiment.progress }}</p></section>
+</div>
+{% include "experiment-study.html" %}
+<div class="experiment-detail-copy">
+  <section aria-labelledby="next-title"><h2 id="next-title">What comes next</h2><p>{{ experiment.next_step }}</p></section>
+  <details class="experiment-implementation"><summary>Example scope and source credit</summary><p>{{ experiment.question }}</p><p>{{ experiment.scope }}</p><p>{{ experiment.demo_plan }}</p><p>{{ experiment.rust_plan }}</p><p>{{ experiment.credit }}</p></details>
+</div>
+<p class="experiment-back"><a href="/experiments/#{{ experiment.category.key() }}">More in {{ experiment.category.label() }}</a></p>
+{% endif %}

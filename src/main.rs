@@ -1,3 +1,4 @@
+mod experiments;
 mod static_export;
 
 use askama::Template;
@@ -43,6 +44,10 @@ struct Site<'a> {
     canonical_url: &'a str,
     structured_data: &'a str,
     projects: &'a [Project],
+    experiments: &'a [experiments::Experiment],
+    experiment_categories: &'a [experiments::Category],
+    selected_experiment: Option<&'a experiments::Experiment>,
+    experiment_study: Option<experiments::Study>,
     recent_posts: Vec<&'a BlogPost>,
     resume_html: &'a str,
     pdf_available: bool,
@@ -206,6 +211,7 @@ fn site_path(page: &str) -> &'static str {
         "home" => "/",
         "blog" => "/blog/",
         "projects" => "/projects/",
+        "experiments" => "/experiments/",
         "hornet" => "/projects/hornet/",
         "resume" => "/resume/",
         "chat" => "/chat/",
@@ -217,6 +223,7 @@ fn page_title(page: &str) -> &'static str {
     match page {
         "blog" => "Writing | Sharif Haason",
         "projects" => "Projects | Sharif Haason",
+        "experiments" => "Vibe coded experiments | Sharif Haason",
         "hornet" => "Hornet FX desk | Sharif Haason",
         "resume" => "Resume | Sharif Haason",
         "chat" => "Chat | Sharif Haason",
@@ -230,6 +237,9 @@ fn page_description(page: &str) -> &'static str {
             "Notes and articles by Sharif Haason on Rust, compiler systems, quantitative finance, options pricing, risk management, and applied mathematics."
         }
         "projects" => "Selected software, research, and practical tools by Sharif Haason.",
+        "experiments" => {
+            "Small visual studies, Rust experiments, and AI-assisted projects by Sharif Haason. Try a demo or explore what comes next."
+        }
         "hornet" => {
             "An interactive USD/MXN options pricing and risk demo adapted from the Hornet Trading Contest."
         }
@@ -247,6 +257,7 @@ fn breadcrumbs_for_page(page: &str) -> Vec<Breadcrumb> {
     let paths: &[(&str, &str)] = match page {
         "blog" => &[("Home", "/"), ("Writing", "/blog/")],
         "projects" => &[("Home", "/"), ("Projects", "/projects/")],
+        "experiments" => &[("Home", "/"), ("Experiments", "/experiments/")],
         "hornet" => &[
             ("Home", "/"),
             ("Projects", "/projects/"),
@@ -360,7 +371,13 @@ fn person_json_ld() -> serde_json::Value {
     })
 }
 
-fn page_json_ld(canonical_url: &str, page: &str, breadcrumbs: &[Breadcrumb]) -> String {
+fn page_json_ld(
+    canonical_url: &str,
+    page: &str,
+    breadcrumbs: &[Breadcrumb],
+    title: &str,
+    description: &str,
+) -> String {
     let page_type = if page == "home" {
         "ProfilePage"
     } else {
@@ -370,8 +387,8 @@ fn page_json_ld(canonical_url: &str, page: &str, breadcrumbs: &[Breadcrumb]) -> 
         "@type": page_type,
         "@id": format!("{canonical_url}#webpage"),
         "url": canonical_url,
-        "name": page_title(page),
-        "description": page_description(page),
+        "name": title,
+        "description": description,
         "isPartOf": {"@id": format!("{SITE_ORIGIN}/#website")},
         "about": {"@id": format!("{SITE_ORIGIN}/#person")},
         "inLanguage": "en-US"
@@ -763,6 +780,7 @@ fn sitemap_xml(posts: &[BlogPost]) -> String {
         "/",
         "/blog",
         "/projects",
+        "/experiments",
         "/projects/hornet",
         "/resume",
         "/chat",
@@ -771,6 +789,14 @@ fn sitemap_xml(posts: &[BlogPost]) -> String {
         xml.push_str(&xml_escape(&site_url(path)));
         xml.push_str("</loc>");
         xml.push_str("</url>\n");
+    }
+    for experiment in experiments::all() {
+        xml.push_str("  <url><loc>");
+        xml.push_str(&xml_escape(&site_url(&format!(
+            "/experiments/{}",
+            experiment.slug
+        ))));
+        xml.push_str("</loc></url>\n");
     }
     for post in posts {
         xml.push_str("  <url><loc>");
@@ -795,6 +821,11 @@ fn llms_txt(posts: &[BlogPost]) -> String {
         ("Home", "/", page_description("home")),
         ("Writing index", "/blog", page_description("blog")),
         ("Projects", "/projects", page_description("projects")),
+        (
+            "Experiments",
+            "/experiments",
+            page_description("experiments"),
+        ),
         (
             "Hornet FX desk",
             "/projects/hornet",
@@ -2091,27 +2122,77 @@ fn render_blog_article(posts: &[BlogPost], slug: &str) -> Result<Html<String>, S
 }
 
 fn render_site(page: &str, posts: &[BlogPost]) -> Result<Html<String>, StatusCode> {
-    if !["home", "projects", "hornet", "resume", "chat"].contains(&page) {
+    render_site_with_experiment(page, posts, None)
+}
+
+fn render_experiment(slug: &str) -> Result<Html<String>, StatusCode> {
+    let experiment = experiments::all()
+        .iter()
+        .find(|experiment| experiment.slug == slug)
+        .ok_or(StatusCode::NOT_FOUND)?;
+    render_site_with_experiment("experiment", &[], Some(experiment))
+}
+
+fn render_site_with_experiment(
+    page: &str,
+    posts: &[BlogPost],
+    selected_experiment: Option<&experiments::Experiment>,
+) -> Result<Html<String>, StatusCode> {
+    if ![
+        "home",
+        "projects",
+        "hornet",
+        "resume",
+        "chat",
+        "experiments",
+        "experiment",
+    ]
+    .contains(&page)
+    {
         return Err(StatusCode::NOT_FOUND);
     }
     let resume_html = render_markdown(include_str!("../content/resume-current.md"));
     let projects = load_projects();
-    let title = page_title(page);
-    let description = page_description(page);
-    let canonical_url = site_url(site_path(page));
-    let breadcrumbs = breadcrumbs_for_page(page);
+    let title = selected_experiment.map_or_else(
+        || page_title(page).to_owned(),
+        |experiment| format!("{} | Experiments | Sharif Haason", experiment.name),
+    );
+    let description =
+        selected_experiment.map_or(page_description(page), |experiment| &experiment.summary);
+    let canonical_url = selected_experiment.map_or_else(
+        || site_url(site_path(page)),
+        |experiment| site_url(&format!("/experiments/{}", experiment.slug)),
+    );
+    let breadcrumbs = selected_experiment.map_or_else(
+        || breadcrumbs_for_page(page),
+        |experiment| {
+            make_breadcrumbs(&[
+                ("Home", "/"),
+                ("Experiments", "/experiments/"),
+                (
+                    &experiment.name,
+                    &format!("/experiments/{}", experiment.slug),
+                ),
+            ])
+        },
+    );
     let structured_data = if page == "projects" {
         projects_json_ld(&canonical_url, &projects, &breadcrumbs)
     } else {
-        page_json_ld(&canonical_url, page, &breadcrumbs)
+        page_json_ld(&canonical_url, page, &breadcrumbs, &title, description)
     };
     Site {
         page,
-        title,
+        title: &title,
         description,
         canonical_url: &canonical_url,
         structured_data: &structured_data,
         projects: &projects,
+        experiments: experiments::all(),
+        experiment_categories: experiments::CATEGORIES,
+        selected_experiment,
+        experiment_study: selected_experiment
+            .and_then(|experiment| experiments::study(&experiment.slug)),
         recent_posts: posts
             .iter()
             .filter(|post| !post.study_note)
@@ -2133,6 +2214,18 @@ async fn home(State(posts): State<Arc<Vec<BlogPost>>>) -> Result<Html<String>, S
 
 async fn projects() -> Result<Html<String>, StatusCode> {
     render_site("projects", &[])
+}
+
+async fn experiments_index() -> Result<Html<String>, StatusCode> {
+    render_site("experiments", &[])
+}
+
+async fn experiment_detail(Path(slug): Path<String>) -> Response {
+    match render_experiment(&slug) {
+        Ok(page) => page.into_response(),
+        Err(StatusCode::NOT_FOUND) => not_found().await,
+        Err(status) => status.into_response(),
+    }
 }
 
 async fn hornet() -> Result<Html<String>, StatusCode> {
@@ -2266,6 +2359,10 @@ async fn main() {
         .route("/blog/{slug}/", get(blog_article))
         .route("/projects", get(projects))
         .route("/projects/", get(projects))
+        .route("/experiments", get(experiments_index))
+        .route("/experiments/", get(experiments_index))
+        .route("/experiments/{slug}", get(experiment_detail))
+        .route("/experiments/{slug}/", get(experiment_detail))
         .route("/projects/hornet", get(hornet))
         .route("/projects/hornet/", get(hornet))
         .route("/resume", get(resume))
@@ -2394,15 +2491,53 @@ mod tests {
     }
 
     #[test]
+    fn experiment_pages_preserve_status_metadata_and_unknown_routes() {
+        let Html(index) = render_site("experiments", &[]).unwrap();
+        assert!(index.contains(&format!("{} experiment pages", experiments::all().len())));
+        assert_eq!(
+            index.matches("class=\"experiment-row\"").count(),
+            experiments::all().len()
+        );
+        let Html(wedeo) = render_experiment("wedeo").unwrap();
+        assert!(wedeo.contains("Recorded result"));
+        assert!(wedeo.contains("id=\"demo\""));
+        assert!(wedeo.contains("Wedeo | Experiments | Sharif Haason"));
+        for slug in [
+            "browser-model",
+            "fractal-study",
+            "home-inventory",
+            "discord-audio",
+            "docs-cli",
+            "paper-reader",
+            "rust-swift",
+            "numerical-ports",
+            "cugen-layout",
+        ] {
+            assert!(!index.contains(&format!("/experiments/{slug}/")));
+            assert_eq!(render_experiment(slug).unwrap_err(), StatusCode::NOT_FOUND);
+        }
+        assert_eq!(
+            render_experiment("missing").unwrap_err(),
+            StatusCode::NOT_FOUND
+        );
+    }
+
+    #[test]
     fn machine_readable_endpoints_cover_the_canonical_site() {
         let posts = load_blog_posts().unwrap();
         assert!(posts.iter().all(|post| !post.description.trim().is_empty()));
         let sitemap = sitemap_xml(&posts);
-        assert_eq!(sitemap.matches("<url>").count(), posts.len() + 6);
+        assert_eq!(
+            sitemap.matches("<url>").count(),
+            posts.len() + 7 + experiments::all().len()
+        );
         assert!(sitemap.contains("https://sharifhsn.dev/blog/circuits/"));
+        assert!(sitemap.contains("https://sharifhsn.dev/experiments/rustlyn/"));
+        assert!(!sitemap.contains("https://sharifhsn.dev/experiments/fractal-study/"));
 
         let llms = llms_txt(&posts);
         assert!(llms.starts_with("# Sharif Haason"));
+        assert!(llms.contains("[Experiments](https://sharifhsn.dev/experiments/):"));
         assert!(llms.contains("[Writing index](https://sharifhsn.dev/blog/):"));
         assert!(llms.contains("[Structured writing index](https://sharifhsn.dev/api/posts.json):"));
         assert!(llms.contains("[Structured projects](https://sharifhsn.dev/api/projects.json):"));

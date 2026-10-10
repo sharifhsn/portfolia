@@ -1,0 +1,16 @@
+{
+  "selected_pages": 17,
+  "removed_pages": 9,
+  "catalog_rows": 17,
+  "local_links_checked": 614,
+  "all_selected_routes": 200,
+  "all_removed_routes": 404,
+  "writeups_preserved": true,
+  "export_and_sitemap_filtered": true,
+  "desktop_width": 1440,
+  "mobile_width": 390,
+  "horizontal_overflow": false,
+  "browser_detail_review": "Oboromi systems work",
+  "rust_tests_passed": 23,
+  "frontend_gate_passed": true
+}

@@ -1,0 +1,16 @@
+schema	tylax-artifact-status-v3
+status	degraded
+output_grade	native
+diagnostic_count	1
+coverage_terminal	clean
+contribution	project	clean
+contribution	expansion	clean
+contribution	lowering	clean
+contribution	resolution	clean
+contribution	resources	clean
+contribution	target	clean
+contribution	diagnostics	degraded
+contribution	coverage	clean
+contribution	dependencies	degraded
+contribution	verification	degraded
+diagnostic	L2T-PKG-001	warning	1

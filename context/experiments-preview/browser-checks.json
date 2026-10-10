@@ -1,0 +1,339 @@
+{
+  "mobileViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "mobile": [
+    {
+      "href": "/experiments/hornet/",
+      "cases": 0,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/ldsc/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/raygeo/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/booksharp/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/cugen-layout/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/numerical-ports/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/rustlyn/",
+      "cases": 2,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/tylax/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/rust-dotnet/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/oboromi/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/rust-swift/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/fractal-study/",
+      "cases": 0,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/wedeo/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/plume/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/bevy-switch/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/system-health/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/volt/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/guphub/",
+      "cases": 4,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/ttfx/",
+      "cases": 4,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/home-inventory/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/docs-cli/",
+      "cases": 4,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/browser-model/",
+      "cases": 0,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/factshort/",
+      "cases": 3,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/dailyreddit/",
+      "cases": 4,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/discord-audio/",
+      "cases": 4,
+      "overflow": false
+    },
+    {
+      "href": "/experiments/paper-reader/",
+      "cases": 4,
+      "overflow": false
+    }
+  ],
+  "desktopViewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "desktop": [
+    {
+      "href": "/experiments/hornet/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/ldsc/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/raygeo/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/booksharp/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/cugen-layout/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/numerical-ports/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/rustlyn/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/tylax/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/rust-dotnet/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/oboromi/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/rust-swift/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/fractal-study/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/wedeo/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/plume/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/bevy-switch/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/system-health/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/volt/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/guphub/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/ttfx/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/home-inventory/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/docs-cli/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/browser-model/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/factshort/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/dailyreddit/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/discord-audio/",
+      "overflow": false,
+      "brokenImages": []
+    },
+    {
+      "href": "/experiments/paper-reader/",
+      "overflow": false,
+      "brokenImages": []
+    }
+  ],
+  "finalMedia": [
+    {
+      "href": "/experiments/volt/",
+      "images": [
+        {
+          "broken": false,
+          "height": "93",
+          "src": "/static/experiments/volt/frame.png",
+          "width": "93"
+        }
+      ],
+      "viewport": 390,
+      "width": 390
+    },
+    {
+      "href": "/experiments/wedeo/",
+      "images": [
+        {
+          "broken": false,
+          "height": "32",
+          "src": "/static/experiments/wedeo/frame-1.png",
+          "width": "32"
+        },
+        {
+          "broken": false,
+          "height": "32",
+          "src": "/static/experiments/wedeo/frame-2.png",
+          "width": "32"
+        },
+        {
+          "broken": false,
+          "height": "32",
+          "src": "/static/experiments/wedeo/frame-3.png",
+          "width": "32"
+        }
+      ],
+      "viewport": 390,
+      "width": 390
+    },
+    {
+      "href": "/experiments/tylax/",
+      "images": [
+        {
+          "broken": false,
+          "height": "57",
+          "src": "/static/experiments/tylax/equation.svg",
+          "width": "77"
+        },
+        {
+          "broken": false,
+          "height": "64",
+          "src": "/static/experiments/tylax/matrix.svg",
+          "width": "72"
+        },
+        {
+          "broken": false,
+          "height": "67",
+          "src": "/static/experiments/tylax/sum.svg",
+          "width": "128"
+        }
+      ],
+      "viewport": 390,
+      "width": 390
+    }
+  ]
+}

@@ -52,7 +52,7 @@ and make long reading and the light workbook compete; rejected. A newspaper
 grid would overfragment the essays; rejected. The cool journal keeps one
 expressive homepage identity and otherwise lets the real material do the work.
 
-Primary navigation is Writing, Projects, Resume. Browser chat is an experiment
+Primary navigation is Writing, Projects, Experiments, Resume. Browser chat is an experiment
 reached through Projects. Article ordinals and repeated breadcrumb titles add
 little information and are removed. The study archive stays below the writing
 list, as requested. The worksheet keeps the source workbook's peach market,

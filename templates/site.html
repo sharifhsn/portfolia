@@ -50,6 +50,7 @@
   <meta name="twitter:image:alt" content="Portrait of Sharif Haason">
   <title>{{ title }}</title>
   {% include "styles.html" %}
+  {% if page == "experiments" || page == "experiment" %}<link rel="stylesheet" href="/static/css/experiments.css?v=20261009-1">{% endif %}
   <script type="application/ld+json">{{ structured_data|safe }}</script>
 </head>
 <body>
@@ -62,6 +63,8 @@
       {% endif %}
       {% if page == "home" %}{% include "home.html" %}
       {% else if page == "projects" %}{% include "projects.html" %}
+      {% else if page == "experiments" %}{% include "experiments.html" %}
+      {% else if page == "experiment" %}{% include "experiment.html" %}
       {% else if page == "resume" %}{% include "resume.html" %}
       {% else if page == "hornet" %}{% include "hornet.html" %}
       {% else if page == "chat" %}{% include "chat.html" %}

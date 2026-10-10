@@ -16,6 +16,16 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     write_route(output_dir, "blog", &blog.0)?;
     let projects = render_site("projects", posts).map_err(render_status_error)?;
     write_route(output_dir, "projects", &projects.0)?;
+    let experiments = render_site("experiments", posts).map_err(render_status_error)?;
+    write_route(output_dir, "experiments", &experiments.0)?;
+    for experiment in super::experiments::all() {
+        let html = super::render_experiment(&experiment.slug).map_err(render_status_error)?;
+        write_route(
+            output_dir,
+            &format!("experiments/{}", experiment.slug),
+            &html.0,
+        )?;
+    }
     let hornet = render_site("hornet", posts).map_err(render_status_error)?;
     write_route(output_dir, "projects/hornet", &hornet.0)?;
     let resume = render_site("resume", posts).map_err(render_status_error)?;
@@ -218,6 +228,30 @@ mod tests {
         assert!(!home.contains("/v/6") && !home.contains("/designs"));
         assert!(output.join("blog/index.html").is_file());
         assert!(output.join("projects/index.html").is_file());
+        assert!(output.join("experiments/index.html").is_file());
+        for experiment in super::super::experiments::all() {
+            let html = fs::read_to_string(
+                output.join(format!("experiments/{}/index.html", experiment.slug)),
+            )
+            .expect("experiment page must export");
+            assert!(html.contains(&experiment.name));
+            assert!(html.contains(&format!(
+                "https://sharifhsn.dev/experiments/{}/",
+                experiment.slug
+            )));
+            if let Some(study) = super::super::experiments::study(&experiment.slug) {
+                for scene in study.scenes {
+                    if let Some(image) = scene.image {
+                        assert!(html.contains(&image.src));
+                        assert!(output.join(image.src.trim_start_matches('/')).is_file());
+                    }
+                }
+                if let Some(audio) = study.audio {
+                    assert!(html.contains(audio));
+                    assert!(output.join(audio.trim_start_matches('/')).is_file());
+                }
+            }
+        }
         assert!(output.join("resume/index.html").is_file());
         assert!(output.join("chat/index.html").is_file());
         assert!(output.join("robots.txt").is_file());

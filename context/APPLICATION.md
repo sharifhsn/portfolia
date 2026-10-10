@@ -24,6 +24,9 @@ review findings and validation are in [DESIGN_REVIEW.md](DESIGN_REVIEW.md).
   Typst posts are present. The deployment workflow installs the pinned version.
 - `content/projects.toml` is the structured source for the projects page and
   `/api/projects.json`.
+- `content/experiments.toml` supplies the experiment catalog. `src/experiments.rs`
+  supplies typed records and SVG diagrams. The selected projects use Rust examples,
+  recorded native results, and native HTML controls. See [the selection notes](EXPERIMENT-SELECTION.md).
 - `content/resume-current.md` supplies the resume page. The PDF and DOCX
   downloads are served from `static/resume/`.
 
@@ -37,6 +40,8 @@ machine endpoints retain their extensions without a trailing slash.
 - `GET /blog/` — writing index with client-side search and topic filters.
 - `GET /blog/{slug}/` — an individual article.
 - `GET /projects/` — selected-projects page.
+- `GET /experiments/` — visual experiment catalog.
+- `GET /experiments/{slug}/` — one experiment, its scope, and its next small demo.
 - `GET /resume/` — resume page and downloads.
 - `GET /projects/hornet/` — compact USD/MXN scenario worksheet.
 - `GET /chat/` — browser language-model experiment, reached through Projects.
@@ -97,7 +102,7 @@ visible. Use actual writing and working projects to establish the site's identit
 
 A cool light canvas, blue links, Georgia display headings and serif article
 prose form the visual system. System sans supplies interface text, and monospace
-is reserved for code. Primary navigation is Writing, Projects, Resume; the
+is reserved for code. Primary navigation is Writing, Projects, Experiments, Resume. The
 browser model is presented as an experiment under Projects. Topic filters use
 a native disclosure that starts collapsed at every width, and technical site
 resources live in a footer disclosure. The archive remains readable without JavaScript.

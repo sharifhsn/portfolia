@@ -1,0 +1,5 @@
+encoded 32 bytes into 3 frames (1 source + 2 repair)
+packed object: 104 bytes
+session: 463a7a64b586abdf
+player: /tmp/portfolia-volt-frames/player.html
+mode: qr
