@@ -2514,6 +2514,9 @@ mod tests {
         assert!(ldsc.contains("<strong>20.32%</strong>"));
         assert_eq!(ldsc.matches("class=\"ldsc-runtime-row\"").count(), 3);
         assert!(ldsc.contains("/static/experiments/fixtures/ldsc/results.json"));
+        // Production CSP permits external stylesheets and SVG geometry, but no style attributes.
+        assert!(!ldsc.contains("style=\""));
+        assert_eq!(ldsc.matches("viewBox=\"0 0 100 1\"").count(), 4);
         for slug in [
             "browser-model",
             "fractal-study",

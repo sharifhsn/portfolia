@@ -120,9 +120,9 @@
 .ldsc-runtime-row { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 1rem; align-items: center; margin: 1rem 0; }
 .ldsc-runtime-row dt { font-size: .95rem; }
 .ldsc-runtime-row dd { display: grid; grid-template-columns: minmax(0, 1fr) 9.5rem; align-items: center; gap: 1rem; margin: 0; }
-.ldsc-runtime-track { display: block; height: 1.6rem; background: var(--paper-raised); }
-.ldsc-runtime-track > span { display: block; height: 100%; background: var(--link); }
-.ldsc-runtime-row:first-child .ldsc-runtime-track > span { background: var(--muted); }
+.ldsc-runtime-track { display: block; width: 100%; height: 1.6rem; background: var(--paper-raised); }
+.ldsc-runtime-track rect { fill: var(--link); }
+.ldsc-runtime-row:first-child .ldsc-runtime-track rect { fill: var(--muted); }
 .ldsc-runtime-value { text-align: right; font-variant-numeric: tabular-nums; font-size: .95rem; }
 .ldsc-engine .ldsc-evidence-note { font-size: .85rem; }
 .ldsc-disclosure { margin: 1.25rem 0; padding-top: .75rem; border-top: 1px solid var(--rule); }
@@ -145,8 +145,8 @@
 .ldsc-pipeline span { color: var(--link); font-variant-numeric: tabular-nums; }
 .ldsc-bmi-result { margin: 2rem 0 1.5rem; }
 .ldsc-bmi-result strong { display: block; color: var(--link); font-family: var(--font-display); font-size: 3rem; font-weight: 400; }
-.ldsc-share-track { height: .8rem; margin: 1rem 0; background: var(--paper-raised); }
-.ldsc-share-track span { display: block; height: 100%; background: var(--link); }
+.ldsc-share-track { display: block; width: 100%; height: .8rem; margin: 1rem 0; background: var(--paper-raised); }
+.ldsc-share-track rect { fill: var(--link); }
 .ldsc-engine-sources { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
 .ldsc-engine-sources p, .ldsc-engine-sources ul { font-size: .9rem; }
 .ldsc-engine-sources ul { padding-left: 1.25rem; }
