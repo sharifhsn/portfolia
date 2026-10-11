@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Typst source produces an editable Word document and a PowerPoint slide">
+  <g fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M34 48H164V242H34Z"/><path d="M53 100H145M53 119H130M53 180H145M53 199H128" opacity=".4"/>
+    <path d="M164 143H218V78H266M218 143V228H266"/><path d="m259 71 7 7-7 7m0 136 7 7-7 7"/>
+    <path d="M278 25H388L406 43V153H278Z"/><path d="M388 25V43H406"/>
+    <path d="M293 77H391M293 94H361M293 115H391M327 107V136M293 107H391V136H293Z" opacity=".55"/>
+    <path d="M278 180H446V271H278Z"/><path d="M293 222H373M293 238H350M396 218V254H431V218Z" opacity=".55"/>
+  </g>
+  <g fill="currentColor" font-family="system-ui,sans-serif">
+    <text x="52" y="78" font-size="17">main.typ</text><text x="52" y="154" font-size="27">∑ xᵢ / n</text>
+    <text x="293" y="62" font-size="17">Word / DOCX</text><text x="293" y="205" font-size="17">PowerPoint / PPTX</text>
+    <text x="34" y="279" font-size="13">Source + structure</text>
+  </g>
+</svg>

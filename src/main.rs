@@ -2503,7 +2503,10 @@ mod tests {
         let Html(tylax) = render_experiment("tylax").unwrap();
         assert!(tylax.contains("Recorded result"));
         assert!(tylax.contains("id=\"demo\""));
-        assert!(tylax.contains("LaTeX to Typst | Experiments | Sharif Haason"));
+        assert!(tylax.contains("Typst &#38; Office | Experiments | Sharif Haason"));
+        assert!(tylax.contains("id=\"typst-workbench\""));
+        assert!(tylax.contains("brief.docx"));
+        assert!(tylax.contains("deck.pptx"));
         assert!(!tylax.contains("id=\"engine\""));
         let Html(ldsc) = render_experiment("ldsc").unwrap();
         assert!(ldsc.contains("id=\"engine\""));

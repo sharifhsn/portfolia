@@ -1,0 +1,56 @@
+{
+  "docx": {
+    "parts": 23,
+    "counts": {
+      "paragraphs": 13,
+      "tables": 1,
+      "math": 1,
+      "text_runs": 0,
+      "text_boxes": 0,
+      "drawing_tables": 0
+    },
+    "bytes": 5367882
+  },
+  "pptx": {
+    "parts": 18,
+    "counts": {
+      "paragraphs": 0,
+      "tables": 0,
+      "math": 1,
+      "text_runs": 13,
+      "text_boxes": 6,
+      "drawing_tables": 1
+    },
+    "bytes": 1356468
+  },
+  "recorded_at": "2026-10-10",
+  "office_source_revision": "22fd0c0d07777c989e006645e12bd2c16c679823",
+  "wasm_sha256": "a814b337178e10b8aaf5ade6d17869dc464211cbfcf97a6e7915b6ca02bfc158",
+  "preview_compiler": "typst 0.15.0 (unknown commit)",
+  "files": {
+    "brief.docx": "94f71e70f3c66a9ca9f041f7e785cb46d03fb8c163daab7d82f24e17426c8672",
+    "brief.pdf": "65d7a57e01f36465695de466d9449884aa863a2b02d04941afc26386ec32f34d",
+    "brief.svg": "384f5e66672f5c82f199a4344c4a8fc27bf82d480245512e7f7346629a84cf9c",
+    "brief.typ": "c1eb7501b4c94d2f445e8089b5e3597ba65fc28723f019eb4ece4b27af4c46d3",
+    "chart-edited.svg": "0d11a3d0c06b92923108934de5703cacd256c65f72a9158f2e0060a815b3ff86",
+    "chart-original.svg": "238e87ecf55748e301941f3315efdb77d057da01a602e9cda6564d9e7d17c06f",
+    "chart.typ": "301cbfba01a7d67abd7d4914be76c5720917a75e52bca99d6b35cb84e7a6388b",
+    "content.typ": "2d218b830aa2222018013545ab72fa1cc09b482b28b5df7e059935c6121c34b2",
+    "deck.pdf": "42e10a71bcd11f0d4d9922150f0bbe9d660d4f135483e7f1ce1df9045c00e4ac",
+    "deck.pptx": "8c81f96f28ffe9886049be623fc589d1d4ab782128454a55626698253a3755d5",
+    "deck.svg": "dd5084e91b3cd6ec347099a59ea62bf7c2b1bb5deeb8239a432cdc0fdfc0474a",
+    "deck.typ": "77f089c1ac7d769c9f61fffe93b8971bdfd2ea40fb3538221ac397a4273f104b",
+    "fonts/NOTICE": "80ac46fb7d70f1c30bf0c14d3408e6a6f0f9cc9997a00b592aa0d2c8a5243a9d",
+    "fonts/NewCM10-Bold.otf": "40b0b32b63655fe802679ee4a14adb29c762a4712095d9c84cf7df7852b5152e",
+    "fonts/NewCM10-BoldItalic.otf": "fb53f43500c8ffbcc6dfdea5a519961d475543174ea2a0dcbe16c08510299fdf",
+    "fonts/NewCM10-Italic.otf": "a55d07607eec48889b6e7e7d51d7703c3beb915a39690f34fe01b4e2a744a9d6",
+    "fonts/NewCM10-Regular.otf": "328698d764ccdf7acf6bc1088aefd83a237f6a1d8b812de1e77ac5e4483bf3d1",
+    "fonts/NewCMMath-Regular.otf": "d66ac1cc91c55c24d3636ae2df1238076debdff51841f9893fc5419cc2df3df7",
+    "source.zip": "2c5efe08c65b9050a90dad680076e375e99333058d2e64ddc2e6391cad3687f5",
+    "workflow.svg": "852c38690bfc463ba9204da0eb710e6e8fdf5aa20178ec5619a19a971f33e5a1"
+  },
+  "office_demo_revision": "58d8a044c763acf66eda26eb22ec71a705edb355",
+  "office_demo_build": "https://github.com/sharifhsn/typst-office/actions/runs/30330497453",
+  "compiler_url": "https://sharifhsn.github.io/typst-office/pkg/typst_office_bg.wasm",
+  "lilaq_version": "0.6.0"
+}

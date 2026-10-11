@@ -106,7 +106,7 @@ static CATALOG: LazyLock<Vec<Experiment>> = LazyLock::new(|| {
     for experiment in &mut document.experiments {
         if let Some(preview) = studies::preview(&experiment.slug) {
             experiment.preview_svg = preview;
-            experiment.preview_is_example = true;
+            experiment.preview_is_example = experiment.slug != "tylax";
         } else {
             experiment.preview_svg = illustration(experiment.category);
         }

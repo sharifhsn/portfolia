@@ -1,0 +1,106 @@
+<section class="typst-workbench" id="typst-workbench" aria-labelledby="typst-workbench-title">
+  <div class="typst-workbench-heading">
+    <div><h2 id="typst-workbench-title">A document people can work with</h2>
+    <p>Typst combines a typesetter with a programming language. Functions and templates make the layout reusable. The Office work extends that control to the files people exchange: briefs, papers, tables, and slide decks.</p></div>
+    <a href="https://sharifhsn.github.io/typst-office/">Try the browser exporter</a>
+  </div>
+  <fieldset class="typst-control study-control">
+    <legend>Follow a document through the system</legend>
+    <div class="study-options">
+      <label><input type="radio" name="typst-path" id="typst-word" checked><span>Word export</span></label>
+      <label><input type="radio" name="typst-path" id="typst-slides"><span>PowerPoint export</span></label>
+      <label><input type="radio" name="typst-path" id="typst-import"><span>Office import</span></label>
+      <label><input type="radio" name="typst-path" id="typst-review"><span>Word review</span></label>
+    </div>
+  </fieldset>
+  <section class="typst-scene" data-typst="word" aria-labelledby="typst-word-title">
+    <div class="typst-scene-copy">
+      <h3 id="typst-word-title">Keep the document’s meaning in Word</h3>
+      <p>Word lays out a stream of paragraphs. The exporter reads Typst’s document structure and creates native headings, lists, table cells, references, footnotes, and equations. Word can then edit those objects.</p>
+      <ol class="typst-flow"><li><strong>Resolve the page</strong><span>Compile the reference layout to resolve page sizes, counters, and citations.</span></li><li><strong>Read the structure</strong><span>Realize the document for DOCX and build typed Word objects.</span></li><li><strong>Write the package</strong><span>Emit Office Open XML with styles, relationships, and a fidelity report.</span></li></ol>
+      <p>The sample includes <strong>13 native paragraphs, one Word table, and one OMML equation</strong>. The preview shows Typst’s reference page. The download is the actual Office export.</p>
+      <div class="typst-downloads"><a href="/static/experiments/tylax/office/brief.docx" download>Download Word sample</a><a href="/static/experiments/tylax/office/brief.pdf">Reference PDF</a></div>
+    </div>
+    <figure class="typst-document"><img src="/static/experiments/tylax/office/brief.svg" width="420" height="580" alt="Typst reference brief with headings, a two-column table, an equation, and a footnote"><figcaption>Real Typst render. The DOCX contains editable Office objects.</figcaption></figure>
+  </section>
+  <section class="typst-scene" data-typst="slides" aria-labelledby="typst-slides-title">
+    <div class="typst-scene-copy">
+      <h3 id="typst-slides-title">Use the finished page as a slide canvas</h3>
+      <p>PowerPoint starts with coordinates. The exporter walks Typst’s laid-out page and places text, shapes, images, tables, and equations on the slide. Compiler tags recover the structure inside that geometry.</p>
+      <ol class="typst-flow"><li><strong>Lay out the source</strong><span>Typst resolves the page before the exporter reads it.</span></li><li><strong>Walk the canvas</strong><span>Read objects in paint order and recover semantic regions from layout tags.</span></li><li><strong>Build editable slides</strong><span>Write DrawingML objects, slide relationships, and supported speaker notes.</span></li></ol>
+      <p>This 16:9 sample reuses the brief’s content. Its PPTX contains <strong>six native text shapes, 13 text runs, one DrawingML table, and one OMML equation</strong>. Recipients can edit the text and table.</p>
+      <div class="typst-downloads"><a href="/static/experiments/tylax/office/deck.pptx" download>Download PowerPoint sample</a><a href="/static/experiments/tylax/office/deck.pdf">Reference PDF</a></div>
+    </div>
+    <figure class="typst-document typst-slide"><img src="/static/experiments/tylax/office/deck.svg" width="720" height="405" loading="lazy" alt="Typst reference slide with the same headings, table, and equation as the brief"><figcaption>One Typst page becomes one slide. This preview is the Typst reference.</figcaption></figure>
+  </section>
+  <section class="typst-scene" data-typst="import" aria-labelledby="typst-import-title">
+    <div class="typst-scene-copy">
+      <h3 id="typst-import-title">Bring existing Office files into source</h3>
+      <p>The importers read arbitrary DOCX and PPTX packages. They resolve styles, numbering, media, slide masters, and theme colors before they produce Typst source and extracted assets.</p>
+      <p>DOCX import recovers a flowing document. PPTX import preserves authored coordinates by default and produces Touying slides. A second mode promotes recognized placeholders into source that follows the slide’s content flow.</p>
+      <p>The loss report names each known approximation or dropped object. Charts can become data tables or plots. Comments and revisions survive as metadata. EMF/WMF media, animations, transitions, and embedded OLE objects remain gaps.</p>
+      <a href="https://github.com/sharifhsn/typst#office-import-this-fork">Read the import support and commands</a>
+    </div>
+    <figure class="typst-process-figure">
+      <div class="typst-import-map"><div class="typst-format-pair"><span>Word<br><b>.docx</b></span><span>PowerPoint<br><b>.pptx</b></span></div><span class="typst-map-arrow" aria-hidden="true">↓</span><div class="typst-map-stage"><strong>Resolve the Office model</strong><span>Styles / numbering / masters / themes</span></div><span class="typst-map-arrow" aria-hidden="true">↓</span><div class="typst-format-pair"><span>Editable source<br><b>.typ + assets</b></span><span>Recorded losses<br><b>report.json</b></span></div></div>
+      <figcaption>Two document models, with a shared package reader and explicit loss reports.</figcaption>
+    </figure>
+  </section>
+  <section class="typst-scene" data-typst="review" aria-labelledby="typst-review-title">
+    <div class="typst-scene-copy">
+      <h3 id="typst-review-title">Let someone edit in Word, then return to Typst</h3>
+      <p>The review exporter tags source regions and keeps a separate baseline. After a reviewer edits the DOCX, a three-way comparison finds the Word change, the original text, and any local source edits.</p>
+      <p>Plain source text in headings, paragraphs, lists, table cells, headers, footers, and footnotes can return to its original location. Existing style wrappers stay intact. Repeated review cycles retain the same workflow.</p>
+      <p>Formatting changes, structural changes, and ambiguous source matches produce conflicts. The importer escapes literal text before it writes Typst. Word comments stay review annotations.</p>
+      <a href="https://github.com/sharifhsn/typst/blob/codex/office-export/docs/dev/docx-roundtrip.md">Read the review workflow</a>
+    </div>
+    <figure class="typst-process-figure">
+      <div class="typst-review-map"><div><span>Source baseline</span><code>The estimate is 0.20.</code></div><div class="typst-word-edit"><span>Word edit</span><code>The estimate is <del>0.20</del> <ins>0.24</ins>.</code></div><div><span>Local Typst source</span><code>The estimate is 0.20.</code></div><span class="typst-map-arrow" aria-hidden="true">↓</span><div class="typst-review-result"><strong>Apply the matched text edit</strong><code>The estimate is 0.24.</code><span>Retain surrounding Typst structure</span></div></div>
+      <figcaption>Illustrative conflict-free text edit. A conflict requires an explicit decision.</figcaption>
+    </figure>
+  </section>
+  <details class="typst-source"><summary>See the source and export evidence</summary>
+    <p>Both samples include the same <code>content.typ</code>. Their entrypoints set the page geometry and type. Rust/WASM produced the DOCX and PPTX on October 10, 2026. XML and internal relationship checks passed.</p>
+    <pre><code>#set page(width: 420pt, height: 580pt)
+#include "content.typ"
+
+// The slide entrypoint uses the same content.
+#set page(width: 720pt, height: 405pt)
+#include "content.typ"</code></pre>
+    <p>Typst 0.15.0 produced the SVG and PDF references. These renders show the source layout. Office render, edit, and reopen checks remain separate.</p>
+    <div class="typst-downloads"><a href="/static/experiments/tylax/office/source.zip" download>Download the source and fonts</a><a href="/static/experiments/tylax/office/record.json">Inspect the artifact record</a></div>
+  </details>
+</section>
+<section class="typst-studio" aria-labelledby="typst-studio-title">
+  <div>
+    <h2 id="typst-studio-title">Edit the page without losing the source</h2>
+    <p>My local Typst Studio connects visual annotations to source edits. A selection retains the document revision and component identity. A change compiles before it becomes the new document. Undo restores the edit and its data together.</p>
+    <p>Company briefs and tearsheets use reusable components. Shared datasets bind metrics, charts, and tables to the same values. Source records retain dates, excerpts, and evidence. A manual override remains visible.</p>
+    <p>Native <a href="https://lilaq.org/">Lilaq</a> charts compile inside Typst. The small example here shows why shared data matters: one value changes the metric, bar, and table cell together.</p>
+    <fieldset class="typst-control study-control"><legend>Change the final sample value</legend><div class="study-options"><label><input type="radio" name="typst-data" id="typst-data-original" checked><span>Value 8</span></label><label><input type="radio" name="typst-data" id="typst-data-edited"><span>Value 11</span></label></div></fieldset>
+    <p class="typst-studio-note">These are two recorded Typst builds with illustrative data. The Studio service uses Python, a Rust parser, and a web viewer. Typst renders the native charts.</p>
+    <a href="/static/experiments/tylax/office/chart.typ" download>Inspect the chart source</a>
+  </div>
+  <figure><img class="typst-chart-original" src="/static/experiments/tylax/office/chart-original.svg" width="420" height="394" loading="lazy" alt="Lilaq render with metric 8, final bar at 8, and final table cell 8"><img class="typst-chart-edited" src="/static/experiments/tylax/office/chart-edited.svg" width="420" height="394" loading="lazy" alt="Lilaq render with metric 11, final bar at 11, and final table cell 11"><figcaption>Actual native Lilaq 0.6.0 renders. One source value feeds all three views.</figcaption></figure>
+</section>
+<section class="typst-office-scope" aria-labelledby="typst-office-scope-title">
+  <h2 id="typst-office-scope-title">The rest of the Office work</h2>
+  <div class="typst-office-topics">
+    <article><h3>Research documents</h3><p>Headings and styles, equations, tables, citations, bibliographies, cross-references, contents, notes, page sections, headers, and footers. These are the structures that make a brief or paper useful after export.</p></article>
+    <article><h3>Decks and graphics</h3><p>Native text, shapes, gradients, images, tables, equations, placeholders, and speaker notes. SVG carries a PNG compatibility fallback. Complex diagrams and transforms use positioned images.</p></article>
+    <article><h3>Local browser export</h3><p>Rust runs as WebAssembly. A source file, project folder, or ZIP stays in browser memory. Relative imports, binary assets, bundled fonts, and vendored packages keep their paths. The hosted demo exports DOCX and PPTX.</p></article>
+    <article><h3>Reports and acceptance limits</h3><p>Reports distinguish native, approximate, rasterized, and dropped content. CLI limits can reject an export with too many recorded losses. Native paragraph reflow and font substitution still require a check in Office.</p></article>
+  </div>
+  <details class="typst-source"><summary>Pandoc and compiler performance branches</summary><p>The fork also contains a typed Pandoc JSON target. It evaluates Typst before export, but remains incomplete and unsupported. The HarfRust and line-break performance work lives on a separate branch. This page makes no speed claim for that branch.</p><a href="https://github.com/sharifhsn/typst#pandoc-export-this-fork">Read the Pandoc status</a></details>
+</section>
+<section class="typst-progress" aria-labelledby="typst-progress-title">
+  <h2 id="typst-progress-title">Progress, with the evidence attached</h2>
+  <table><caption>Each result belongs to the revision and date in its record.</caption><thead><tr><th scope="col">Work</th><th scope="col">Recorded result</th><th scope="col">Next gap</th></tr></thead><tbody>
+    <tr><th scope="row">Office samples<br><span>October 10, 2026</span></th><td>Fresh DOCX and PPTX exports. Editable text and OMML math appear in the package. XML and internal relationships pass.</td><td>Render, edit, save, and reopen these files in Word and PowerPoint.</td></tr>
+    <tr><th scope="row">Compiler integration<br><span>October 2, 2026</span></th><td>Upstream merge, 91/91 Office construct cases, and schema checks for two DOCX fixtures and one PPTX fixture.</td><td>Refresh corpus and native Office results. Package checks do not measure visual fidelity.</td></tr>
+    <tr><th scope="row">Package and CLI coverage<br><span>October 2 audit</span></th><td>343 DOCX export, 77 PPTX export, 95 DOCX import, and 18 PPTX import cases retained. Review tests cover two complete edit cycles.</td><td>PowerPoint text-box baselines and native table rendering remain specific fidelity issues.</td></tr>
+    <tr><th scope="row">Typst Studio<br><span>Local working project</span></th><td>Source-owned annotations, reusable components, native Lilaq charts, guarded data edits, provenance, and Undo.</td><td>The website shows two recorded renders. The live authoring controls run in the local Studio tool.</td></tr>
+    <tr><th scope="row">LaTeX conversion<br><span>October 2 review</span></th><td>Tylax’s typed compiler, complete output bundles, bounded native verification, and worker-based browser conversion. 1,745 Rust tests passed in that record.</td><td>Full-document source/target visual acceptance. The three older examples below retain their Degraded grade.</td></tr>
+  </tbody></table>
+  <p class="typst-evidence-links"><a href="https://github.com/sharifhsn/typst/blob/codex/office-export/docs/dev/validation-evidence/2026-10-02/README.md">Compiler evidence</a><a href="https://github.com/sharifhsn/typst/blob/codex/office-export/docs/dev/test-audit.md">Package and CLI audit</a><a href="https://github.com/sharifhsn/typst">Typst fork</a><a href="https://github.com/sharifhsn/typst-office">Browser exporter source</a></p>
+</section>

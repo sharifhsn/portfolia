@@ -238,7 +238,10 @@ mod tests {
                 output.join(format!("experiments/{}/index.html", experiment.slug)),
             )
             .expect("experiment page must export");
-            assert!(html.contains(&experiment.name));
+            let escaped_name = askama::filters::escape(&experiment.name, askama::filters::Html)
+                .expect("HTML escaping is infallible")
+                .to_string();
+            assert!(html.contains(&escaped_name));
             assert!(html.contains(&format!(
                 "https://sharifhsn.dev/experiments/{}/",
                 experiment.slug

@@ -7,6 +7,9 @@ pub(super) fn preview(slug: &str) -> Option<String> {
     if slug == "ldsc" {
         return Some(super::ldsc::build().reference_svg);
     }
+    if slug == "tylax" {
+        return Some(include_str!("../../static/experiments/tylax/office/workflow.svg").into());
+    }
     build(slug)?.scenes.into_iter().find_map(|scene| {
         if !scene.svg.is_empty() {
             Some(scene.svg)
@@ -318,7 +321,7 @@ fn tylax() -> Study {
     Study {
         title: "Follow the mathematics into Typst",
         intro: "Choose a fraction, matrix, or sum and compare its LaTeX source, converted Typst, and preview.",
-        method: "The native Rust converter produces the recorded output, and Typst 0.15.1 renders the preview. The artifact grade identifies the amsmath handler to fix next. SciPenAI authors Tylax.",
+        method: "These retained examples record Tylax 0.3.6 output and Typst 0.15.1 previews. Their Degraded grade preserves the missing amsmath-handler diagnostic from that recording. The October architecture work above has a separate evidence record. SciPenAI authors Tylax.",
         scenes,
         sources: vec![source(
             "tylax",

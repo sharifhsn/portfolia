@@ -100,6 +100,99 @@
   .study-control { display: none; }
   .study-scene { display: block; margin-block: 2rem; }
 }
+.typst-workbench { margin: 1rem 0 3rem; padding: 2rem; background: var(--paper); scroll-margin-top: 1rem; }
+.typst-workbench h2, .typst-office-scope h2, .typst-progress h2 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 2rem; font-weight: 400; }
+.typst-workbench p, .typst-office-scope p { max-width: 70ch; color: var(--muted); }
+.typst-workbench-heading { display: flex; align-items: start; justify-content: space-between; gap: 2rem; }
+.typst-workbench-heading > div { max-width: 45rem; }
+.typst-workbench-heading > a { flex-shrink: 0; padding-block: .4rem; font-size: .9rem; }
+.typst-scene { display: none; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: 2.5rem; }
+.typst-scene > * { min-width: 0; }
+.typst-scene h3 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; line-height: 1.2; }
+.typst-flow { margin: 1.5rem 0; padding-left: 1.3rem; }
+.typst-flow li { margin: 0 0 1rem; padding-left: .25rem; }
+.typst-flow strong, .typst-flow span { display: block; }
+.typst-flow span { margin-top: .3rem; color: var(--muted); font-size: .9rem; }
+.typst-document { width: min(100%, 22rem); margin: 0 auto; }
+.typst-document img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); box-shadow: 0 .25rem .75rem #24373212; }
+.typst-slide { width: 100%; }
+.typst-document figcaption, .typst-process-figure figcaption { margin-top: 1rem; color: var(--muted); font-size: .82rem; line-height: 1.55; }
+.typst-downloads, .typst-evidence-links { display: flex; flex-wrap: wrap; gap: .7rem 1.5rem; margin-top: 1.5rem; font-size: .9rem; }
+.typst-downloads a { padding-block: .35rem; }
+.typst-process-figure { margin: 0; }
+.typst-format-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.typst-format-pair > span { padding: 1rem .75rem; border: 1px solid #b9cec6; background: #edf3ef; color: #315547; font-size: .85rem; }
+.typst-format-pair b { display: block; margin-top: .4rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 400; }
+.typst-map-arrow { display: block; margin: .65rem 0; color: #426557; font-size: 1.7rem; text-align: center; }
+.typst-map-stage { padding: 1.1rem .75rem; border-block: 2px solid #426557; text-align: center; }
+.typst-map-stage span { display: block; margin-top: .35rem; color: var(--muted); font-size: .8rem; }
+.typst-review-map > div { padding: 1rem; background: var(--paper-raised); }
+.typst-review-map > div + div { margin-top: .7rem; }
+.typst-review-map span, .typst-review-map strong { display: block; margin-bottom: .5rem; font-size: .85rem; }
+.typst-review-map code { display: block; overflow-wrap: anywhere; font-size: .85rem; }
+.typst-review-map .typst-word-edit { border-left: 3px solid #426557; }
+.typst-review-map ins { color: #315547; text-decoration: none; background: #dcece1; }
+.typst-review-map del { color: #81503d; }
+.typst-review-map .typst-review-result { border: 1px solid #426557; background: #edf3ef; }
+.typst-review-result span { margin-top: .7rem; margin-bottom: 0; color: var(--muted); }
+.typst-source { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+.typst-source summary { min-height: 2.75rem; padding-block: .4rem; color: var(--link); }
+.typst-source p { margin: 1rem 0; font-size: .9rem; }
+.typst-source pre { padding: 1rem; overflow: auto; background: var(--paper-raised); white-space: pre-wrap; overflow-wrap: anywhere; font-size: .85rem; line-height: 1.6; }
+.typst-office-scope, .typst-progress { margin-bottom: 3rem; }
+.typst-studio { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: 3rem; margin-bottom: 3rem; }
+.typst-studio > * { min-width: 0; }
+.typst-studio h2 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 2rem; font-weight: 400; }
+.typst-studio p { max-width: 70ch; color: var(--muted); }
+.typst-studio .typst-studio-note { font-size: .85rem; }
+.typst-studio figure { margin: 0; }
+.typst-studio img { display: none; width: 100%; height: auto; border: 1px solid var(--rule); }
+.typst-studio figcaption { margin-top: 1rem; color: var(--muted); font-size: .82rem; }
+.typst-studio:has(#typst-data-original:checked) .typst-chart-original,
+.typst-studio:has(#typst-data-edited:checked) .typst-chart-edited { display: block; }
+.typst-office-topics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 3rem; }
+.typst-office-topics h3 { margin: .5rem 0 .6rem; font-size: 1.1rem; }
+.typst-office-topics p { font-size: .95rem; }
+.typst-progress table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: .9rem; }
+.typst-progress caption { margin-bottom: 1rem; color: var(--muted); text-align: left; }
+.typst-progress th, .typst-progress td { padding: 1rem .75rem; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.typst-progress thead th { font-weight: 600; }
+.typst-progress thead th:first-child { width: 22%; }
+.typst-progress tbody th { font-weight: 600; }
+.typst-progress tbody th span { display: inline-block; margin-top: .4rem; color: var(--muted); font-size: .8rem; font-weight: 400; }
+.typst-progress td { color: var(--muted); }
+.typst-workbench:has(#typst-word:checked) [data-typst="word"],
+.typst-workbench:has(#typst-slides:checked) [data-typst="slides"],
+.typst-workbench:has(#typst-import:checked) [data-typst="import"],
+.typst-workbench:has(#typst-review:checked) [data-typst="review"] { display: grid; }
+@supports not selector(:has(*)) {
+  .typst-control { display: none; }
+  .typst-scene { display: grid; margin-top: 2rem; }
+  .typst-studio img { display: block; margin-top: 1rem; }
+}
+@media (max-width: 900px) {
+  .typst-workbench-heading { display: block; }
+  .typst-workbench-heading > a { display: inline-block; }
+  .typst-scene { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+  .typst-studio { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .typst-document, .typst-process-figure { width: min(100%, 30rem); }
+  .typst-document { grid-row: 1; }
+}
+@media (max-width: 600px) {
+  .typst-workbench { padding: 1.25rem; }
+  .typst-workbench h2, .typst-office-scope h2, .typst-progress h2, .typst-studio h2 { font-size: 1.7rem; }
+  .typst-scene h3 { font-size: 1.55rem; }
+  .typst-document { width: min(100%, 18rem); }
+  .typst-slide { width: 100%; }
+  .typst-office-topics { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  .typst-progress table, .typst-progress tbody, .typst-progress tr, .typst-progress th, .typst-progress td { display: block; width: 100%; }
+  .typst-progress caption { display: block; width: 100%; }
+  .typst-progress thead { display: none; }
+  .typst-progress tbody th { padding: 1.1rem 0 .4rem; border: 0; }
+  .typst-progress td { padding: .4rem 0 1rem; border: 0; }
+  .typst-progress td:last-child { border-bottom: 1px solid var(--rule); }
+  .typst-progress td:last-child::before { content: "Next gap: "; color: var(--ink); font-weight: 600; }
+}
 .ldsc-engine { margin: 1rem 0 3rem; padding: 2rem; background: var(--paper); scroll-margin-top: 1rem; }
 .ldsc-engine h2 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 2rem; font-weight: 400; }
 .ldsc-engine h3 { margin: 0 0 1rem; font-size: 1.25rem; }
