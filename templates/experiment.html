@@ -19,7 +19,9 @@
 </div>
 {% include "ldsc-engine.html" %}
 {% if experiment.slug == "tylax" %}{% include "typst-workbench.html" %}{% endif %}
+{% if experiment.slug == "github-triage" %}{% include "github-triage-process.html" %}{% endif %}
 {% include "experiment-study.html" %}
+{% if experiment.slug == "github-triage" %}{% include "github-triage-reports.html" %}{% endif %}
 <div class="experiment-detail-copy">
   <section aria-labelledby="next-title"><h2 id="next-title">What comes next</h2><p>{{ experiment.next_step }}</p></section>
   <details class="experiment-implementation"><summary>Implementation and credits</summary><p>{{ experiment.question }}</p><p>{{ experiment.scope }}</p><p>{{ experiment.demo_plan }}</p><p>{{ experiment.rust_plan }}</p><p>{{ experiment.credit }}</p></details>

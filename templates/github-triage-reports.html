@@ -1,0 +1,35 @@
+<section class="triage-reports" aria-labelledby="triage-reports-title">
+  <h2 id="triage-reports-title">Other reports from the same process</h2>
+  <p class="triage-snapshot-note">Public issue states checked on October 11, 2026. The measurements and reproductions belong to the linked reports. Fixing pull requests are credited to their upstream authors.</p>
+  <div class="triage-report-list">
+    <article>
+      <div><h3><a href="https://github.com/typst/typst/issues/8667">Typst: a shaping regression</a></h3><p>A paragraph, an explicit right-to-left span, and a final combining mark trigger a compiler panic. Removing any one condition makes the input compile. The report compares four versions and traces the invalid glyph range through reshaping.</p></div>
+      <span class="triage-issue-state">Open</span>
+    </article>
+    <article>
+      <div><h3><a href="https://github.com/oraios/serena/issues/2127">Serena: closing a handler leaves it alive</a></h3><p>Twenty create-and-close cycles left twenty workers alive and twenty handlers retained after garbage collection. The report separates that disposal defect from an unproven explanation for system memory exhaustion. <a href="https://github.com/oraios/serena/pull/2128">mikamikasuki’s fix</a> merged on October 6.</p></div>
+      <span class="triage-issue-state triage-issue-closed">Closed</span>
+    </article>
+    <article>
+      <div><h3><a href="https://github.com/openai/codex/issues/50550">Codex: a click that reaches the wrong element</a></h3><p>A local HTML fixture records which handler receives the click. The overlay receives it in all three trials, even though the locator call succeeds. Removing the overlay’s pointer events makes the same call reach the button.</p></div>
+      <span class="triage-issue-state">Open</span>
+    </article>
+    <article>
+      <div><h3><a href="https://github.com/astral-sh/uv/issues/22167">uv: an interrupted build leaves an environment</a></h3><p>A dependency-free build backend isolates the cancellation case. After Ctrl+C and cache prune, an 84 KiB environment remains. <a href="https://github.com/astral-sh/uv/pull/22171">sanjeevafk’s pruning change</a> closed this issue. The separate ownership proposal covers processes that remain alive.</p></div>
+      <span class="triage-issue-state triage-issue-closed">Closed</span>
+    </article>
+  </div>
+  <details class="triage-comment">
+    <summary>Read my published close recommendation for uv #3841</summary>
+    <p><a href="https://github.com/astral-sh/uv/issues/3841#issuecomment-4478885750">Posted May 18, 2026</a>. The issue closed after this comment. charliermarsh authored <a href="https://github.com/astral-sh/uv/pull/7188">the fixing pull request</a>.</p>
+    <p>Closed by #7188</p>
+    <p>Repro:</p>
+    <pre><code>UV_PYTHON_DOWNLOADS=never UV_NO_MANAGED_PYTHON=1 uv pip install --python 3.9 requests</code></pre>
+    <p>uv 0.4.7:</p>
+    <pre><code>error: No virtual environment found for Python 3.9</code></pre>
+    <p>uv 0.4.8:</p>
+    <pre><code>error: No virtual environment found for Python 3.9; run `uv venv` to create an environment, or pass `--system` to install into a non-virtual environment</code></pre>
+  </details>
+  <div class="triage-ai-note"><h3>Where AI helps</h3><p>Codex helps me search the history, prepare isolated harnesses, and organize the evidence. My uv and Typst reports disclose AI assistance. I keep observed output, source analysis, and proposed changes distinct, so another developer can check each claim.</p></div>
+  <p class="triage-evidence-download"><a href="/static/experiments/github-triage/evidence.json">Download the public source and benchmark snapshot</a></p>
+</section>

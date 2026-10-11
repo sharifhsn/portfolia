@@ -10,6 +10,9 @@ pub(super) fn preview(slug: &str) -> Option<String> {
     if slug == "tylax" {
         return Some(include_str!("../../static/experiments/tylax/office/workflow.svg").into());
     }
+    if slug == "github-triage" {
+        return Some(super::triage::workflow_svg());
+    }
     build(slug)?.scenes.into_iter().find_map(|scene| {
         if !scene.svg.is_empty() {
             Some(scene.svg)
@@ -35,6 +38,7 @@ pub(super) fn build(slug: &str) -> Option<Study> {
         "raygeo" => geometry(),
         "booksharp" => basketball(),
         "dailyreddit" => retrieval("thread"),
+        "github-triage" => super::triage::build(),
         "docs-cli" => retrieval("document"),
         "paper-reader" => retrieval("paper"),
         "discord-audio" => retrieval("audio"),

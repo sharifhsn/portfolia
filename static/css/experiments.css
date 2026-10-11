@@ -96,6 +96,50 @@
 .experiment-study:has(input[value="1"]:checked) [data-case="1"],
 .experiment-study:has(input[value="2"]:checked) [data-case="2"],
 .experiment-study:has(input[value="3"]:checked) [data-case="3"] { display: block; }
+.triage-process, .triage-reports { margin-bottom: 3rem; scroll-margin-top: 1rem; }
+.triage-process h2, .triage-reports h2 { margin: 0 0 1rem; font-family: var(--font-display); font-size: 2rem; font-weight: 400; }
+.triage-process-heading { max-width: 46rem; }
+.triage-process p, .triage-reports p { color: var(--muted); }
+.triage-steps { margin: 2rem 0; padding: 0; list-style: none; counter-reset: investigation; }
+.triage-steps > li { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) minmax(12rem, .5fr); gap: 1.5rem; padding: 1.7rem 0; border-top: 1px solid var(--rule); counter-increment: investigation; }
+.triage-steps > li::before { content: counter(investigation, decimal-leading-zero); color: #386675; font-family: var(--font-display); font-size: 1.7rem; line-height: 1.3; }
+.triage-steps h3 { margin: .1rem 0 .75rem; font-size: 1.12rem; font-weight: 650; }
+.triage-steps p { margin-bottom: .65rem; font-size: .95rem; }
+.triage-steps aside { align-self: start; padding-left: 1rem; border-left: 2px solid #8a6b4d; }
+.triage-steps aside span { display: block; color: var(--muted); font-size: .8rem; }
+.triage-steps aside strong { display: block; margin: .5rem 0 .8rem; font-size: 1rem; font-weight: 550; }
+.triage-steps aside a { display: inline-block; padding-block: .25rem; font-size: .85rem; }
+.triage-decisions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; padding: 1.25rem 1.5rem; background: var(--paper); }
+.triage-decisions h3 { margin: .25rem 0 .65rem; font-size: .95rem; }
+.triage-decisions p { margin: 0; font-size: .88rem; }
+.triage-report-list { margin-top: 1.5rem; }
+.triage-report-list article { display: grid; grid-template-columns: minmax(0, 1fr) 6rem; gap: 2rem; padding: 1.5rem 0; border-top: 1px solid var(--rule); }
+.triage-report-list h3 { margin: 0 0 .6rem; font-size: 1.12rem; }
+.triage-report-list h3 a { color: var(--ink); }
+.triage-report-list p { max-width: 75ch; margin-bottom: 0; font-size: .95rem; }
+.triage-issue-state { justify-self: end; align-self: start; margin-top: .25rem; padding: .3rem .65rem; border: 1px solid #b9c9ce; color: #386675; font-size: .8rem; }
+.triage-issue-closed { color: #6b547f; border-color: #cbbfd7; }
+.triage-reports .triage-snapshot-note { max-width: 75ch; font-size: .85rem; }
+.triage-comment { margin: 1.5rem 0 2rem; padding: 1.25rem 1.5rem; border-left: 3px solid #386675; background: var(--paper); }
+.triage-comment summary { min-height: 2.75rem; padding-block: .4rem; color: var(--link); cursor: pointer; }
+.triage-comment p { margin-top: 1rem; font-size: .9rem; }
+.triage-comment pre { padding: 1rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--paper-raised); font-size: .82rem; line-height: 1.6; }
+.triage-ai-note { max-width: 46rem; }
+.triage-ai-note h3 { margin-bottom: .65rem; font-size: 1.1rem; }
+.triage-evidence-download { font-size: .9rem; }
+@media (max-width: 900px) {
+  .triage-steps > li { grid-template-columns: 2.5rem minmax(0, 1fr); gap: 1rem; }
+  .triage-steps aside { grid-column: 2; margin-top: .25rem; }
+}
+@media (max-width: 600px) {
+  .triage-process h2, .triage-reports h2 { font-size: 1.7rem; }
+  .triage-steps > li { grid-template-columns: 1.6rem minmax(0, 1fr); gap: .8rem; }
+  .triage-steps > li::before { font-size: 1.3rem; }
+  .triage-decisions { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .triage-report-list article { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  .triage-issue-state { justify-self: start; }
+  .triage-comment { padding: 1rem; }
+}
 @supports not selector(:has(*)) {
   .study-control { display: none; }
   .study-scene { display: block; margin-block: 2rem; }

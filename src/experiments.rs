@@ -3,6 +3,7 @@ use std::sync::LazyLock;
 
 pub(super) mod ldsc;
 mod studies;
+mod triage;
 
 #[derive(Clone, Copy, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
@@ -106,7 +107,8 @@ static CATALOG: LazyLock<Vec<Experiment>> = LazyLock::new(|| {
     for experiment in &mut document.experiments {
         if let Some(preview) = studies::preview(&experiment.slug) {
             experiment.preview_svg = preview;
-            experiment.preview_is_example = experiment.slug != "tylax";
+            experiment.preview_is_example =
+                !matches!(experiment.slug.as_str(), "tylax" | "github-triage");
         } else {
             experiment.preview_svg = illustration(experiment.category);
         }

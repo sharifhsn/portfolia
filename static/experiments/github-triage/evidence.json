@@ -1,0 +1,94 @@
+{
+  "checked_on": "October 11, 2026",
+  "benchmark_posted_on": "May 18, 2026",
+  "benchmarks": [
+    {
+      "members": 100,
+      "before_ms": 213.8,
+      "before_stddev_ms": 19.3,
+      "after_ms": 53.7,
+      "after_stddev_ms": 0.8
+    },
+    {
+      "members": 200,
+      "before_ms": 694.0,
+      "before_stddev_ms": 15.7,
+      "after_ms": 69.0,
+      "after_stddev_ms": 5.5
+    }
+  ],
+  "issues": [
+    {
+      "key": "uv3841",
+      "title": "Improve error message when discovery fails due to system interpreter filtering",
+      "href": "https://github.com/astral-sh/uv/issues/3841",
+      "evidence_href": "https://github.com/astral-sh/uv/issues/3841#issuecomment-4478885750",
+      "kind": "My verification comment",
+      "state": "Closed",
+      "quote": "Closed by #7188"
+    },
+    {
+      "key": "uv3937",
+      "title": "Cache workspace discovery in-process",
+      "href": "https://github.com/astral-sh/uv/issues/3937",
+      "evidence_href": "https://github.com/astral-sh/uv/issues/3937#issuecomment-4480071899",
+      "kind": "My verification comment",
+      "state": "Closed",
+      "quote": "Closed by #12096"
+    },
+    {
+      "key": "wild2616",
+      "title": "`--compress-debug-sections` shifts writable segment contents when the first TLS section is padded",
+      "href": "https://github.com/wild-linker/wild/issues/2616",
+      "evidence_href": "https://github.com/wild-linker/wild/issues/2616",
+      "kind": "My report",
+      "state": "Closed",
+      "quote": "Segfaults with `zlib` or `zstd`; exits 0 without `--compress-debug-sections`."
+    },
+    {
+      "key": "uv22167",
+      "title": "uv build leaves a temporary build environment after Ctrl+C",
+      "href": "https://github.com/astral-sh/uv/issues/22167",
+      "evidence_href": "https://github.com/astral-sh/uv/issues/22167",
+      "kind": "My report",
+      "state": "Closed",
+      "quote": "Ctrl+C stops `uv build` and the backend, but the temporary build environment stays in `builds-v0`."
+    },
+    {
+      "key": "uv22338",
+      "title": "Separate runtime workspace ownership from cache cleanup",
+      "href": "https://github.com/astral-sh/uv/issues/22338",
+      "evidence_href": "https://github.com/astral-sh/uv/issues/22338",
+      "kind": "My report",
+      "state": "Open",
+      "quote": "Unknown process lifetime means keep the workspace."
+    },
+    {
+      "key": "serena2127",
+      "title": "MemoryLogHandler.close() leaves worker threads alive and retains closed handlers",
+      "href": "https://github.com/oraios/serena/issues/2127",
+      "evidence_href": "https://github.com/oraios/serena/issues/2127",
+      "kind": "My report",
+      "state": "Closed",
+      "quote": "leaves all 20 worker threads alive and all 20 handler objects retained after garbage collection."
+    },
+    {
+      "key": "codex50550",
+      "title": "In-app Browser locator.click returns success when a same-document overlay receives the click",
+      "href": "https://github.com/openai/codex/issues/50550",
+      "evidence_href": "https://github.com/openai/codex/issues/50550",
+      "kind": "My report",
+      "state": "Open",
+      "quote": "The requested button receives no click; the overlay's handler runs instead."
+    },
+    {
+      "key": "typst8667",
+      "title": "Compiler panic when a `par` contains a `text(dir: rtl)` span ending in a combining mark",
+      "href": "https://github.com/typst/typst/issues/8667",
+      "evidence_href": "https://github.com/typst/typst/issues/8667",
+      "kind": "My report",
+      "state": "Open",
+      "quote": "`#par[#text(dir: rtl)[أَمۡ]]` panics the compiler. Exit code 101, no output file."
+    }
+  ]
+}

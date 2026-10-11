@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-labelledby="title desc">
+  <title id="title">From a reported symptom to a checkable conclusion</title>
+  <desc id="desc">Read the issue, isolate a reproduction, compare versions, then give a maintainer the evidence. A passing example still needs checks for unresolved cases.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="24" y="28" width="178" height="76" rx="4"/>
+    <rect x="278" y="28" width="178" height="76" rx="4"/>
+    <rect x="278" y="176" width="178" height="76" rx="4"/>
+    <rect x="24" y="176" width="178" height="76" rx="4"/>
+    <path d="M202 66h76m-10-7 10 7-10 7M367 104v72m-7-10 7 10 7-10M278 214h-76m10-7-10 7 10 7"/>
+  </g>
+  <g fill="currentColor" font-family="sans-serif" font-size="19" text-anchor="middle">
+    <text x="113" y="61">Reported symptom</text><text x="113" y="85" font-size="16">Read every ask</text>
+    <text x="367" y="61">Small reproduction</text><text x="367" y="85" font-size="16">Control one variable</text>
+    <text x="367" y="209">Version boundary</text><text x="367" y="233" font-size="16">Failure → change</text>
+    <text x="113" y="209">Useful conclusion</text><text x="113" y="233" font-size="16">Proof + open work</text>
+  </g>
+</svg>

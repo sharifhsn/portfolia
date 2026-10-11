@@ -1,0 +1,37 @@
+<section class="triage-process" id="triage-process" aria-labelledby="triage-process-title">
+  <div class="triage-process-heading">
+    <h2 id="triage-process-title">How I investigate an issue</h2>
+    <p>Source code explains the mechanism. A reproduction shows the behavior. Release history connects that behavior to a specific change. I bring those pieces together before recommending what happens next.</p>
+  </div>
+  <ol class="triage-steps">
+    <li>
+      <div><h3>Read the whole problem</h3><p>I read the original report, every comment, and the linked issues and pull requests. I separate each requested behavior. A report about an error message can also contain an unresolved platform case or a broader API request.</p><p>I check the current state of related work. An old issue can still track an active design decision. A merged fix can leave its original issue open.</p></div>
+      <aside><span>The question</span><strong>What exactly must change?</strong><a href="https://github.com/astral-sh/uv/issues/3841">uv’s missing interpreter hint</a></aside>
+    </li>
+    <li>
+      <div><h3>Reduce it to a runnable example</h3><p>I preserve the reported trigger, then remove everything that does not cause the failure. I pin the tool version, inputs, platform, and relevant configuration. A useful control changes one condition and shows the result.</p><p>For the Wild linker report, three lines of C were enough. The binary crashed with debug compression and exited successfully without it. The report records both architectures and the tested commit.</p></div>
+      <aside><span>The evidence</span><strong>Same input. One changed condition.</strong><a href="https://github.com/wild-linker/wild/issues/2616">The three-line linker reproduction</a></aside>
+    </li>
+    <li>
+      <div><h3>Trace the failure to its owner</h3><p>I follow the relevant call path and connect the observed failure to a concrete operation. A panic location can be downstream of the defect. A successful tool response can hide a failed action.</p><p>In my Codex browser report, a visible, enabled button resolved correctly, but an overlay received the click. An event receipt identified the recipient. That placed the report at the app’s browser wrapper.</p></div>
+      <aside><span>The mechanism</span><strong>Which component breaks the contract?</strong><a href="https://github.com/openai/codex/issues/50550">The wrong-recipient click report</a></aside>
+    </li>
+    <li>
+      <div><h3>Find the version where behavior changes</h3><p>For a claimed fix, I run the reproduction on the current release and narrow the historical boundary. I compare the last failing release with the first passing release. I trace the change to its pull request or commit and check that it reached that release.</p><p>For performance, I repeat measurements and increase the input along the dimension that caused the slowdown. The uv workspace example compares 100 and 200 members, so the improvement is visible beyond one fixture size.</p></div>
+      <aside><span>The attribution</span><strong>One reproduction. Adjacent releases.</strong><a href="https://github.com/astral-sh/uv/issues/3937#issuecomment-4480071899">My uv benchmark comparison</a></aside>
+    </li>
+    <li>
+      <div><h3>Challenge the conclusion</h3><p>I check sibling inputs, remaining asks, partial fixes, reverts, active follow-ups, and maintainer commitments. I keep an untested platform as an explicit gap. A failed attempt to reproduce a bug does not establish a fix.</p><p>The uv cleanup report and workspace-ownership proposal show why this matters. Removing abandoned environments addresses one problem. A live backend losing its files raises a separate lifetime problem.</p></div>
+      <aside><span>The boundary</span><strong>What remains unresolved?</strong><a href="https://github.com/astral-sh/uv/issues/22338">The workspace-ownership proposal</a></aside>
+    </li>
+    <li>
+      <div><h3>Give the maintainer the shortest useful proof</h3><p>My close recommendations lead with the fixing change, then give the reproduction and exact output on each side of the release boundary. I keep the commands copyable. The comment adds a verified link or result that the thread was missing.</p><p>I retain the longer investigation, per-ask decisions, and remaining checks in the working notes. The public comment contains what another developer needs to verify the conclusion.</p></div>
+      <aside><span>The handoff</span><strong>Fix link. Repro. Before and after.</strong><a href="https://github.com/astral-sh/uv/issues/3841#issuecomment-4478885750">Read a published recommendation</a></aside>
+    </li>
+  </ol>
+  <div class="triage-decisions" aria-label="Evidence and resulting actions">
+    <div><h3>Verified resolution</h3><p>Every ask is met, the behavior is reproduced, and the fix is attributable. Publish the proof.</p></div>
+    <div><h3>Partial resolution</h3><p>Record what changed and name the remaining failure. Keep the unresolved work visible.</p></div>
+    <div><h3>Missing evidence</h3><p>Name the unavailable platform, input, or test. Preserve a command that makes the next check concrete.</p></div>
+  </div>
+</section>
