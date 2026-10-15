@@ -81,6 +81,12 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
         well_known_dir.join("security.txt"),
         super::security_txt_content(),
     )?;
+    let appspecific_dir = well_known_dir.join("appspecific");
+    fs::create_dir_all(&appspecific_dir)?;
+    fs::write(
+        appspecific_dir.join("com.tesla.3p.public-key.pem"),
+        include_str!("../context/com.tesla.3p.public-key.pem"),
+    )?;
     fs::write(
         output_dir.join("manifest.webmanifest"),
         serde_json::to_string(&super::web_manifest_json()).expect("web manifest should serialize"),
@@ -274,6 +280,11 @@ mod tests {
         assert!(output.join("api/openapi.json").is_file());
         assert!(output.join(".well-known/agent.json").is_file());
         assert!(output.join(".well-known/security.txt").is_file());
+        assert!(
+            output
+                .join(".well-known/appspecific/com.tesla.3p.public-key.pem")
+                .is_file()
+        );
         assert!(output.join("manifest.webmanifest").is_file());
         assert!(output.join("404.html").is_file());
         assert!(output.join("_headers").is_file());
