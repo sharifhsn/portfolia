@@ -28,11 +28,11 @@ impl Category {
 
     pub(super) fn label(self) -> &'static str {
         match self {
-            Self::Numbers => "Numbers & models",
-            Self::Languages => "Languages & compilers",
-            Self::Media => "Pictures, games & sound",
-            Self::Tools => "Small useful tools",
-            Self::Knowledge => "Knowledge & local AI",
+            Self::Numbers => "Quantitative & science",
+            Self::Languages => "Systems & compilers",
+            Self::Media => "Graphics & media",
+            Self::Tools => "Tools & desktop",
+            Self::Knowledge => "Knowledge & data",
         }
     }
 }
@@ -53,6 +53,12 @@ pub(super) struct Experiment {
     pub(super) name: String,
     pub(super) category: Category,
     status: Status,
+    #[serde(default)]
+    pub(super) stack: String,
+    #[serde(default)]
+    pub(super) featured: bool,
+    pub(super) repo_url: Option<String>,
+    pub(super) live_url: Option<String>,
     pub(super) summary: String,
     pub(super) interest: String,
     pub(super) progress: String,
@@ -75,10 +81,7 @@ impl Experiment {
     }
 
     pub(super) fn featured(&self) -> bool {
-        matches!(
-            self.slug.as_str(),
-            "ldsc" | "rustlyn" | "rust-dotnet" | "tylax"
-        )
+        self.featured
     }
 
     pub(super) fn has_demo(&self) -> bool {
@@ -87,7 +90,7 @@ impl Experiment {
 
     pub(super) fn status_label(&self) -> &'static str {
         match self.status {
-            Status::Available => "Try now",
+            Status::Available => "Live demo",
             Status::Study => "Interactive study",
             Status::Recorded => "Recorded result",
             Status::Planned => "Demo planned",
@@ -219,6 +222,7 @@ mod tests {
                 assert_eq!(page.matches(&format!("id=\"{fragment}\"")).count(), 1);
             }
             for text in [
+                &experiment.stack,
                 &experiment.summary,
                 &experiment.scope,
                 &experiment.next_step,
@@ -228,9 +232,15 @@ mod tests {
                 assert!(!text.is_empty());
                 assert!(!text.contains("/Users/") && !text.contains("ai-history-2026"));
             }
+            if let Some(url) = &experiment.repo_url {
+                assert!(url.starts_with("https://"), "repo_url must be https: {url}");
+            }
+            if let Some(url) = &experiment.live_url {
+                assert!(url.starts_with("https://"), "live_url must be https: {url}");
+            }
         }
         assert_eq!(all().iter().filter(|e| e.available()).count(), 1);
-        assert_eq!(all().iter().filter(|e| e.featured()).count(), 4);
+        assert_eq!(all().iter().filter(|e| e.featured()).count(), 6);
     }
 
     #[test]

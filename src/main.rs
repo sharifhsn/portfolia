@@ -223,7 +223,7 @@ fn page_title(page: &str) -> &'static str {
     match page {
         "blog" => "Writing | Sharif Haason",
         "projects" => "Projects | Sharif Haason",
-        "experiments" => "Vibe coded experiments | Sharif Haason",
+        "experiments" => "Experiments & Builds | Sharif Haason",
         "hornet" => "Hornet FX desk | Sharif Haason",
         "resume" => "Resume | Sharif Haason",
         "chat" => "Chat | Sharif Haason",
@@ -1103,8 +1103,8 @@ fn web_manifest_json() -> serde_json::Value {
         "start_url": "/",
         "scope": "/",
         "display": "browser",
-        "theme_color": "#f3f6fa",
-        "background_color": "#f3f6fa",
+        "theme_color": "#faf8f5",
+        "background_color": "#faf8f5",
         "icons": [
             {
                 "src": "/static/img/icon-192.png",
@@ -2519,6 +2519,35 @@ mod tests {
         assert!(!ldsc.contains("style=\""));
         assert_eq!(ldsc.matches("viewBox=\"0 0 100 1\"").count(), 4);
         for slug in [
+            "tessera",
+            "system-health",
+            "ldsc",
+            "rowla",
+            "tylax",
+            "github-triage",
+            "rust-target-size",
+            "rustlyn",
+            "rust-dotnet",
+            "wedeo",
+            "bevy-switch",
+            "ttfx",
+            "hornet",
+        ] {
+            let Html(page) = render_experiment(slug).unwrap();
+            assert!(index.contains(&format!("/experiments/{slug}/")));
+            assert!(
+                !page.contains("style=\""),
+                "CSP forbids inline style on {slug}"
+            );
+        }
+        let Html(target_size) = render_experiment("rust-target-size").unwrap();
+        assert!(target_size.contains("id=\"target-size-writeup\""));
+        assert!(target_size.contains("100.48 GiB"));
+        assert!(target_size.contains("81.7%"));
+        let Html(rowla) = render_experiment("rowla").unwrap();
+        assert!(rowla.contains("/static/experiments/rowla/taskbar.png"));
+        assert!(rowla.contains("Ghostty"));
+        for slug in [
             "browser-model",
             "fractal-study",
             "home-inventory",
@@ -2528,17 +2557,16 @@ mod tests {
             "rust-swift",
             "numerical-ports",
             "cugen-layout",
-            "oboromi",
-            "system-health",
-            "bevy-switch",
-            "plume",
-            "wedeo",
+            "leonida",
             "volt",
+            "oboromi",
             "guphub",
-            "ttfx",
             "raygeo",
-            "factshort",
             "booksharp",
+            "polymm",
+            "dailyreddit",
+            "plume",
+            "factshort",
         ] {
             assert!(!index.contains(&format!("/experiments/{slug}/")));
             assert_eq!(render_experiment(slug).unwrap_err(), StatusCode::NOT_FOUND);

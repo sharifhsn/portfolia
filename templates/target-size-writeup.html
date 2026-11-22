@@ -1,0 +1,103 @@
+<section class="target-size-writeup" id="target-size-writeup" aria-labelledby="ts-title">
+  <div class="ts-header">
+    <div>
+      <p class="page-eyebrow">Full Writeup · Cargo, rustc &amp; Wild</p>
+      <h2 id="ts-title">Cutting Rust target/ by 61–82% without dropping debug info</h2>
+      <p>Large Rust repositories routinely chew through 30–100 GiB of disk across feature flags, test targets, and branch switches. I built two separate prototypes inside forks of Cargo, rustc, and the Wild linker—keeping full DWARF debug information and incremental compilation enabled—and measured both storage saved and exact rebuild cost across Bevy, Polars, Nushell, Ruff, and uv.</p>
+    </div>
+    <a class="button-secondary" href="https://github.com/sharifhsn/rust/blob/main/TARGET-SIZE.md" target="_blank" rel="noopener noreferrer">Read raw TARGET-SIZE.md ↗</a>
+  </div>
+
+  <div class="ts-highlights">
+    <div class="ts-stat">
+      <span class="ts-stat-label">Cargo active retention</span>
+      <strong>61–65%</strong>
+      <span>saved across 5 real histories (Bevy: 100.5 → 34.6 GiB)</span>
+    </div>
+    <div class="ts-stat">
+      <span class="ts-stat-label">rustc + Wild compact artifacts</span>
+      <strong>74–82%</strong>
+      <span>saved with full DWARF + incremental (Polars: 8.15 → 1.49 GiB)</span>
+    </div>
+    <div class="ts-stat">
+      <span class="ts-stat-label">Validation suite</span>
+      <strong>527 cmds</strong>
+      <span>71 runtime oracles · 29 Cargo regressions · zero warm cache loss</span>
+    </div>
+  </div>
+
+  <section class="ts-track" aria-labelledby="ts-cargo-title">
+    <h3 id="ts-cargo-title">1. Cargo: active artifact retention (<code>-Zactive-artifacts</code>)</h3>
+    <p>Cargo tracks the complete artifact graphs needed by live sessions, published outputs, and registered executions. When a configuration switch succeeds, Cargo reclaims recorded units that no longer have a live owner. If a build fails, the previous successful session roots stay intact so a broken edit never evicts your working build.</p>
+    <p>Across five matched histories—running identical sources, edits, flags, compiler, and CPU—active retention cut disk usage by more than 60% on every repository. Warm <code>check</code>, <code>build</code>, <code>test</code>, and <code>clippy</code> runs reused 100% of cached artifacts with zero extra recompilation. The explicit tradeoff is paid only when returning to an evicted configuration for the first time.</p>
+
+    <div class="ts-table-wrap">
+      <table class="ts-table">
+        <caption>Paired empty-target histories with full debug info (debug = 2) and incremental compilation enabled.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Project</th>
+            <th scope="col">Configs</th>
+            <th scope="col">Ordinary target/</th>
+            <th scope="col">Active target/</th>
+            <th scope="col">Saved</th>
+            <th scope="col">First return (ord → active)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Bevy</th><td>6</td><td>100.48 GiB</td><td>34.62 GiB</td><td class="ts-saved">65.5%</td><td>31.97 → 263.32 s</td></tr>
+          <tr><th scope="row">Polars</th><td>3</td><td>26.63 GiB</td><td>9.83 GiB</td><td class="ts-saved">63.1%</td><td>24.61 → 157.31 s</td></tr>
+          <tr><th scope="row">Nushell</th><td>3</td><td>30.13 GiB</td><td>11.32 GiB</td><td class="ts-saved">62.4%</td><td>22.71 → 172.81 s</td></tr>
+          <tr><th scope="row">Ruff</th><td>3</td><td>14.70 GiB</td><td>5.64 GiB</td><td class="ts-saved">61.6%</td><td>5.07 → 61.72 s</td></tr>
+          <tr><th scope="row">uv</th><td>3</td><td>28.55 GiB</td><td>11.11 GiB</td><td class="ts-saved">61.1%</td><td>6.33 → 123.93 s</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ts-links">
+      <a href="https://github.com/sharifhsn/cargo/tree/codex/active-artifacts" target="_blank" rel="noopener noreferrer">Cargo branch ↗</a>
+      <a href="https://github.com/sharifhsn/cargo/blob/codex/active-artifacts/src/compiler/active_artifacts.rs" target="_blank" rel="noopener noreferrer">active_artifacts.rs ↗</a>
+      <a href="https://github.com/sharifhsn/cargo/blob/codex/active-artifacts/tests/testsuite/active_artifacts.rs" target="_blank" rel="noopener noreferrer">29 regression tests ↗</a>
+      <a href="https://github.com/sharifhsn/rust/blob/main/docs/target-directory-size/astral-retention-results-2026-10-04.md" target="_blank" rel="noopener noreferrer">Ruff &amp; uv report ↗</a>
+      <a href="https://github.com/sharifhsn/rust/blob/main/docs/target-directory-size/config-change-tests-2026-10-03.md" target="_blank" rel="noopener noreferrer">Bevy, Polars &amp; Nushell report ↗</a>
+    </div>
+  </section>
+
+  <section class="ts-track" aria-labelledby="ts-wild-title">
+    <h3 id="ts-wild-title">2. rustc &amp; Wild: compact compiler artifacts</h3>
+    <p>Retention solves multi-configuration sprawl, but even a single build is bloated by duplicated object files, uncompressed metadata, and serialized dependency-graph lookup tables. This second prototype shrinks the artifacts themselves:</p>
+    <ul class="ts-bullets">
+      <li><strong>Compressed objects &amp; metadata</strong> — Zstd-compressed ELF objects, rmeta, and incremental artifacts while keeping compressed <code>.dwo</code> debug files readable by <code>gdb</code>.</li>
+      <li><strong>Content-addressed object &amp; debug storage</strong> — Ordinary ELF objects stored by content hash instead of copied across archives.</li>
+      <li><strong>Direct compact linking in Wild</strong> — Wild reads the compact library representation straight from disk without expanding archives before linking (this work also uncovered and fixed Wild debug-compression segment padding bug <code>#2616</code>).</li>
+      <li><strong>In-memory dep-graph index</strong> — rustc rebuilds the dependency-graph lookup index in memory rather than persisting redundant index tables to disk.</li>
+    </ul>
+
+    <div class="ts-table-wrap">
+      <table class="ts-table">
+        <caption>Single-configuration storage with Zstd final DWARF, full debug info, and incremental compilation (measured separately from Cargo retention).</caption>
+        <thead>
+          <tr>
+            <th scope="col">Project</th>
+            <th scope="col">Ordinary target/</th>
+            <th scope="col">Compact target/</th>
+            <th scope="col">Saved</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Bevy</th><td>12.514 GiB</td><td>2.582 GiB</td><td class="ts-saved">79.4%</td></tr>
+          <tr><th scope="row">Polars</th><td>8.145 GiB</td><td>1.489 GiB</td><td class="ts-saved">81.7%</td></tr>
+          <tr><th scope="row">Nushell</th><td>5.850 GiB</td><td>1.498 GiB</td><td class="ts-saved">74.4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ts-note">Clean builds took 9–22% longer due to compression work; edited rebuilds and relinks stayed fast because Wild reads compact inputs directly without archive expansion.</p>
+
+    <div class="ts-links">
+      <a href="https://github.com/sharifhsn/rust/tree/codex/compact-artifacts-2026-09-28" target="_blank" rel="noopener noreferrer">rustc snapshot ↗</a>
+      <a href="https://github.com/sharifhsn/wild/tree/codex/compact-artifacts-2026-09-28" target="_blank" rel="noopener noreferrer">Wild linker snapshot ↗</a>
+      <a href="https://github.com/sharifhsn/rust/blob/main/docs/target-directory-size/public-results/retention-metrics.json" target="_blank" rel="noopener noreferrer">retention-metrics.json ↗</a>
+      <a href="https://github.com/sharifhsn/rust/blob/main/docs/target-directory-size/public-results/compact-metrics.json" target="_blank" rel="noopener noreferrer">compact-metrics.json ↗</a>
+    </div>
+  </section>
+</section>

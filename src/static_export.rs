@@ -293,8 +293,8 @@ mod tests {
         assert!(headers.contains("Content-Language: en-US"));
         assert!(headers.contains("Strict-Transport-Security:"));
         let redirects = fs::read_to_string(output.join("_redirects")).unwrap();
-        assert!(redirects.contains("/experiments/oboromi/ /experiments/ 302"));
-        assert!(redirects.contains("/experiments/booksharp/ /experiments/ 302"));
+        assert!(redirects.contains("/experiments/fractal-study/ /experiments/ 302"));
+        assert!(redirects.contains("/experiments/browser-model/ /chat/ 302"));
         assert!(!redirects.contains("/v/") && !redirects.contains("/designs"));
         for experiment in super::super::experiments::all() {
             assert!(!redirects.contains(&format!("/experiments/{} ", experiment.slug)));

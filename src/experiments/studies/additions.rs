@@ -2,216 +2,236 @@ use super::*;
 
 pub(super) fn build(slug: &str) -> Option<Study> {
     Some(match slug {
-        "factshort" => claims(),
-        "guphub" => rooms(),
-        "cugen-layout" => packed_values(),
-        "oboromi" => machine(),
+        "tessera" => tessera(),
+        "rowla" => rowla(),
+        "rust-target-size" => rust_target_size(),
         _ => return None,
     })
 }
 
-fn claims() -> Study {
-    let evidence = "The imaginary Sample Desk runs on macOS and stores results locally. Linux support is the next development task.";
+fn tessera() -> Study {
     let scenes = [
-        ("Supported", "The Sample Desk stores results locally.", "Supported", "The source says the application stores results locally, so it supports the claim."),
-        ("Contradicted", "Linux support is complete.", "Contradicted", "The source lists Linux support as the next development task, which contradicts the claim that it is complete."),
-        ("No evidence", "The Sample Desk has ten thousand users.", "Insufficient evidence", "The source gives no user count. The assessment records the missing evidence."),
-    ].into_iter().map(|(label, claim, decision, reason)| {
-        let mut result = scene(label, "A claim stays beside its evidence", reason);
-        result.input = claim.into();
-        result.output = format!("Assessment: {decision}\nReason: {reason}");
-        result.citations.push("claim-1".into());
-        result.svg = svg("A claim connects to a source and an assessment", "<rect x=\"25\" y=\"85\" width=\"120\" height=\"85\" fill=\"none\" stroke=\"currentColor\"/><rect x=\"180\" y=\"85\" width=\"120\" height=\"85\" fill=\"none\" stroke=\"currentColor\"/><rect x=\"335\" y=\"85\" width=\"120\" height=\"85\" fill=\"none\" stroke=\"currentColor\"/><path d=\"M145 127h35m120 0h35\" stroke=\"currentColor\"/><text x=\"65\" y=\"133\">Claim</text><text x=\"208\" y=\"133\">Source</text><text x=\"355\" y=\"133\">Decision</text>");
+        (
+            "Tree + pixels",
+            "Semantic state commits in the same transaction as pixels",
+            "Every window writes its semantic tree (roles, names, actions, bounds) inside the exact transaction that commits its pixels. Agents act by node identity—never guessing pixel coordinates—wait on an explicit settled signal, and never see server-blanked sensitive fields.",
+            "tx.commit(rev = 43):\n  pixels: shm_handle(720x900)\n  node[41]: Button(\"Submit\", enabled)\n  node[42]: Password(sensitive = true)",
+            "MCP read_tree():\n  node[41] Button \"Submit\" [actable]\n  node[42] Password [REDACTED]\ncapture(): node[42] blanked by server\nstate: SETTLED",
+            "Atomic",
+            r#"<rect x="155" y="22" width="170" height="44" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="240" y="49" text-anchor="middle">Transaction #43</text><path d="M240 66v26M120 92h240M120 92v26M360 92v26" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="40" y="118" width="160" height="54" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="120" y="142" text-anchor="middle">Pixels (SHM)</text><text x="120" y="160" text-anchor="middle" font-size="12" opacity=".72">password blanked</text><rect x="280" y="118" width="160" height="54" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="360" y="142" text-anchor="middle">Semantic Tree</text><text x="360" y="160" text-anchor="middle" font-size="12" opacity=".72">node 41 · settled</text><rect x="105" y="206" width="270" height="44" rx="6" fill="currentColor" opacity=".88"/><text x="240" y="233" text-anchor="middle" fill="white" font-size="14">Zero frame/label skew · MCP ready</text>"#,
+        ),
+        (
+            "Multi-agent locks",
+            "Several agents working on one window without fighting over focus",
+            "Tessera treats a window's semantic tree like a concurrent data structure. Agents acquire disjoint subtree grants and deadlock-free FIFO locks, each with its own input seat—so Agent A fills a form while Agent B edits a table in the same window.",
+            "Agent A: lock(subtree = /form/address, seat = 1)\nAgent B: lock(subtree = /sheet/rows,  seat = 2)",
+            "Agent A → GRANTED (exclusive /form/address)\nAgent B → GRANTED (exclusive /sheet/rows)\ndeadlock_possible: false (whole-grant FIFO)\ncursor_conflict: none (per-seat focus)",
+            "Parallel",
+            r#"<rect x="145" y="22" width="190" height="44" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="240" y="49" text-anchor="middle">Shared Window Tree</text><path d="M240 66v26M120 92h240M120 92v26M360 92v26" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="40" y="118" width="160" height="54" rx="5" fill="currentColor" opacity=".12" stroke="currentColor" stroke-width="2"/><text x="120" y="142" text-anchor="middle">Agent A · Seat 1</text><text x="120" y="160" text-anchor="middle" font-size="12" opacity=".78">lock: /form/address</text><rect x="280" y="118" width="160" height="54" rx="5" fill="currentColor" opacity=".12" stroke="currentColor" stroke-width="2"/><text x="360" y="142" text-anchor="middle">Agent B · Seat 2</text><text x="360" y="160" text-anchor="middle" font-size="12" opacity=".78">lock: /sheet/rows</text><rect x="105" y="206" width="270" height="44" rx="6" fill="currentColor" opacity=".88"/><text x="240" y="233" text-anchor="middle" fill="white" font-size="14">Two seats · Disjoint subtrees</text>"#,
+        ),
+        (
+            "Optimistic CAS",
+            "Stale actions are refused before they ever reach the app",
+            "Every action stamps the tree clock the agent read. If the target node—or any node in its declared reads set—changed since that stamp, the server refuses the action immediately so an agent never clicks a stale button.",
+            "act(node = 41, expected_clock = 18)\nserver_clock(node 41): 19 (price updated)",
+            "status: REFUSED (StaleClock)\napp_notified: false\nnext: agent reads delta(18 → 19) and re-decides",
+            "CAS Guard",
+            r#"<rect x="40" y="88" width="150" height="68" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="115" y="118" text-anchor="middle">Agent act()</text><text x="115" y="140" text-anchor="middle" font-size="12" opacity=".72">clock = 18</text><path d="M190 122h50" stroke="currentColor" stroke-width="2"/><rect x="240" y="88" width="200" height="68" rx="5" fill="currentColor" opacity=".85"/><text x="340" y="118" text-anchor="middle" fill="white">Server Clock = 19</text><text x="340" y="140" text-anchor="middle" fill="white" font-size="12" opacity=".9">Refused before app</text><text x="240" y="212" text-anchor="middle" font-size="13" opacity=".75">Compare-and-swap on UI state eliminates race clicks</text>"#,
+        ),
+        (
+            "Single-writer",
+            "One owner per property, capability grants for everything else",
+            "Apps own content; the window manager owns placement. Neither can clobber the other, and a read-only agent cannot mutate properties it holds no write capability for. Revoking a grant destroys its node and takes effect on the next frame.",
+            "WM writes:    node/editor/bounds = rect(0, 0, 720, 900)\nAgent writes: node/editor/title  = \"hacked\"",
+            "WM    → COMMITTED (holds placement capability)\nAgent → REJECTED  (CapabilityDenied)\nunsafe_outside_ipc: 0",
+            "Isolated",
+            r#"<rect x="165" y="22" width="150" height="44" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="240" y="49" text-anchor="middle">Root tree</text><path d="M240 66v28M120 94h240M120 94v26M360 94v26" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="45" y="120" width="150" height="52" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="120" y="143" text-anchor="middle">Editor node</text><text x="120" y="162" text-anchor="middle" font-size="12" opacity=".75">owner: App + WM</text><rect x="285" y="120" width="150" height="52" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="360" y="143" text-anchor="middle">Agent grant</text><text x="360" y="162" text-anchor="middle" font-size="12" opacity=".75">read + act only</text><rect x="115" y="206" width="250" height="44" rx="6" fill="currentColor" opacity=".88"/><text x="240" y="233" text-anchor="middle" fill="white" font-size="14">Write denied · Grant enforced</text>"#,
+        ),
+    ]
+    .into_iter()
+    .map(|(label, title, explanation, input, output, mode, drawing)| {
+        let mut result = scene(label, title, explanation);
+        result.input = input.into();
+        result.output = output.into();
+        result.metrics = vec![
+            metric("Mechanism", mode),
+            metric("Architecture", "18 Rust crates"),
+            metric("Agent interface", "Native MCP"),
+        ];
+        result.svg = svg("Tessera protocol architecture diagram", drawing);
         result
-    }).collect();
+    })
+    .collect();
     Study {
-        title: "Three claims, one source",
-        intro: "Put three claims against the same synthetic note. Follow the evidence to see why each gets a different assessment.",
-        method: "The assessments are prewritten for this synthetic source. Rust exports the report views. FactShort's Python pipeline supplies the claim-research application.",
-        scenes,
-        sources: vec![source(
-            "claim-1",
-            "Original synthetic source note",
-            evidence,
-            None,
-        )],
-        audio: None,
-    }
-}
-
-#[derive(Clone, Copy)]
-enum Role {
-    Host,
-    Speaker,
-    Listener,
-}
-
-fn publish_audio(role: Role, room_open: bool, invitation_accepted: bool) -> bool {
-    room_open
-        && (matches!(role, Role::Host) || matches!(role, Role::Speaker) && invitation_accepted)
-}
-
-fn rooms() -> Study {
-    let scenes = [
-        ("Host", Role::Host, true, true),
-        ("Invited speaker", Role::Speaker, true, true),
-        ("Listener", Role::Listener, true, false),
-        ("Room closed", Role::Host, false, true),
-    ].into_iter().map(|(label, role, open, accepted)| {
-        let permitted = publish_audio(role, open, accepted);
-        let mut result = scene(label, "One room, explicit audio roles", "An open room permits its host and accepted speakers to publish audio. Listeners receive audio. Close the room and every role loses publication access.");
-        result.metrics = vec![metric("Room", if open { "Open" } else { "Closed" }), metric("Role", label), metric("Audio publication", if permitted { "Permitted" } else { "Denied" })];
-        result.svg = svg("A control-plane decision precedes an audio connection", &format!(r#"<circle cx="90" cy="140" r="42" fill="none" stroke="currentColor"/><text x="58" y="145">Person</text><path d="M135 140h55m130 0h35" stroke="currentColor"/><rect x="190" y="90" width="130" height="100" fill="none" stroke="currentColor"/><text x="215" y="125">Role check</text><text x="216" y="157">{}</text><circle cx="399" cy="140" r="42" fill="none" stroke="currentColor"/><text x="376" y="145">Audio</text>"#, if permitted { "Allow" } else { "Deny" }));
-        result.output = format!("can_publish_audio = {permitted}\nroom_open = {open}\ninvitation_accepted = {accepted}");
-        result
-    }).collect();
-    Study {
-        title: "The role decides who gets the microphone",
-        intro: "Choose a role, then compare its publication permission with a closed room.",
-        method: "Rust evaluates this policy for an imaginary room. The next integration matches these decisions to the Guphub control plane's LiveKit grants.",
+        title: "Inside the Tessera protocol",
+        intro: "Walk through the four protocol primitives that turn a desktop session into a clean, concurrent, typed environment for AI agents.",
+        method: "All four primitives—atomic semantic commits, subtree grants with deadlock-free FIFO locks, clock-stamped CAS actions, and single-writer capability checks—are implemented and tested across the 18-crate Rust workspace.",
         scenes,
         sources: vec![],
         audio: None,
     }
 }
 
-fn pack(values: [u8; 4]) -> Option<u8> {
-    values
-        .into_iter()
-        .enumerate()
-        .try_fold(0_u8, |byte, (index, value)| {
-            (value <= 3).then_some(byte | (value << (index * 2)))
-        })
-}
-
-fn unpack(byte: u8) -> [u8; 4] {
-    [byte & 3, (byte >> 2) & 3, (byte >> 4) & 3, (byte >> 6) & 3]
-}
-
-fn packed_values() -> Study {
-    let scenes = [[0, 1, 2, 3], [2, 2, 1, 0], [3, 3, 3, 3]].into_iter().map(|values| {
-        let byte = pack(values).expect("The fixture contains only two-bit values");
-        let mut result = scene(format!("{values:?}"), "Four two-bit values fit in one byte", "The first value occupies the two lowest bits. Decode the same positions to recover all four original values.");
-        result.input = format!("values: {values:?}\nslot order: least significant first");
-        result.output = format!("packed: 0x{byte:02x}\nbits: {byte:08b}\ndecoded: {:?}", unpack(byte));
-        result.metrics = vec![metric("Input values", 4), metric("Packed bytes", 1), metric("Round trip", "Equal")];
-        result.svg = svg("Eight bits grouped into four pairs", &(0..8).map(|bit| {
-            let value = (byte >> (7 - bit)) & 1;
-            format!(r#"<rect x="{}" y="105" width="43" height="58" fill="none" stroke="currentColor"/><text x="{}" y="141" font-size="23">{value}</text>"#, 25 + bit * 54, 39 + bit * 54)
-        }).collect::<String>());
-        result
-    }).collect();
-    Study {
-        title: "A data-layout study",
-        intro: "Choose a synthetic vector, then inspect its encoded byte and recovered values.",
-        method: "Rust implements this independent two-bit example. The view does not implement the CuGen file format, run a GPU kernel, or establish an upstream contribution.",
-        scenes,
-        sources: vec![],
-        audio: None,
-    }
-}
-
-#[derive(Clone, Copy)]
-enum Instruction {
-    Load(u8),
-    Add(u8),
-    Halt,
-}
-
-fn execute(program: &[Instruction], limit: usize) -> Result<Vec<u8>, &'static str> {
-    let mut value = 0_u8;
-    let mut trace = vec![value];
-    for (step, instruction) in program.iter().enumerate() {
-        if step >= limit {
-            return Err("Step limit reached");
-        }
-        match instruction {
-            Instruction::Load(input) => value = *input,
-            Instruction::Add(input) => {
-                value = value.checked_add(*input).ok_or("Register overflow")?
-            }
-            Instruction::Halt => return Ok(trace),
-        }
-        trace.push(value);
-    }
-    Err("Program has no halt instruction")
-}
-
-fn machine() -> Study {
+fn rowla() -> Study {
     let scenes = [
-        ("A complete program", vec![Instruction::Load(7), Instruction::Add(5), Instruction::Halt], "LOAD 7\nADD 5\nHALT", 8),
-        ("Overflow", vec![Instruction::Load(250), Instruction::Add(10), Instruction::Halt], "LOAD 250\nADD 10\nHALT", 8),
-        ("Step limit", vec![Instruction::Load(7), Instruction::Add(5), Instruction::Halt], "LOAD 7\nADD 5\nHALT", 1),
-    ].into_iter().map(|(label, program, input, limit)| {
-        let mut result = scene(label, "One register and explicit execution limits", "The machine has one eight-bit register. Checked addition stops an overflow, and the step limit bounds execution. A successful program reaches HALT within that limit.");
-        result.input = format!("{input}\n\nstep limit: {limit}");
-        result.output = match execute(&program, limit) {
-            Ok(trace) => format!("register trace: {trace:?}\nresult: {}\nstate: Halted", trace.last().expect("The trace includes the initial register")),
-            Err(error) => format!("state: Rejected\nreason: {error}"),
-        };
-        result.svg = svg("A toy register before instruction execution", "<rect x=\"55\" y=\"85\" width=\"155\" height=\"100\" fill=\"none\" stroke=\"currentColor\"/><text x=\"78\" y=\"123\">Instruction</text><text x=\"88\" y=\"153\">decoder</text><path d=\"M210 135h65\" stroke=\"currentColor\"/><rect x=\"275\" y=\"85\" width=\"150\" height=\"100\" fill=\"none\" stroke=\"currentColor\"/><text x=\"306\" y=\"124\">Register</text><text x=\"304\" y=\"156\">8 bits</text>");
+        (
+            "Window buttons",
+            "One dedicated button per window",
+            "Every open window gets its own button along the screen edge with cached ScreenCaptureKit hover previews and instant ⌘W / ⌘Q controls—no more hunting through macOS app groupings.",
+            "/static/experiments/rowla/taskbar.png",
+            "windows: Arc — GitHub PRs · Zed — main.rs · Ghostty — cargo test · Notes — Roadmap\ncache_cap: 16 MiB / 32 thumbnails",
+            "Hovering Ghostty shows the live cached preview with direct close (⌘W) and quit (⌘Q) actions.",
+            "Per-window strip",
+        ),
+        (
+            "One-click Sort",
+            "Reset a busy strip to your preferred order",
+            "Clicking Sort restores your configured app order (Arc → Zed → Ghostty) while keeping main windows ahead of utility popups inside each application.",
+            "/static/experiments/rowla/sort.png",
+            "action: Sort button (or macOS Shortcut / Spotlight)\npreferred_order: [Arc, Zed, Ghostty]",
+            "Taskbar snaps cleanly back into your configured order in one click.",
+            "Instant Sort",
+        ),
+        (
+            "Native tab bubbles",
+            "Utility windows and native tabs stay compact",
+            "Related utility windows and native macOS tabs appear as compact numbered bubbles attached directly to their parent window tile instead of cluttering the bar.",
+            "/static/experiments/rowla/tabs.png",
+            "window: Ghostty — tessera\nnative_tabs: [1: tessera, 2: cargo clippy, 3: git log]",
+            "Three Ghostty tabs sit cleanly inside one predictable tile.",
+            "Tab bubbles",
+        ),
+        (
+            "Stable tile position",
+            "Switch tabs without shuffling the taskbar",
+            "Moving between native tabs keeps the parent window tile anchored in the exact same slot so muscle memory stays intact.",
+            "/static/experiments/rowla/stable-tile.png",
+            "switch: Tab 1 (tessera) → Tab 2 (cargo clippy)\ntile_slot: unchanged",
+            "Tab 2 activates cleanly with zero bar reshuffling.",
+            "Zero jitter",
+        ),
+    ]
+    .into_iter()
+    .map(|(label, title, explanation, img, input, output, feature)| {
+        let mut result = scene(label, title, explanation);
+        result.image = Some(StudyImage {
+            src: img.into(),
+            width: 1280,
+            height: 720,
+        });
+        result.input = input.into();
+        result.output = output.into();
+        result.metrics = vec![
+            metric("Feature", feature),
+            metric("Release", "Signed & notarized"),
+            metric("Platform", "macOS 15.2+ ARM64"),
+        ];
         result
-    }).collect();
+    })
+    .collect();
     Study {
-        title: "Make execution limits visible",
-        intro: "Run the same instruction set through successful execution, arithmetic overflow, and a step-limit failure. Each result shows where execution stops.",
-        method: "Rust executes this original eight-bit instruction set and records the register trace. The next example uses an IPC packet from the local Oboromi parser work. 0xNikilite authors Oboromi.",
+        title: "Rowla in action",
+        intro: "Inspect the shipped native Rust macOS taskbar across hover previews, one-click Sort, native tab bubbles, and stable tile positioning.",
+        method: "Shipped as a free, MIT-licensed, Developer ID signed and Apple-notarized macOS beta on GitHub.",
         scenes,
-        sources: vec![source(
-            "oboromi",
-            "Upstream emulator foundation",
-            "Reference: Oboromi by 0xNikilite. The browser example executes its own eight-bit instruction set.",
-            Some("https://github.com/0xNikilite/oboromi"),
-        )],
+        sources: vec![
+            source(
+                "rowla-repo",
+                "Rowla on GitHub (MIT)",
+                "Free, open-source Windows-style taskbar for macOS written in native Rust.",
+                Some("https://github.com/sharifhsn/rowla"),
+            ),
+            source(
+                "rowla-release",
+                "Download Apple Silicon Beta (v0.2.0-beta.3)",
+                "Developer ID signed and Apple-notarized macOS 15.2+ release.",
+                Some("https://github.com/sharifhsn/rowla/releases/tag/v0.2.0-beta.3"),
+            ),
+        ],
         audio: None,
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn every_possible_packed_byte_round_trips() {
-        for byte in 0..=u8::MAX {
-            assert_eq!(pack(unpack(byte)), Some(byte));
-        }
-        assert_eq!(pack([0, 1, 2, 4]), None);
-    }
-
-    #[test]
-    fn audio_grants_require_role_room_and_invitation() {
-        assert!(publish_audio(Role::Host, true, false));
-        assert!(publish_audio(Role::Speaker, true, true));
-        assert!(!publish_audio(Role::Speaker, true, false));
-        assert!(!publish_audio(Role::Listener, true, true));
-        assert!(!publish_audio(Role::Host, false, true));
-    }
-
-    #[test]
-    fn toy_machine_requires_a_bounded_complete_run() {
-        assert_eq!(
-            execute(
-                &[Instruction::Load(7), Instruction::Add(5), Instruction::Halt],
-                3
+fn rust_target_size() -> Study {
+    let scenes = [
+        (
+            "Bevy (6 configs)",
+            "Cargo retention: 100.48 GiB → 34.62 GiB (65.5% saved)",
+            "Across six Bevy configurations with full debug info and incremental compilation, active retention reclaimed 65.86 GiB while keeping 100% warm-build artifact reuse.",
+            "project: bevy (6 configurations)\nordinary_target: 100.48 GiB\nactive_target: 34.62 GiB",
+            "saved: 65.5% (65.86 GiB reclaimed)\nfirst_return: 31.97 s → 263.32 s\nwarm_reuse: 100% (check/build/test/clippy)",
+            100.48_f64,
+            34.62_f64,
+            "65.5%",
+        ),
+        (
+            "Polars (compact Wild)",
+            "Compact rustc + Wild: 8.15 GiB → 1.49 GiB (81.7% saved)",
+            "Compressing objects and metadata, content-addressing ELF files, linking compact libraries directly in Wild, and rebuilding dep-graph indices in memory shrank Polars's target/ by 81.7%.",
+            "project: polars (full debug + incremental)\nordinary_target: 8.145 GiB\ncompact_target: 1.489 GiB",
+            "saved: 81.7% (6.656 GiB reclaimed)\ndebug_info: Zstd DWARF (gdb-readable .dwo)\narchive_expansion_at_link: eliminated",
+            8.145,
+            1.489,
+            "81.7%",
+        ),
+        (
+            "Ruff & uv (Astral)",
+            "Cargo retention on Ruff (61.6%) and uv (61.1%)",
+            "Running 201 commands and 26 exact runtime oracles across Ruff and uv cut target/ from 14.70 → 5.64 GiB on Ruff and 28.55 → 11.11 GiB on uv.",
+            "ruff: 14.70 GiB → 5.64 GiB (3 configs)\nuv:   28.55 GiB → 11.11 GiB (3 configs)",
+            "ruff_saved: 61.6% | first_return: 5.07 → 61.72 s\nuv_saved:   61.1% | first_return: 6.33 → 123.93 s\nwarm_reuse: 100% across both workspaces",
+            28.55,
+            11.11,
+            "61.1%",
+        ),
+    ]
+    .into_iter()
+    .map(|(label, title, explanation, input, output, before, after, saved)| {
+        let mut result = scene(label, title, explanation);
+        result.input = input.into();
+        result.output = output.into();
+        result.metrics = vec![
+            metric("Ordinary", format!("{before:.2} GiB")),
+            metric("Prototype", format!("{after:.2} GiB")),
+            metric("Saved", saved),
+        ];
+        result.svg = svg(
+            "Rust target directory size comparison in GiB",
+            &format!(
+                r#"<text x="20" y="42" font-size="14" font-weight="600">{}</text>{}{}"#,
+                escape(title),
+                bar("Ordinary GiB", before, before * 1.05, 86),
+                bar("Prototype GiB", after, before * 1.05, 166)
             ),
-            Ok(vec![0, 7, 12])
         );
-        assert_eq!(
-            execute(
-                &[
-                    Instruction::Load(250),
-                    Instruction::Add(10),
-                    Instruction::Halt
-                ],
-                3
+        result
+    })
+    .collect();
+    Study {
+        title: "Compare measured storage savings",
+        intro: "Inspect real before-and-after target/ measurements from Bevy, Polars, Ruff, and uv.",
+        method: "Measured across paired empty-target runs with full debug info (debug = 2) and incremental compilation enabled. Full metrics JSON and reproduction scripts are linked above.",
+        scenes,
+        sources: vec![
+            source(
+                "rust-target-guide",
+                "TARGET-SIZE.md on GitHub",
+                "Full guide, methodology, and machine-readable benchmark JSONs across Cargo, rustc, and Wild.",
+                Some("https://github.com/sharifhsn/rust/blob/main/TARGET-SIZE.md"),
             ),
-            Err("Register overflow")
-        );
-        assert_eq!(
-            execute(&[Instruction::Load(7)], 3),
-            Err("Program has no halt instruction")
-        );
-        assert_eq!(execute(&[Instruction::Halt], 0), Err("Step limit reached"));
+            source(
+                "cargo-retention",
+                "Cargo active-artifacts branch",
+                "Experimental -Zactive-artifacts implementation and 29 regression tests.",
+                Some("https://github.com/sharifhsn/cargo/tree/codex/active-artifacts"),
+            ),
+            source(
+                "wild-compact",
+                "Wild compact-artifacts branch",
+                "Direct compact-library linking and content-addressed ELF object storage.",
+                Some("https://github.com/sharifhsn/wild/tree/codex/compact-artifacts-2026-09-28"),
+            ),
+        ],
+        audio: None,
     }
 }

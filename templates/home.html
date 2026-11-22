@@ -1,19 +1,46 @@
 <section class="introduction" aria-labelledby="page-title">
   <div class="intro-copy">
+    <p class="role">Product Engineer · Monark Markets</p>
     <h1 id="page-title">Sharif Haason</h1>
-    <p class="role">Product engineer at Monark Markets.</p>
-    <p>I build financial software and work with Rust, compilers, and applied mathematics. This is where I share projects and ideas from that work.</p>
+    <p class="intro-lead">I build financial software and ship ambitious systems in Rust—from an AI-native window server and Codex telemetry tooling to high-performance genomics, compiler prototypes, and macOS utilities.</p>
     <nav class="quick-links" aria-label="Profile links">
-      <a href="/projects/">Explore my projects</a>
-      <a href="https://github.com/sharifhsn/" rel="me">GitHub</a>
-      <a href="https://www.linkedin.com/in/sharif-haason/" rel="me">LinkedIn</a>
+      <a class="button-primary" href="/experiments/tessera/">Explore Tessera</a>
+      <a class="button-secondary" href="/experiments/">All {{ experiments.len() }} builds</a>
+      <a class="button-ghost" href="https://github.com/sharifhsn/" rel="me">GitHub</a>
+      <a class="button-ghost" href="https://www.linkedin.com/in/sharif-haason/" rel="me">LinkedIn</a>
     </nav>
   </div>
-  {% if photo_available %}<img class="portrait" src="/static/img/profile.jpg" alt="Sharif Haason" width="800" height="800" decoding="async" fetchpriority="high">{% endif %}
+  {% if photo_available %}<figure class="portrait-frame"><img class="portrait" src="/static/img/profile.jpg" alt="Sharif Haason" width="800" height="800" decoding="async" fetchpriority="high"></figure>{% endif %}
 </section>
+
+<section class="home-experiments" aria-labelledby="home-experiments-title">
+  <header class="section-heading">
+    <div>
+      <h2 id="home-experiments-title">Featured builds</h2>
+      <p class="section-subtitle">Flagship systems, Codex tooling, shipped utilities, and high-performance Rust rewrites.</p>
+    </div>
+    <a class="section-more" href="/experiments/">All {{ experiments.len() }} builds →</a>
+  </header>
+  <ul class="home-experiment-grid">
+    {% for experiment in experiments %}{% if experiment.featured() %}
+    <li class="home-experiment-card">
+      <div class="card-top">
+        <span class="category-chip category-chip-{{ experiment.category.key() }}">{{ experiment.category.label() }}</span>
+        <span class="status-pill{% if experiment.available() %} status-pill-live{% endif %}">{{ experiment.status_label() }}</span>
+      </div>
+      <h3><a href="/experiments/{{ experiment.slug }}/">{{ experiment.name }}</a></h3>
+      <p>{{ experiment.summary }}</p>
+      <div class="card-foot">
+        <span class="stack-line">{{ experiment.stack }}</span>
+      </div>
+    </li>
+    {% endif %}{% endfor %}
+  </ul>
+</section>
+
 <div class="home-work">
   <section class="home-writing" aria-labelledby="recent-writing-title">
-    <header class="section-heading"><h2 id="recent-writing-title">Recent writing</h2><a href="/blog/">All writing</a></header>
+    <header class="section-heading"><h2 id="recent-writing-title">Recent writing</h2><a class="section-more" href="/blog/">All writing →</a></header>
     <ul class="recent-posts">
       {% for post in recent_posts %}
       <li><article>
@@ -25,21 +52,24 @@
     </ul>
   </section>
   <section class="home-project" aria-labelledby="home-project-title">
-    <header class="section-heading"><h2 id="home-project-title">Working projects</h2></header>
+    <header class="section-heading"><h2 id="home-project-title">More work &amp; deep dives</h2><a class="section-more" href="/projects/">Projects →</a></header>
     <div class="home-tool">
+      <span class="tool-kicker">Cargo · rustc · Wild Linker</span>
+      <h3><a href="/experiments/rust-target-size/">Rust target size prototypes</a></h3>
+      <p>Cutting Rust <code>target/</code> disk usage by 61–65% via Cargo active retention and 74–82% via compact rustc + Wild artifacts across Bevy, Polars, Nushell, Ruff, and uv.</p>
+      <a class="text-action" href="/experiments/rust-target-size/">Read the full writeup →</a>
+    </div>
+    <div class="home-tool">
+      <span class="tool-kicker">Research &amp; coursework</span>
+      <h3><a href="/projects/#selected-projects">Selected software &amp; quant research</a></h3>
+      <p>Implied willow trees on 10Y Treasury futures options, a second-place HFT market-making strategy, and data engineering pipelines.</p>
+      <a class="text-action" href="/projects/#selected-projects">Read case notes →</a>
+    </div>
+    <div class="home-tool">
+      <span class="tool-kicker">Coursework prototype · Rust/WASM</span>
       <h3><a href="/projects/hornet/">Hornet FX desk</a></h3>
-      <p>Compose USD/MXN trades in a working risk grid. Change the market and see each position and the total reprice.</p>
-      <a class="text-action" href="/projects/hornet/">Open the worksheet</a>
-    </div>
-    <div class="home-tool">
-      <h3><a href="/experiments/">Vibe coded experiments</a></h3>
-      <p>Small tools, ambitious ports, and ideas that became code. Try a demo or see what comes next.</p>
-      <a class="text-action" href="/experiments/">Explore the experiments</a>
-    </div>
-    <div class="home-tool">
-      <h3><a href="/projects/#selected-projects">Research and software</a></h3>
-      <p>Options pricing, a market-making competition, and data pipelines for basketball analysis.</p>
-      <a class="text-action" href="/projects/">See the project notes</a>
+      <p>An older USD/MXN options and forwards worksheet compiled to WebAssembly for live portfolio Greeks.</p>
+      <a class="text-action" href="/projects/hornet/">Open the worksheet →</a>
     </div>
   </section>
 </div>

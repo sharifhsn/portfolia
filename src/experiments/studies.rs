@@ -5,7 +5,13 @@ mod additions;
 
 pub(super) fn preview(slug: &str) -> Option<String> {
     if slug == "ldsc" {
-        return Some(super::ldsc::build().reference_svg);
+        return Some(ldsc_speedup_svg());
+    }
+    if slug == "rowla" {
+        return Some(
+            r#"<svg viewBox="0 0 1280 720" role="img" aria-label="Rowla native macOS taskbar screenshot" xmlns="http://www.w3.org/2000/svg"><image href="/static/experiments/rowla/taskbar.png" x="0" y="0" width="1280" height="720" preserveAspectRatio="xMidYMid slice"/></svg>"#
+                .into(),
+        );
     }
     if slug == "tylax" {
         return Some(include_str!("../../static/experiments/tylax/office/workflow.svg").into());
@@ -17,9 +23,22 @@ pub(super) fn preview(slug: &str) -> Option<String> {
         if !scene.svg.is_empty() {
             Some(scene.svg)
         } else {
-            scene.image.map(|image| svg("A visual from the recorded example", &format!(r#"<image href="{}" x="80" y="15" width="320" height="250" preserveAspectRatio="xMidYMid meet"/>"#, escape(&image.src))))
+            scene.image.map(|image| {
+                svg(
+                    "Visual from the example",
+                    &format!(
+                        r#"<image href="{}" x="80" y="15" width="320" height="250" preserveAspectRatio="xMidYMid meet"/>"#,
+                        escape(&image.src)
+                    ),
+                )
+            })
         }
     })
+}
+
+fn ldsc_speedup_svg() -> String {
+    r##"<svg viewBox="0 0 480 280" role="img" aria-label="LDSC benchmark: Python takes 25 minutes 49 seconds versus 85 seconds in Rust, an 18.1x speedup" xmlns="http://www.w3.org/2000/svg"><g font-family="-apple-system, BlinkMacSystemFont, sans-serif" fill="currentColor"><text x="24" y="48" font-size="32" font-weight="700" letter-spacing="-0.03em">18.1×</text><text x="140" y="46" font-size="16" font-weight="600" opacity=".82">faster LD scores in Rust</text><text x="24" y="72" font-size="12.5" opacity=".62">Exact f64 on 1000G reference · 0.0 max diff vs. Python</text><text x="24" y="120" font-size="13.5" font-weight="600" opacity=".75">Python LDSC</text><text x="456" y="120" text-anchor="end" font-size="13.5" font-weight="600" opacity=".75">25m 49s</text><rect x="24" y="130" width="432" height="24" rx="5" opacity=".22"/><text x="24" y="194" font-size="13.5" font-weight="700">Rust LDSC (exact f64)</text><text x="456" y="194" text-anchor="end" font-size="13.5" font-weight="700">1m 25s</text><rect x="24" y="204" width="432" height="24" rx="5" opacity=".08"/><rect x="24" y="204" width="26" height="24" rx="5"/></g></svg>"##
+        .into()
 }
 
 pub(super) fn build(slug: &str) -> Option<Study> {
@@ -207,23 +226,70 @@ fn measurement_state(value: Option<f64>, age: Option<u64>) -> MeasurementState {
 }
 
 fn system_health() -> Study {
-    let scenes = [("Current", Some(18.0), Some(4)), ("Stale", Some(82.0), Some(420)), ("Missing", None, None)].into_iter().map(|(label, cpu, age)| {
+    let scenes = [
+        ("Current", Some(18.0), Some(4)),
+        ("Stale", Some(82.0), Some(420)),
+        ("Missing", None, None),
+    ]
+    .into_iter()
+    .map(|(label, cpu, age)| {
         let state = measurement_state(cpu, age);
-        let mut result = scene(label, format!("Synthetic host: {label}"), match state {
-            MeasurementState::Current => "The CPU sample is four seconds old. Its age keeps the value tied to the time of measurement.",
-            MeasurementState::Stale => "Seven minutes passed since this CPU sample. The panel keeps the value visible and marks it stale, so its age travels with it.",
-            MeasurementState::Missing => "The CPU sample is missing. The panel reports that state explicitly instead of substituting a zero-percent reading.",
-        });
-        result.svg = svg("Synthetic memory, disk, and CPU measurements", &format!("{}{}{}", bar("Memory %", 56.0, 100.0, 45), bar("Disk %", 31.0, 100.0, 115), cpu.map_or_else(|| "<text x=\"16\" y=\"208\">CPU: unavailable</text>".into(), |value| bar("CPU %", value, 100.0, 185))));
-        result.metrics = vec![metric("CPU state", label), metric("CPU sample age", age.map_or_else(|| "Unknown".into(), |seconds| format!("{seconds} seconds"))), metric("Memory", "56% of 16 GiB")];
-        result.input = format!("cpu_percent: {cpu:?}\ncpu_age_seconds: {age:?}\nmemory_percent: 56\ndisk_percent: 31");
+        let mut result = scene(
+            label,
+            format!("Host telemetry: {label}"),
+            match state {
+                MeasurementState::Current => {
+                    "Sampled four seconds ago: CPU, memory, and disk readings are fresh and trustworthy for scheduling parallel builds."
+                }
+                MeasurementState::Stale => {
+                    "Seven minutes old: the panel keeps the last known 82% reading visible while flagging it stale so neither the developer nor the agent treats old data as live."
+                }
+                MeasurementState::Missing => {
+                    "Sensor unavailable: the panel reports missing explicitly instead of silently substituting 0% CPU."
+                }
+            },
+        );
+        let badge_text = match state {
+            MeasurementState::Current => "FRESH · 4s ago",
+            MeasurementState::Stale => "STALE · 7m ago",
+            MeasurementState::Missing => "UNAVAILABLE",
+        };
+        let badge_op = match state {
+            MeasurementState::Current => ".9",
+            MeasurementState::Stale => ".62",
+            MeasurementState::Missing => ".42",
+        };
+        let cpu_row = cpu.map_or_else(
+            || r#"<text x="16" y="222" font-weight="600">CPU %</text><text x="135" y="222" opacity=".7">unavailable (never coerced to 0%)</text>"#.into(),
+            |value| bar("CPU %", value, 100.0, 200),
+        );
+        result.svg = svg(
+            "Codex System Health telemetry panel with freshness state",
+            &format!(
+                r#"<text x="16" y="34" font-size="16" font-weight="700">Codex System Health</text><rect x="316" y="14" width="148" height="28" rx="14" fill="currentColor" opacity="{badge_op}"/><text x="390" y="33" text-anchor="middle" fill="white" font-size="11.5" font-weight="600">{badge_text}</text>{}{}{cpu_row}"#,
+                bar("Memory %", 56.0, 100.0, 72),
+                bar("Disk %", 31.0, 100.0, 136),
+            ),
+        );
+        result.metrics = vec![
+            metric("CPU state", label),
+            metric(
+                "Sample age",
+                age.map_or_else(|| "Unknown".into(), |seconds| format!("{seconds}s")),
+            ),
+            metric("Memory", "56% of 16 GiB"),
+        ];
+        result.input = format!(
+            "cpu_percent: {cpu:?}\ncpu_age_seconds: {age:?}\nmemory_percent: 56\ndisk_percent: 31"
+        );
         result.output = format!("CPU state: {state:?}");
         result
-    }).collect();
+    })
+    .collect();
     Study {
-        title: "A measurement needs an age",
-        intro: "The same panel tells a different story when its sample is fresh, seven minutes old, or missing. Switch between those states with synthetic host data.",
-        method: "Rust checks each synthetic value and its sample age, then classifies the measurement as current, stale, or missing.",
+        title: "Every reading carries its freshness",
+        intro: "Switch between fresh, stale, and missing host samples to see how the Codex panel prevents silent telemetry bugs.",
+        method: "The state classifier runs directly in Rust here; the live Codex plugin implements the full Python/TypeScript sampler, process list, and disk index.",
         scenes,
         sources: vec![],
         audio: None,
@@ -284,11 +350,16 @@ fn wedeo() -> Study {
         result
     }).collect();
     Study {
-        title: "Three frames, two decoders",
-        intro: "Give Wedeo and FFmpeg the same synthetic H.264 input, then compare each decoded frame's checksum.",
-        method: "This native comparison uses baseline H.264 with three intra frames. The complete 4,608-byte YUV output matches FFmpeg. The next comparison adds another decoder fixture.",
+        title: "Three frames, two decoders, identical bytes",
+        intro: "Feed Wedeo and FFmpeg the same H.264 stream and compare raw YUV420p checksums frame by frame.",
+        method: "Both decoders output the exact same 4,608 raw YUV bytes across all three baseline H.264 intra frames.",
         scenes,
-        sources: vec![],
+        sources: vec![source(
+            "wedeo-repo",
+            "Wedeo on GitHub",
+            "Pure-Rust FFmpeg rewrite with bit-exact H.264 decoding verified against FFmpeg.",
+            Some("https://github.com/sharifhsn/wedeo"),
+        )],
         audio: None,
     }
 }
@@ -516,14 +587,14 @@ fn terminal() -> Study {
         result.metrics = vec![metric("Selected frame", frame.frame), metric("Captured frames", 30)]; result
     }).collect();
     Study {
-        title: "Follow the print effect frame by frame",
-        intro: "Select four stages from the native Rust port and watch the text take shape.",
-        method: "ttfx produced 30 frames in this recorded run. The page displays four of them. The next benchmark measures startup and frame throughput against TerminalTextEffects by ChrisBuilds.",
+        title: "Four frames from the native Rust port",
+        intro: "Step through four frames from a 30-frame seeded print run—a port built to try to beat the original on throughput that ended up revealing a real regression instead.",
+        method: "Captured directly from the native Rust ttfx binary (30 seeded frames on a 24 × 3 canvas). Ports TerminalTextEffects by ChrisBuilds under the MIT license.",
         scenes,
         sources: vec![source(
             "ttfx",
-            "Upstream effect and engine",
-            "TerminalTextEffects by ChrisBuilds supplies the effect design. ttfx ports it to Rust under the MIT license.",
+            "Upstream TerminalTextEffects",
+            "TerminalTextEffects by ChrisBuilds supplies the original effect designs ported to Rust.",
             Some("https://github.com/ChrisBuilds/terminaltexteffects"),
         )],
         audio: None,

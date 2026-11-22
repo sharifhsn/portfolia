@@ -1,42 +1,136 @@
 <section class="experiment-intro" aria-labelledby="page-title">
   <div class="page-intro">
-    <h1 id="page-title">Vibe coded <br>experiments</h1>
-    <p>These are projects I've built and upstream projects I've worked on. Each page explains what drew me to the problem, what I've built, and what comes next.</p>
-    <p class="experiment-intro-note">Rust is my first choice. The examples show the work through calculations, decoded output, and interactive views.</p>
-    <a class="text-action" href="#catalog">Browse the collection</a>
+    <p class="page-eyebrow">{{ experiments.len() }} featured builds &amp; experiments</p>
+    <h1 id="page-title">Experiments &amp; Builds</h1>
+    <p>Systems protocols, Codex developer tools, shipped macOS utilities, compiler prototypes, and high-performance Rust rewrites—each with concrete architecture notes, benchmarks, or screenshots.</p>
+    <div class="intro-actions">
+      <a class="button-primary" href="/experiments/tessera/">Start with Tessera</a>
+      <a class="button-secondary" href="#catalog">Browse all {{ experiments.len() }}</a>
+      <a class="button-ghost" href="https://github.com/sharifhsn/">GitHub ↗</a>
+    </div>
   </div>
   <figure class="experiment-hero-visual">
-    {% for experiment in experiments %}{% if experiment.slug == "ldsc" %}{{ experiment.preview_svg|safe }}{% endif %}{% endfor %}
-    <figcaption>LD scores from the Rust engine's 1000G reference calculation.<br><a href="/experiments/ldsc/">Explore LDSC</a></figcaption>
+    <div class="hero-visual-stage">{% for experiment in experiments %}{% if experiment.slug == "ldsc" %}{{ experiment.preview_svg|safe }}{% endif %}{% endfor %}</div>
+    <figcaption>Exact f64 LD-score calculation in Rust versus Python on 1000G. <a href="/experiments/ldsc/">Explore LDSC →</a></figcaption>
   </figure>
 </section>
+
 <section class="experiment-featured" aria-labelledby="try-title">
-  <header class="section-heading"><h2 id="try-title">Explore a project</h2><span>Start with these four</span></header>
+  <header class="section-heading">
+    <div>
+      <h2 id="try-title">Flagship builds</h2>
+      <p class="section-subtitle">My strongest systems, Codex tooling, shipped utility apps, and open-source work.</p>
+    </div>
+  </header>
   <div class="experiment-featured-grid">
     {% for experiment in experiments %}{% if experiment.featured() %}
     <article class="experiment-feature">
-      <a class="experiment-picture experiment-picture-{{ experiment.category.key() }}" href="/experiments/{{ experiment.slug }}/" aria-label="Explore {{ experiment.name }}">{{ experiment.preview_svg|safe }}</a>
-      <h3><a href="/experiments/{{ experiment.slug }}/">{{ experiment.name }}</a></h3>
-      <p>{{ experiment.summary }}</p>
-      {% if let Some(href) = experiment.demo_href %}<a class="text-action" href="{{ href }}">{% if experiment.available() %}Try the demo{% else %}Inspect the result{% endif %}</a>{% endif %}
+      <a class="experiment-picture{% if experiment.slug == "rowla" %} experiment-picture-bleed{% endif %} experiment-picture-{{ experiment.category.key() }}" href="/experiments/{{ experiment.slug }}/" aria-label="Explore {{ experiment.name }}">{{ experiment.preview_svg|safe }}</a>
+      <div class="experiment-feature-body">
+        <div class="card-top">
+          <span class="category-chip category-chip-{{ experiment.category.key() }}">{{ experiment.category.label() }}</span>
+          <span class="status-pill{% if experiment.available() %} status-pill-live{% endif %}">{{ experiment.status_label() }}</span>
+        </div>
+        <h3><a href="/experiments/{{ experiment.slug }}/">{{ experiment.name }}</a></h3>
+        <p>{{ experiment.summary }}</p>
+        <p class="stack-line">{{ experiment.stack }}</p>
+        <div class="feature-links">
+          {% if let Some(href) = experiment.demo_href %}<a class="text-action" href="{{ href }}">{% if experiment.available() %}Try live demo →{% else %}Read writeup →{% endif %}</a>{% endif %}
+          {% if let Some(url) = experiment.live_url %}<a class="ext-link" href="{{ url }}" target="_blank" rel="noopener noreferrer">{% if experiment.slug == "rowla" %}Download ↗{% else %}Live site ↗{% endif %}</a>{% endif %}
+          {% if let Some(url) = experiment.repo_url %}<a class="ext-link" href="{{ url }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>{% endif %}
+        </div>
+      </div>
     </article>
     {% endif %}{% endfor %}
   </div>
 </section>
+
 <section class="experiment-catalog" id="catalog" aria-labelledby="catalog-title">
-  <header class="section-heading"><h2 id="catalog-title">The collection</h2><span>{{ experiments.len() }} experiment pages</span></header>
-  <p class="experiment-catalog-note">For each project, I explain what drew me to it, what I've built, and what comes next. Browser demos, recorded results, and visual studies put the implementation beside the idea.</p>
+  <header class="section-heading">
+    <div>
+      <h2 id="catalog-title">Full collection</h2>
+      <p class="section-subtitle">Ordered from flagship systems and deep technical writeups down to stubs, negative benchmarks, and older coursework.</p>
+    </div>
+    <span class="catalog-count">{{ experiments.len() }} experiment pages</span>
+  </header>
+
+  <fieldset class="catalog-filter" aria-label="Filter experiments by category">
+    <legend class="sr-only">Filter experiments by category</legend>
+    <div class="catalog-filter-pills">
+      <label><input type="radio" name="exp-cat" value="all" id="cat-all" checked><span>All ({{ experiments.len() }})</span></label>
+      <label><input type="radio" name="exp-cat" value="languages" id="cat-languages"><span>Systems &amp; compilers</span></label>
+      <label><input type="radio" name="exp-cat" value="tools" id="cat-tools"><span>Tools &amp; desktop</span></label>
+      <label><input type="radio" name="exp-cat" value="numbers" id="cat-numbers"><span>Quantitative &amp; science</span></label>
+      <label><input type="radio" name="exp-cat" value="media" id="cat-media"><span>Graphics &amp; media</span></label>
+    </div>
+  </fieldset>
+
   <ol class="experiment-rows">
     {% for experiment in experiments %}
-    <li class="experiment-row" id="{{ experiment.slug }}">
-      <div class="experiment-thumbnail experiment-picture-{{ experiment.category.key() }}" aria-hidden="true">{{ experiment.preview_svg|safe }}</div>
-      <div>
-        <span class="experiment-row-category">{{ experiment.category.label() }}</span>
+    <li class="experiment-row" data-category="{{ experiment.category.key() }}" id="{{ experiment.slug }}">
+      <a class="experiment-thumbnail{% if experiment.slug == "rowla" %} experiment-picture-bleed{% endif %} experiment-picture-{{ experiment.category.key() }}" href="/experiments/{{ experiment.slug }}/" tabindex="-1" aria-hidden="true">{{ experiment.preview_svg|safe }}</a>
+      <div class="experiment-row-main">
+        <div class="experiment-row-meta">
+          <span class="category-chip category-chip-{{ experiment.category.key() }}">{{ experiment.category.label() }}</span>
+          <span class="stack-line">{{ experiment.stack }}</span>
+        </div>
         <h3><a href="/experiments/{{ experiment.slug }}/">{{ experiment.name }}</a></h3>
         <p>{{ experiment.summary }}</p>
       </div>
-      <span class="experiment-state{% if experiment.has_demo() %} experiment-state-available{% endif %}">{{ experiment.status_label() }}</span>
+      <div class="experiment-row-side">
+        <span class="status-pill{% if experiment.available() %} status-pill-live{% else if experiment.has_demo() %} status-pill-ready{% endif %}">{{ experiment.status_label() }}</span>
+        <div class="row-ext-links">
+          {% if let Some(url) = experiment.live_url %}<a class="ext-link" href="{{ url }}" target="_blank" rel="noopener noreferrer">{% if experiment.slug == "rowla" %}Release ↗{% else %}Live ↗{% endif %}</a>{% endif %}
+          {% if let Some(url) = experiment.repo_url %}<a class="ext-link" href="{{ url }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>{% endif %}
+        </div>
+      </div>
     </li>
     {% endfor %}
   </ol>
 </section>
+
+<section class="oss-widget" aria-labelledby="oss-widget-title">
+  <header class="section-heading">
+    <div>
+      <h2 id="oss-widget-title">Open-source PRs &amp; smaller crates</h2>
+      <p class="section-subtitle">Focused repositories and contributions across GPU shaders, rough-volatility calibration, and bioinformatics.</p>
+    </div>
+  </header>
+  <ul class="oss-widget-grid">
+    <li>
+      <a href="https://github.com/sharifhsn/deko-shader-compiler" target="_blank" rel="noopener noreferrer">
+        <strong>deko-shader-compiler ↗</strong>
+        <span>Open Rust WGSL/Naga → Maxwell GM20B / DKSH shader compiler for Nintendo Switch.</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/sharifhsn/pathwise-lsrv" target="_blank" rel="noopener noreferrer">
+        <strong>pathwise-lsrv ↗</strong>
+        <span>Pathwise conditional-density &amp; Rao–Blackwellized calibration for local stochastic rough volatility.</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/sharifhsn/genomicsem" target="_blank" rel="noopener noreferrer">
+        <strong>genomicsem ↗</strong>
+        <span>Rust rewrite of the GenomicSEM R package with an internal lavaan-style DWLS/ML SEM crate.</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://github.com/sharifhsn/flowsom-rs" target="_blank" rel="noopener noreferrer">
+        <strong>flowsom-rs ↗</strong>
+        <span>Deterministic, rayon-parallel Rust batch-learning SOM for FlowSOM via PyO3.</span>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<aside class="experiments-errata" aria-labelledby="errata-title">
+  <h2 id="errata-title">Errata &amp; shelved prototypes</h2>
+  <p>Smaller side sites and early experiments kept out of the main showcase:</p>
+  <ul>
+    <li><a href="https://four-mana.pages.dev/" target="_blank" rel="noopener noreferrer">Four Mana (Liesa) ↗</a> — hypergeometric Commander mana-base calculator and rendered <code>fframes</code> video.</li>
+    <li><a href="https://sharifhsn.github.io/witness/" target="_blank" rel="noopener noreferrer">Grant Witness PoC ↗</a> (<a href="https://github.com/sharifhsn/witness" target="_blank" rel="noopener noreferrer">source ↗</a>) — R data pipeline cross-referencing NIH/NSF termination notices against USAspending.gov.</li>
+    <li><strong>Plume</strong> — deterministic Rust/Bevy Flash game rewrite (shelved for now; may revisit later).</li>
+    <li><strong>FactShort</strong> — claim-research &amp; source-verification desk (shelved; needed too many external connectors to go further).</li>
+  </ul>
+</aside>

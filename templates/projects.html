@@ -1,34 +1,59 @@
 <section class="page-intro" aria-labelledby="page-title">
+  <p class="page-eyebrow">Software &amp; research</p>
   <h1 id="page-title">Projects</h1>
-  <p>Financial tools, quantitative research, and experiments you can try.</p>
-  <p><a href="/experiments/">Explore the vibe coded experiments</a> for small visual studies and the next demos.</p>
+  <p>Systems builds, quantitative finance research, and case notes from work and university projects.</p>
 </section>
-<section class="demo-list" aria-labelledby="demo-title">
-  <h2 id="demo-title">Try a project</h2>
-  <div class="demo-layout">
-    <article class="demo-entry">
-      <div class="demo-preview worksheet-preview" aria-hidden="true"><span>Hornet</span><div><span>Contract</span><span>Value</span><span>Risk</span></div><div><span>USD call</span><span>MtM</span><span>Delta</span></div><div><span>USD put</span><span>MtM</span><span>Vega</span></div><div><strong>Total</strong><span>∑</span><span>∑</span></div></div>
-      <h3><a href="/projects/hornet/">Hornet FX desk</a></h3>
-      <p>A USD/MXN worksheet adapted from my trading-contest project. Edit trade rows, reprice the book, and inspect combined risk.</p>
-      <a class="text-action" href="/projects/hornet/">Open the worksheet</a>
-    </article>
-    <article class="demo-entry">
-      <div class="demo-preview model-preview" aria-hidden="true"><span>Stentor-30M</span><strong>Small model.<br>On your device.</strong><span>Browser experiment</span></div>
-      <h3><a href="/chat/">Browser language model</a></h3>
-      <p>A 30-million-parameter model running locally in your browser. An inference experiment, with a very small context and imperfect answers.</p>
-      <a class="text-action" href="/chat/">Try the model</a>
-    </article>
+
+<div class="experiments-callout projects-lead-callout">
+  <div>
+    <span class="tool-kicker">Flagship &amp; ongoing builds</span>
+    <h2>Vibe-coded experiments &amp; systems</h2>
+    <p>Explore <strong>Tessera</strong>, <strong>System Health for Codex</strong>, <strong>LDSC in Rust (18.1× faster)</strong>, <strong>Rowla</strong>, <strong>Typst &amp; Office</strong>, <strong>GitHub Issue Triage</strong>, and the full <strong>Rust target size</strong> writeup.</p>
   </div>
-</section>
+  <a class="button-primary" href="/experiments/">Explore all {{ experiments.len() }} →</a>
+</div>
+
 <section class="project-list" id="selected-projects" aria-labelledby="selected-title">
-  <h2 id="selected-title">Selected work</h2>
+  <header class="section-heading"><h2 id="selected-title">Selected work &amp; coursework</h2></header>
   {% for project in projects %}
   <article class="project-card" id="project-{{ project.slug }}" aria-labelledby="project-title-{{ project.slug }}">
-    <header><h3 id="project-title-{{ project.slug }}">{{ project.name }}</h3><p class="project-meta">{{ project.kind }}<br>{{ project.dates }}</p></header>
-    <div class="project-copy"><p>{{ project.summary }}</p><p class="project-technologies">{{ project.technologies }}</p>
+    <header>
+      <span class="project-kind">{{ project.kind }}</span>
+      <h3 id="project-title-{{ project.slug }}">{{ project.name }}</h3>
+      <p class="project-meta">{{ project.dates }}</p>
+    </header>
+    <div class="project-copy">
+      <p>{{ project.summary }}</p>
+      <p class="project-technologies">{{ project.technologies }}</p>
       <details class="project-details"><summary>Project details</summary><ul>{% for detail in project.details %}<li>{{ detail }}</li>{% endfor %}</ul></details>
-      {% if project.slug == "hornet-trading-contest" %}<p class="project-action"><a href="/projects/hornet/">Open the FX worksheet</a></p>{% endif %}
+      {% if project.slug == "hornet-trading-contest" %}<p class="project-action"><a class="text-action" href="/projects/hornet/">Open the FX worksheet →</a></p>{% endif %}
     </div>
   </article>
   {% endfor %}
+</section>
+
+<section class="demo-list projects-demos-bottom" aria-labelledby="demo-title">
+  <header class="section-heading">
+    <h2 id="demo-title">Browser demos</h2>
+  </header>
+  <div class="demo-layout">
+    <article class="demo-entry">
+      <div class="card-top">
+        <span class="category-chip category-chip-knowledge">llama.cpp · WASM</span>
+        <span class="status-pill">On-device</span>
+      </div>
+      <h3><a href="/chat/">Browser language model</a></h3>
+      <p>Stentor-30M-Instruct (19.9 MiB Q4_K_M) running directly in your browser with zero server inference.</p>
+      <a class="text-action" href="/chat/">Try the model →</a>
+    </article>
+    <article class="demo-entry">
+      <div class="card-top">
+        <span class="category-chip category-chip-numbers">Rust · WebAssembly</span>
+        <span class="status-pill status-pill-live">Live worksheet</span>
+      </div>
+      <h3><a href="/projects/hornet/">Hornet FX desk</a></h3>
+      <p>An older USD/MXN coursework worksheet compiled to WebAssembly—edit spot, rates, vol smile, and scratch trades to reprice portfolio Greeks locally.</p>
+      <a class="text-action" href="/projects/hornet/">Open the worksheet →</a>
+    </article>
+  </div>
 </section>

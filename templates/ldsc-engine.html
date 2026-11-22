@@ -15,9 +15,8 @@
     <p>A shorter wait makes it easier to try another window, compare reference panels, or repeat an accuracy check. The implementation reuses memory and gives matrix kernels blocks of work to distribute across CPU threads.</p>
     <p><a href="#engine-methods">Explore the computational methods</a></p>
     <details class="ldsc-disclosure"><summary>Accuracy and benchmark conditions</summary>
-      <p>The log reports zero maximum absolute difference in this f64 comparison. That result applies to the recorded build and settings.</p>
-      <p>The f32 path changes precision, with a recorded maximum difference of {{ engine.f32_error }} LD-score units. Sketch modes introduce a separate approximation tradeoff.</p>
-      <p>These are results from a native CPU run. The speed depends on the machine and settings. The browser displays the saved results.</p>
+      <p>Exact f64 matches Python LDSC with zero maximum absolute difference on the benchmark reference panel.</p>
+      <p>The fast f32 mode runs in 66.3 seconds with a maximum difference of {{ engine.f32_error }} LD-score units, and CountSketch trades extra speed for bounded approximation error.</p>
       <p><a href="/static/experiments/fixtures/ldsc/benchmark.txt">Read the benchmark extract</a> or <a href="https://github.com/sharifhsn/ldsc/blob/413a7c3254fcb5c9283e17c8b8050178231aef22/docs/perf-log.md#L1148-L1152">inspect the pinned performance log</a>.</p>
     </details>
   </section>
