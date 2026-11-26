@@ -1331,6 +1331,10 @@ fn feed_json(posts: &[BlogPost]) -> serde_json::Value {
                 "tags": post.tags,
                 "_portfolia": {
                     "date": post.date,
+                    "publication_timestamp_known": post
+                        .published_at
+                        .as_deref()
+                        .is_some_and(has_explicit_timezone),
                     "categories": post.categories,
                     "source": post.source,
                     "source_url": if post.source_url.is_empty() { serde_json::Value::Null } else { serde_json::Value::String(post.source_url.clone()) }
@@ -2685,6 +2689,14 @@ mod tests {
                 .contains(FEED_DATE_NOTICE)
         );
         assert_eq!(feed_json["items"].as_array().unwrap().len(), posts.len());
+        for (item, post) in feed_json["items"].as_array().unwrap().iter().zip(&posts) {
+            assert_eq!(
+                item["_portfolia"]["publication_timestamp_known"],
+                post.published_at
+                    .as_deref()
+                    .is_some_and(has_explicit_timezone)
+            );
+        }
 
         let index_json = api_posts_json(&posts);
         assert_eq!(index_json["version"], "1");
