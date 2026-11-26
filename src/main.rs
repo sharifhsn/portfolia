@@ -890,6 +890,11 @@ fn llms_txt(posts: &[BlogPost]) -> String {
             "The complete public writing corpus with rendered article content and metadata.",
         ),
         (
+            "Linked-image writing corpus",
+            "/llms-linked.txt",
+            "Complete writing corpus with known embedded figures linked to their public files.",
+        ),
+        (
             "Sitemap",
             "/sitemap.xml",
             "Machine-readable list of canonical pages.",
@@ -977,6 +982,58 @@ fn llms_full_txt(posts: &[BlogPost]) -> String {
         ));
     }
     text
+}
+
+fn encode_base64(bytes: &[u8]) -> String {
+    const ALPHABET: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let mut encoded = String::with_capacity(bytes.len().div_ceil(3) * 4);
+    for chunk in bytes.chunks(3) {
+        let first = chunk[0];
+        let second = chunk.get(1).copied().unwrap_or(0);
+        let third = chunk.get(2).copied().unwrap_or(0);
+        encoded.push(ALPHABET[(first >> 2) as usize] as char);
+        encoded.push(ALPHABET[(((first & 3) << 4) | (second >> 4)) as usize] as char);
+        encoded.push(if chunk.len() > 1 {
+            ALPHABET[(((second & 15) << 2) | (third >> 6)) as usize] as char
+        } else {
+            '='
+        });
+        encoded.push(if chunk.len() > 2 {
+            ALPHABET[(third & 63) as usize] as char
+        } else {
+            '='
+        });
+    }
+    encoded
+}
+
+fn llms_linked_txt(posts: &[BlogPost]) -> String {
+    let mut body = llms_full_txt(posts);
+    for (bytes, path) in [
+        (
+            &include_bytes!("../static/img/advanced-derivatives-week-04-bond-price-yield.png")[..],
+            "/static/img/advanced-derivatives-week-04-bond-price-yield.png",
+        ),
+        (
+            &include_bytes!("../static/img/advanced-derivatives-week-04-rate-adjustment.png")[..],
+            "/static/img/advanced-derivatives-week-04-rate-adjustment.png",
+        ),
+        (
+            &include_bytes!("../static/img/advanced-derivatives-week-06-hull-white-tree.png")[..],
+            "/static/img/advanced-derivatives-week-06-hull-white-tree.png",
+        ),
+        (
+            &include_bytes!("../static/img/advanced-derivatives-week-06-tree-construction.png")[..],
+            "/static/img/advanced-derivatives-week-06-tree-construction.png",
+        ),
+    ] {
+        let embedded = format!("src=\"data:image/png;base64,{}\"", encode_base64(bytes));
+        let linked = format!("src=\"{}\"", asset_url(path));
+        body = body.replace(&embedded, &linked);
+    }
+    format!(
+        "Known embedded figures are linked to identical public PNG files in this variant. Other figures may remain embedded. For the self-contained corpus, see https://sharifhsn.dev/llms-full.txt.\n\n{body}"
+    )
 }
 
 fn post_summary_json(post: &BlogPost) -> serde_json::Value {
@@ -1096,6 +1153,7 @@ fn agent_manifest_json() -> serde_json::Value {
         "discovery": [
             {"rel": "llms", "url": site_url("/llms.txt"), "description": "Concise site map and article descriptions."},
             {"rel": "llms-full", "url": site_url("/llms-full.txt"), "description": "Complete public writing corpus with rendered HTML and MathML."},
+            {"rel": "llms-linked", "url": site_url("/llms-linked.txt"), "description": "Complete writing corpus with known figures linked to identical public PNG files."},
             {"rel": "openapi", "url": site_url("/api/openapi.json"), "description": "OpenAPI 3.1 description of structured read endpoints."},
             {"rel": "posts", "url": site_url("/api/posts.json"), "description": "Stable article metadata index."},
             {"rel": "projects", "url": site_url("/api/projects.json"), "description": "Structured project summaries."},
@@ -1205,6 +1263,13 @@ fn openapi_json() -> serde_json::Value {
                     "operationId": "getLlmGuide",
                     "summary": "Get the concise LLM discovery guide",
                     "responses": {"200": {"description": "Plain-text discovery guide", "content": {"text/plain": {"schema": {"type": "string"}}}}}
+                }
+            },
+            "/llms-linked.txt": {
+                "get": {
+                    "operationId": "getLinkedCorpus",
+                    "summary": "Get the writing corpus with known figures linked",
+                    "responses": {"200": {"description": "Plain-text corpus with linked public figures", "content": {"text/plain": {"schema": {"type": "string"}}}}}
                 }
             },
             "/llms-full.txt": {
@@ -2342,6 +2407,13 @@ async fn llms_full(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
     text_response("text/plain; charset=utf-8", llms_full_txt(posts.as_slice()))
 }
 
+async fn llms_linked(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
+    text_response(
+        "text/plain; charset=utf-8",
+        llms_linked_txt(posts.as_slice()),
+    )
+}
+
 async fn feed(State(posts): State<Arc<Vec<BlogPost>>>) -> Response {
     text_response(
         "application/atom+xml; charset=utf-8",
@@ -2441,6 +2513,7 @@ async fn main() {
         .route("/sitemap.xml", get(sitemap))
         .route("/llms.txt", get(llms))
         .route("/llms-full.txt", get(llms_full))
+        .route("/llms-linked.txt", get(llms_linked))
         .route("/feed.xml", get(feed))
         .route("/feed.json", get(feed_json_endpoint))
         .route("/manifest.webmanifest", get(web_manifest))
@@ -2467,6 +2540,15 @@ async fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn base64_encoding_handles_partial_chunks() {
+        assert_eq!(encode_base64(b""), "");
+        assert_eq!(encode_base64(b"f"), "Zg==");
+        assert_eq!(encode_base64(b"fo"), "Zm8=");
+        assert_eq!(encode_base64(b"foo"), "Zm9v");
+        assert_eq!(encode_base64(&[0xfb, 0xff, 0xff]), "+///");
+    }
 
     #[test]
     fn markdown_preserves_math_syntax_without_parsing_math_in_code() {
@@ -2670,6 +2752,9 @@ mod tests {
         assert!(llms.contains("[Agent manifest](https://sharifhsn.dev/.well-known/agent.json):"));
         assert!(llms.contains("[OpenAPI description](https://sharifhsn.dev/api/openapi.json):"));
         assert!(llms.contains("[Full writing corpus](https://sharifhsn.dev/llms-full.txt):"));
+        assert!(
+            llms.contains("[Linked-image writing corpus](https://sharifhsn.dev/llms-linked.txt):")
+        );
         assert!(llms.contains("[Circuits](https://sharifhsn.dev/blog/circuits/):"));
 
         let full = llms_full_txt(&posts);
@@ -2677,6 +2762,12 @@ mod tests {
         assert!(full.contains("## Circuits"));
         assert!(full.contains("https://sharifhsn.dev/api/posts/circuits.json"));
         assert!(full.contains("Ohm’s Law"));
+        let linked = llms_linked_txt(&posts);
+        assert!(linked.contains("https://sharifhsn.dev/llms-full.txt"));
+        assert!(linked.contains(
+            "https://sharifhsn.dev/static/img/advanced-derivatives-week-06-tree-construction.png"
+        ));
+
         for post in &posts {
             let timestamp = post
                 .published_at

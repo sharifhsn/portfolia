@@ -47,6 +47,10 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
         output_dir.join("llms-full.txt"),
         super::llms_full_txt(posts),
     )?;
+    fs::write(
+        output_dir.join("llms-linked.txt"),
+        super::llms_linked_txt(posts),
+    )?;
     fs::write(output_dir.join("feed.xml"), super::feed_xml(posts))?;
     fs::write(
         output_dir.join("feed.json"),
@@ -291,6 +295,7 @@ mod tests {
         );
         assert!(output.join("llms.txt").is_file());
         assert!(output.join("llms-full.txt").is_file());
+        assert!(output.join("llms-linked.txt").is_file());
         assert!(output.join("feed.xml").is_file());
         assert!(output.join("feed.json").is_file());
         assert!(output.join("api/posts.json").is_file());

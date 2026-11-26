@@ -87,7 +87,9 @@ identify entries whose precise publication time is not recorded. JSON Feed items
 expose `_portfolia.publication_timestamp_known` for machine readers.
 `llms-full.txt` contains the same
 articles with title, URL, date, topics, source, and source-link metadata. It
-uses rendered HTML/MathML for the Typst archive. `/projects/` is populated from
+uses rendered HTML/MathML for the Typst archive. `llms-linked.txt` preserves the
+same writing while linking known embedded PNG figures to byte-identical public
+files; `llms-full.txt` remains self-contained. `/projects/` is populated from
 `content/projects.toml`, and its JSON
 endpoint and `CreativeWork`/`ItemList` JSON-LD use the same source. Machine
 endpoints and feeds advertise `Access-Control-Allow-Origin: *` in the static
