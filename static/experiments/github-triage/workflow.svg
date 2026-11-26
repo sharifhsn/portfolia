@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-labelledby="title desc">
-  <title id="title">From a reported symptom to a checkable conclusion</title>
-  <desc id="desc">Read the issue, isolate a reproduction, compare versions, then give a maintainer the evidence. A passing example still needs checks for unresolved cases.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-label="From a reported symptom to a checkable conclusion Read the issue, isolate a reproduction, compare versions, then give a maintainer the evidence. A passing example still needs checks for unresolved cases.">
+  <title>From a reported symptom to a checkable conclusion</title>
+  <desc>Read the issue, isolate a reproduction, compare versions, then give a maintainer the evidence. A passing example still needs checks for unresolved cases.</desc>
   <g fill="none" stroke="currentColor" stroke-width="2">
     <rect x="24" y="28" width="178" height="76" rx="4"/>
     <rect x="278" y="28" width="178" height="76" rx="4"/>
