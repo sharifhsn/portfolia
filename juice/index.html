@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142e2d"><link rel="icon" href="data:,"><title>Tideway · juice</title><link rel="stylesheet" href="./style.css"><script type="module" src="./app.js"></script></head>
+<body>
+<header><a class="brand" href="./" aria-label="juice home">juice<span>.</span></a><span class="project">Scene studies</span>
+<nav aria-label="Demo mode"><button id="editTab" aria-pressed="true">Scene editor</button><button id="replayTab" aria-pressed="false">Native replay</button></nav></header>
+<main>
+<div class="heading"><div><p class="location">ORCHARD STREET</p><h1>Tideway</h1></div><span id="mode" class="mode">Browser simulation</span></div>
+<div class="studio">
+<section class="stage" aria-label="Scene viewport">
+ <div id="editor"><canvas id="view" tabindex="0" aria-label="Tideway 3D scene. Drag or use the arrow keys to orbit. Use plus and minus to zoom."></canvas>
+ <div class="tools"><div><button id="street" aria-pressed="true">Street</button><button id="grate" aria-pressed="false">Grate</button></div><div><button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomOut" aria-label="Zoom out">−</button></div></div></div>
+ <div id="replay" hidden><video id="film" controls playsinline preload="none"><track id="captions" kind="captions" srclang="en" label="English"></video></div>
+</section>
+<aside>
+ <section id="inspector"><p class="small">RESOURCE</p><h2>Drain grate</h2><p class="detail">Nine slots · anchored to curb</p>
+ <div class="readout"><span id="station">50</span><span>cm</span></div>
+ <fieldset><legend>Move grate to</legend><div class="stations"><button data-cm="50" disabled>50 cm</button><button data-cm="72" disabled>72 cm</button><button data-cm="83" disabled>83 cm</button></div></fieldset>
+ <button id="undo" class="undo" disabled>↶ &nbsp;Undo move</button><div class="keyval"><span>Scene revision</span><b id="revision">0</b></div>
+ <p class="note">Moves and undo run locally in Rust/Wasm. The street mesh comes from the native Blender scene.</p></section>
+ <section id="replayPanel" hidden><p class="small">NATIVE RECORDING</p><h2>Steer the crew</h2><p class="detail">Choose a recorded instruction and its mid-edit correction.</p>
+ <fieldset><legend>First station → correction</legend><div class="films"><button data-order="83-to-72">83 → 72 cm</button><button data-order="72-to-83">72 → 83 cm</button></div></fieldset>
+ <p class="note">Recorded in Blender with prerecorded voices, three contending actors and a negotiated undo. Captured and encoded with Wedeo.</p>
+ <a id="download" download>Download this recording</a></section>
+</aside></div>
+<footer><span id="status" role="status" aria-live="polite">Opening scene…</span><a href="./provenance.json">Source record ↗</a></footer>
+<noscript>Enable JavaScript for the local editor, or <a href="./assets/83-to-72.mp4">open the recorded native demo</a>.</noscript>
+</main></body></html>

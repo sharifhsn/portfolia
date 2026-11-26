@@ -105,6 +105,11 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
         output_dir.join("static").as_path(),
     )?;
 
+    copy_directory(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("juice").as_path(),
+        output_dir.join("juice").as_path(),
+    )?;
+
     let not_found = super::render_not_found().map_err(render_status_error)?;
     fs::write(output_dir.join("404.html"), not_found.0)?;
     fs::write(
@@ -123,6 +128,10 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
   X-Frame-Options: DENY
   X-Permitted-Cross-Domain-Policies: none
   Cross-Origin-Opener-Policy: same-origin
+
+/juice/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self'; media-src 'self' blob:; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests
 
 /static/css/fonts/*
   Cache-Control: public, max-age=31536000, immutable

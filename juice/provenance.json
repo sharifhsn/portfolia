@@ -1,0 +1,73 @@
+{
+  "project": "juice",
+  "demo": "Tideway on Orchard Street",
+  "license": "GPL-3.0-or-later",
+  "nativeSourceCommit": "3f77d2fb4e984b0db969893091d314a4298b5bac",
+  "geometry": {
+    "source": "pass 48 verified initial editable street.blend",
+    "blender": "5.3.0 / 02f0899d78e3",
+    "blendSha256": "4459a6ee6b18486e9a0b2d5e21cb46e2394577cb95a5714bc36afb1d5856c68b",
+    "snapshotSha256": "ae9ca80ee0c634db6631c8862faebe9ca266aeb87f87659694f12e7ba3cda94a",
+    "generator": "blender/street.py",
+    "generatorSha256": "e57ce2b134ffbaf8bf5dcb63383fa076b267ef42e8404adae9355712bd8d189b",
+    "exportSource": "source/export_scene.py",
+    "exportSourceSha256": "88a4203505723c2088c302158141df411d0987fb5da086d9e8acc780168c1566",
+    "layout": "Little-endian 12-byte vertices: signed int16 positions / 512, signed normalized int8 normals, RGB8 material color. Followed by unsigned triangle indices. Static street plus three evaluated grate/inlet ranges.",
+    "movableGeometry": [
+      "Frame lifting notch",
+      "Frame lifting notch.001",
+      "Grate sump",
+      "Pavement with recessed inlet",
+      "Slotted drain grate"
+    ]
+  },
+  "wasm": {
+    "source": "source/scene.rs",
+    "sourceSha256": "1fed89ed78dfb3e5621036e9575dd8f2af458585d09e4bd020b5f2c92c618502",
+    "compiler": "rustc 1.98.0 (88d9e12ae)",
+    "target": "wasm32-unknown-unknown",
+    "role": "Browser-local station state, revision check, history and undo. No imports."
+  },
+  "replay": {
+    "source": "Local verified pass-044 native Wedeo H.264/FLAC exports; both byte-preserved. Prerecorded speech, scripted actor processes, real native reservations and three-party undo.",
+    "nativeFilmManifestSha256": {
+      "83-to-72": "3e65506a278ce1ec94b743fcb8f34d89a94527309824c585e1e4e74477904ca6",
+      "72-to-83": "94b38c13a7fcfdb71702be2b990634e3b59d59a882d75c8d9141bf0f5605b149"
+    },
+    "poster": "Existing native Tideway render, out/scene-020/preview.png; an overview of a separate native revision."
+  },
+  "assets": {
+    "72-to-83.mp4": {
+      "bytes": 1976433,
+      "sha256": "58f756fdeb8756f3dded5c7ed7f943774119b758052b8ec13ece5a95690d4cce"
+    },
+    "72-to-83.vtt": {
+      "bytes": 1022,
+      "sha256": "d5d28985d6b6e366b586c34710db53f2bc33e20f9a49ac78b8cd206e138493fa"
+    },
+    "83-to-72.mp4": {
+      "bytes": 1754907,
+      "sha256": "f9fb46f2bcf0890faa8191ebddc75bcae868ebf2d927e7dab3c3d0fa2c9bdc08"
+    },
+    "83-to-72.vtt": {
+      "bytes": 1022,
+      "sha256": "cc43686f5d7fed5840340752cb1c4d2bbf0825f5dbcdf61afc3d19c713db9417"
+    },
+    "scene.json": {
+      "bytes": 518,
+      "sha256": "de227b34829874b2bf7060d9dada6ab0fdfa71087e11f621561d13fc94befd7b"
+    },
+    "scene.wasm": {
+      "bytes": 14100,
+      "sha256": "e143d7be60fdd36f48e67b8a2c7ec0ed6c49df44ece8890c45e10ad74b154665"
+    },
+    "tideway.mesh": {
+      "bytes": 693936,
+      "sha256": "a73d8836c22031f07b3002a2d45c0343774b8369d585bfc2130cc7063a43cc82"
+    },
+    "tideway.png": {
+      "bytes": 800777,
+      "sha256": "aa73eae58a3a6914d01f4ca321bc16aa383b40976bb5db3e7857a63ee17609ae"
+    }
+  }
+}
