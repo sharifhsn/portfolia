@@ -17,7 +17,7 @@
       <h3 id="case-title-{{ loop.index0 }}">{{ scene.title }}</h3>
       <p>{{ scene.explanation }}</p>
       {% if !scene.svg.is_empty() %}<figure class="study-visual">{{ scene.svg|safe }}</figure>{% endif %}
-      {% if let Some(image) = scene.image %}<figure class="study-visual"><img src="{{ image.src }}" width="{{ image.width }}" height="{{ image.height }}" alt="{{ scene.title }}" loading="lazy"></figure>{% endif %}
+      {% if let Some(image) = scene.image %}<figure class="study-visual">{% if image.src.starts_with("/static/experiments/rowla/") %}<img src="{{ image.src }}" srcset="{{ image.src.replace(".png", "-640.png") }} 640w, {{ image.src }} 1280w" sizes="(max-width: 760px) calc(100vw - 100px), 1050px" width="{{ image.width }}" height="{{ image.height }}" alt="{{ scene.title }}" loading="lazy">{% else %}<img src="{{ image.src }}" width="{{ image.width }}" height="{{ image.height }}" alt="{{ scene.title }}" loading="lazy">{% endif %}</figure>{% endif %}
       {% if !scene.metrics.is_empty() %}
       <dl class="study-metrics">{% for metric in scene.metrics %}<div><dt>{{ metric.label }}</dt><dd>{{ metric.value }}</dd></div>{% endfor %}</dl>
       {% endif %}
