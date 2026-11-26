@@ -1221,9 +1221,11 @@ fn openapi_json() -> serde_json::Value {
                         "dataUrl": {"type": "string", "format": "uri"},
                         "title": {"type": "string"},
                         "description": {"type": "string"},
-                        "date": {"type": "string", "format": "date"},
-                        "datePublished": {"type": "string"},
-                        "dateModified": {"type": "string"},
+                        "date": {"type": "string", "format": "date", "description": "Public archive calendar date used for display and ordering; it may not be the publication date."},
+                        "datePublished": {"type": "string", "description": "Source publication value when available; otherwise the archive date. A date-only fallback is not a confirmed publication timestamp."},
+                        "publishedAt": {"type": "string", "description": "Source-provided publication value, omitted when unavailable. An explicit time zone is needed for an exact timestamp."},
+                        "dateModified": {"type": "string", "description": "Source-provided update value, omitted when unavailable."},
+                        "updatedAt": {"type": "string", "description": "Source-provided update value, omitted when unavailable."},
                         "tags": {"type": "array", "items": {"type": "string"}},
                         "categories": {"type": "array", "items": {"type": "string"}},
                         "source": {"type": "string"},
@@ -2791,6 +2793,15 @@ mod tests {
         assert_eq!(openapi["openapi"], "3.1.0");
         assert!(openapi["paths"]["/api/posts/{slug}.json"].is_object());
         assert!(openapi["components"]["schemas"]["Post"].is_object());
+        let date_properties = &openapi["components"]["schemas"]["PostSummary"]["properties"];
+        assert!(date_properties["publishedAt"]["description"].is_string());
+        assert!(date_properties["updatedAt"]["description"].is_string());
+        assert!(
+            date_properties["datePublished"]["description"]
+                .as_str()
+                .unwrap()
+                .contains("fallback")
+        );
 
         let web_manifest = web_manifest_json();
         assert_eq!(web_manifest["start_url"], "/");
