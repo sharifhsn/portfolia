@@ -14,6 +14,8 @@ const names = ["taskbar", "sort", "tabs", "stable-tile"];
 const files = ["/experiments/rowla/", ...names.flatMap(name => [
   `/static/experiments/rowla/${name}.png`,
   `/static/experiments/rowla/${name}-640.png`,
+  `/static/experiments/rowla/${name}.webp`,
+  `/static/experiments/rowla/${name}-640.webp`,
 ])];
 async function hashes() {
   const result = {};
@@ -96,7 +98,16 @@ try {
           images[i].scrollIntoView();
           await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
           await images[i].decode();
-          selected.push({ path: new URL(images[i].currentSrc).pathname, alt: images[i].alt });
+          const webp = new URL(images[i].currentSrc).pathname;
+          const source = images[i].parentElement.querySelector('source[type="image/webp"]');
+          if (!source) throw new Error("Missing WebP source");
+          source.type = "image/unsupported";
+          for (let tries = 0; tries < 100 && !new URL(images[i].currentSrc).pathname.endsWith(".png"); tries++) {
+            await new Promise(r => setTimeout(r, 20));
+          }
+          await images[i].decode();
+          const fallback = new URL(images[i].currentSrc).pathname;
+          selected.push({ path: webp, fallback, alt: images[i].alt });
         }
         return JSON.stringify({ width: innerWidth, dpr: devicePixelRatio, overflow: document.documentElement.scrollWidth > innerWidth, selected });
       })()`,
@@ -106,8 +117,10 @@ try {
     const small = width === 390 && dpr <= 2;
     if (result.width !== width || result.dpr !== dpr || result.overflow || result.selected.length !== 4) throw new Error(JSON.stringify(result));
     for (let i = 0; i < names.length; i++) {
-      const expected = `/static/experiments/rowla/${names[i]}${small ? "-640" : ""}.png`;
-      if (result.selected[i].path !== expected || !result.selected[i].alt) throw new Error(JSON.stringify(result));
+      const base = `/static/experiments/rowla/${names[i]}${small ? "-640" : ""}`;
+      const expected = base + ".webp";
+      const fallback = base + ".png";
+      if (result.selected[i].path !== expected || result.selected[i].fallback !== fallback || !result.selected[i].alt) throw new Error(JSON.stringify(result));
     }
     checks.push(result);
     await call("browsingContext.close", { context });
