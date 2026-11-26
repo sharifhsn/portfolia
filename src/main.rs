@@ -1178,7 +1178,7 @@ fn openapi_json() -> serde_json::Value {
                 "get": {
                     "operationId": "getProfile",
                     "summary": "Get the public profile and discovery links",
-                    "responses": {"200": {"description": "Public profile", "content": {"application/json": {"schema": {"type": "object"}}}}}
+                    "responses": {"200": {"description": "Public profile", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Profile"}}}}}
                 }
             },
             "/feed.json": {
@@ -1212,6 +1212,26 @@ fn openapi_json() -> serde_json::Value {
         },
         "components": {
             "schemas": {
+                "Profile": {
+                    "type": "object",
+                    "required": ["version", "site", "canonicalUrl", "language", "sourceRepository", "imageUrl", "agentManifestUrl", "openApiUrl", "profileUrl", "person", "pages", "resume", "writingIndexUrl", "projectsIndexUrl"],
+                    "properties": {
+                        "version": {"type": "string"},
+                        "site": {"type": "string", "format": "uri"},
+                        "canonicalUrl": {"type": "string", "format": "uri"},
+                        "language": {"type": "string"},
+                        "sourceRepository": {"type": "string", "format": "uri"},
+                        "imageUrl": {"type": "string", "format": "uri"},
+                        "agentManifestUrl": {"type": "string", "format": "uri"},
+                        "openApiUrl": {"type": "string", "format": "uri"},
+                        "profileUrl": {"type": "string", "format": "uri"},
+                        "person": {"type": "object", "description": "Public Schema.org Person object.", "required": ["@type", "@id", "name", "url"], "properties": {"@type": {"type": "string", "const": "Person"}, "@id": {"type": "string", "format": "uri"}, "name": {"type": "string"}, "url": {"type": "string", "format": "uri"}, "image": {"type": "string", "format": "uri"}, "description": {"type": "string"}, "jobTitle": {"type": "string"}, "worksFor": {"type": "object", "properties": {"@type": {"type": "string"}, "name": {"type": "string"}}}, "sameAs": {"type": "array", "items": {"type": "string", "format": "uri"}}, "knowsAbout": {"type": "array", "items": {"type": "string"}}}},
+                        "pages": {"type": "array", "items": {"type": "object", "required": ["name", "url"], "properties": {"name": {"type": "string"}, "url": {"type": "string", "format": "uri"}}}},
+                        "resume": {"type": "object", "required": ["htmlUrl", "pdfUrl", "docxUrl"], "properties": {"htmlUrl": {"type": "string", "format": "uri"}, "pdfUrl": {"type": "string", "format": "uri"}, "docxUrl": {"type": "string", "format": "uri"}}},
+                        "writingIndexUrl": {"type": "string", "format": "uri"},
+                        "projectsIndexUrl": {"type": "string", "format": "uri"}
+                    }
+                },
                 "PostSummary": {
                     "type": "object",
                     "required": ["slug", "url", "dataUrl", "title", "description", "date", "datePublished", "tags", "categories", "source", "contentSourceFormat", "wordCount"],
@@ -2809,6 +2829,12 @@ mod tests {
         assert_eq!(openapi["openapi"], "3.1.0");
         assert!(openapi["paths"]["/api/posts/{slug}.json"].is_object());
         assert!(openapi["components"]["schemas"]["Post"].is_object());
+        assert_eq!(
+            openapi["paths"]["/api/profile.json"]["get"]["responses"]["200"]["content"]["application/json"]
+                ["schema"]["$ref"],
+            "#/components/schemas/Profile"
+        );
+        assert!(openapi["components"]["schemas"]["Profile"]["properties"]["resume"].is_object());
         let date_properties = &openapi["components"]["schemas"]["PostSummary"]["properties"];
         assert!(date_properties["publishedAt"]["description"].is_string());
         assert!(date_properties["updatedAt"]["description"].is_string());
