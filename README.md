@@ -73,3 +73,6 @@ The real Markdown resume remains supported.
 The `just static` command and Pages deployment workflow check the pinned Juice
 bundle before and after export. An intentional Juice update must update
 `scripts/juice-bundle.sha256.json` from the new verified bundle in the same change.
+
+The Pages export publishes the public IndexNow ownership key from
+`context/indexnow-key.txt` at the site root for search-discovery submissions.

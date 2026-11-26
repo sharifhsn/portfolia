@@ -40,6 +40,8 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
 
     fs::write(output_dir.join("robots.txt"), super::robots_txt_content())?;
     fs::write(output_dir.join("sitemap.xml"), super::sitemap_xml(posts))?;
+    let indexnow_key = include_str!("../context/indexnow-key.txt").trim();
+    fs::write(output_dir.join(format!("{indexnow_key}.txt")), indexnow_key)?;
     fs::write(output_dir.join("llms.txt"), super::llms_txt(posts))?;
     fs::write(
         output_dir.join("llms-full.txt"),
@@ -282,6 +284,11 @@ mod tests {
         assert!(output.join("chat/index.html").is_file());
         assert!(output.join("robots.txt").is_file());
         assert!(output.join("sitemap.xml").is_file());
+        let indexnow_key = include_str!("../context/indexnow-key.txt").trim();
+        assert_eq!(
+            fs::read_to_string(output.join(format!("{indexnow_key}.txt"))).unwrap(),
+            indexnow_key
+        );
         assert!(output.join("llms.txt").is_file());
         assert!(output.join("llms-full.txt").is_file());
         assert!(output.join("feed.xml").is_file());
