@@ -818,7 +818,7 @@ fn llms_txt(posts: &[BlogPost]) -> String {
     let mut text = String::from(
         "# Sharif Haason\n\n> Product engineer at Monark Markets writing about Rust, compiler systems, mathematical research, quantitative finance, and practical tools. This is the canonical public site; each article carries its date, topics, and source attribution.\n\n## Start here\n\n",
     );
-    text.push_str("For focused questions, use the structured writing index to select articles, then fetch their data URLs. The complete corpora are much larger.\n\n");
+    text.push_str("For focused questions, use the structured writing index to select articles. For one article's rendered HTML and MathML, use https://sharifhsn.dev/ai/articles/{slug}.txt with its index slug. The article data URL also includes the original Typst source. The complete corpora are much larger.\n\n");
     for (label, path, description) in [
         ("Home", "/", page_description("home")),
         ("Writing index", "/blog", page_description("blog")),
@@ -941,46 +941,50 @@ fn llms_txt(posts: &[BlogPost]) -> String {
     text
 }
 
+fn llms_article_block(post: &BlogPost) -> String {
+    let published = post
+        .published_at
+        .as_deref()
+        .filter(|date| has_explicit_timezone(date))
+        .unwrap_or("Not specified");
+    let categories = if post.categories.is_empty() {
+        "None".to_owned()
+    } else {
+        clean_inline_text(&post.categories.join(", "))
+    };
+    let source_url = if post.source_url.is_empty() {
+        "None".to_owned()
+    } else {
+        post.source_url.clone()
+    };
+    let content = &post.body_html;
+    format!(
+        "## {}\n\n- URL: {}\n- Structured data: {}\n- Description: {}\n- Date: {}\n- Exact published timestamp: {}\n- Topics: {}\n- Categories: {}\n- Source: {}\n- Source URL: {}\n- Content source format: {}\n\n{}\n\n",
+        clean_inline_text(&post.title),
+        site_url(&format!("/blog/{}", post.slug)),
+        site_url(&format!("/api/posts/{}.json", post.slug)),
+        clean_inline_text(&post.description),
+        clean_inline_text(&post.date),
+        clean_inline_text(published),
+        if post.tags.is_empty() {
+            "None".to_owned()
+        } else {
+            clean_inline_text(&post.tags.join(", "))
+        },
+        categories,
+        clean_inline_text(&post.source),
+        source_url,
+        "typst",
+        content
+    )
+}
+
 fn llms_full_txt(posts: &[BlogPost]) -> String {
     let mut text = String::from(
         "# Sharif Haason — full writing corpus\n\nThis is the complete public writing archive. Articles are included as rendered HTML fragments so their MathML remains intact. The canonical page for each article and its structured JSON representation are included in the metadata block.\n\n",
     );
     for post in posts {
-        let published = post
-            .published_at
-            .as_deref()
-            .filter(|date| has_explicit_timezone(date))
-            .unwrap_or("Not specified");
-        let categories = if post.categories.is_empty() {
-            "None".to_owned()
-        } else {
-            clean_inline_text(&post.categories.join(", "))
-        };
-        let source_url = if post.source_url.is_empty() {
-            "None".to_owned()
-        } else {
-            post.source_url.clone()
-        };
-        let content = &post.body_html;
-        text.push_str(&format!(
-            "## {}\n\n- URL: {}\n- Structured data: {}\n- Description: {}\n- Date: {}\n- Exact published timestamp: {}\n- Topics: {}\n- Categories: {}\n- Source: {}\n- Source URL: {}\n- Content source format: {}\n\n{}\n\n",
-            clean_inline_text(&post.title),
-            site_url(&format!("/blog/{}", post.slug)),
-            site_url(&format!("/api/posts/{}.json", post.slug)),
-            clean_inline_text(&post.description),
-            clean_inline_text(&post.date),
-            clean_inline_text(published),
-            if post.tags.is_empty() {
-                "None".to_owned()
-            } else {
-                clean_inline_text(&post.tags.join(", "))
-            },
-            categories,
-            clean_inline_text(&post.source),
-            source_url,
-            "typst",
-            content
-        ));
+        text.push_str(&llms_article_block(post));
     }
     text
 }
@@ -1008,8 +1012,10 @@ fn encode_base64(bytes: &[u8]) -> String {
     encoded
 }
 
-fn llms_linked_txt(posts: &[BlogPost]) -> String {
-    let mut body = llms_full_txt(posts);
+fn link_known_figures(mut body: String) -> String {
+    if !body.contains("src=\"data:image/png;base64,") {
+        return body;
+    }
     for (bytes, path) in [
         (
             &include_bytes!("../static/img/advanced-derivatives-week-04-bond-price-yield.png")[..],
@@ -1032,8 +1038,20 @@ fn llms_linked_txt(posts: &[BlogPost]) -> String {
         let linked = format!("src=\"{}\"", asset_url(path));
         body = body.replace(&embedded, &linked);
     }
+    body
+}
+
+fn llms_linked_txt(posts: &[BlogPost]) -> String {
+    let body = link_known_figures(llms_full_txt(posts));
     format!(
         "Known embedded figures are linked to identical public PNG files in this variant. Other figures may remain embedded. For the self-contained corpus, see https://sharifhsn.dev/llms-full.txt.\n\n{body}"
+    )
+}
+
+fn llms_article_txt(post: &BlogPost) -> String {
+    let body = link_known_figures(llms_article_block(post));
+    format!(
+        "This is one article as rendered HTML and MathML. Known embedded figures link to identical public PNG files; other figures may remain embedded. The structured data URL below contains the original Typst source.\n\n{body}"
     )
 }
 
@@ -1264,6 +1282,14 @@ fn openapi_json() -> serde_json::Value {
                     "operationId": "getLlmGuide",
                     "summary": "Get the concise LLM discovery guide",
                     "responses": {"200": {"description": "Plain-text discovery guide", "content": {"text/plain": {"schema": {"type": "string"}}}}}
+                }
+            },
+            "/ai/articles/{slug}.txt": {
+                "get": {
+                    "operationId": "getArticleText",
+                    "summary": "Get one article with rendered HTML, MathML and linked figures",
+                    "parameters": [{"name": "slug", "in": "path", "required": true, "schema": {"type": "string"}}],
+                    "responses": {"200": {"description": "Plain-text article with metadata", "content": {"text/plain": {"schema": {"type": "string"}}}}, "404": {"description": "Unknown article slug"}}
                 }
             },
             "/llms-linked.txt": {
@@ -2458,6 +2484,26 @@ async fn openapi() -> Response {
     json_response(&openapi_json())
 }
 
+async fn article_text(
+    State(posts): State<Arc<Vec<BlogPost>>>,
+    Path(path): Path<String>,
+) -> Result<Response, StatusCode> {
+    let slug = path.strip_suffix(".txt").ok_or(StatusCode::NOT_FOUND)?;
+    let post = posts
+        .iter()
+        .find(|post| post.slug == slug)
+        .ok_or(StatusCode::NOT_FOUND)?;
+    let mut response = text_response("text/plain; charset=utf-8", llms_article_txt(post));
+    response
+        .headers_mut()
+        .insert("x-robots-tag", header::HeaderValue::from_static("noindex"));
+    response.headers_mut().insert(
+        header::ACCESS_CONTROL_ALLOW_ORIGIN,
+        header::HeaderValue::from_static("*"),
+    );
+    Ok(response)
+}
+
 async fn api_post(
     State(posts): State<Arc<Vec<BlogPost>>>,
     Path(path): Path<String>,
@@ -2518,6 +2564,7 @@ async fn main() {
         .route("/feed.xml", get(feed))
         .route("/feed.json", get(feed_json_endpoint))
         .route("/manifest.webmanifest", get(web_manifest))
+        .route("/ai/articles/{path}", get(article_text))
         .route("/api/posts.json", get(api_posts))
         .route("/api/posts/{*path}", get(api_post))
         .route("/api/projects.json", get(api_projects))
@@ -2743,6 +2790,7 @@ mod tests {
         let llms = llms_txt(&posts);
         assert!(llms.starts_with("# Sharif Haason"));
         assert!(llms.contains("use the structured writing index to select articles"));
+        assert!(llms.contains("https://sharifhsn.dev/ai/articles/{slug}.txt"));
         assert!(llms.contains("[Sites directory](https://sharifhsn.dev/#sites)"));
         assert!(llms.contains("_portfolia.publication_timestamp_known"));
         assert!(llms.contains("[Experiments](https://sharifhsn.dev/experiments/):"));
@@ -2764,6 +2812,13 @@ mod tests {
         assert!(full.contains("## Circuits"));
         assert!(full.contains("https://sharifhsn.dev/api/posts/circuits.json"));
         assert!(full.contains("Ohm’s Law"));
+        let first_article = llms_article_txt(&posts[0]);
+        assert!(first_article.contains(&format!("/api/posts/{}.json", posts[0].slug)));
+        assert!(
+            first_article.contains(&posts[0].body_html)
+                || first_article.contains("https://sharifhsn.dev/static/img/")
+        );
+
         let linked = llms_linked_txt(&posts);
         assert!(linked.contains("https://sharifhsn.dev/llms-full.txt"));
         assert!(linked.contains(

@@ -89,7 +89,10 @@ expose `_portfolia.publication_timestamp_known` for machine readers.
 articles with title, URL, date, topics, source, and source-link metadata. It
 uses rendered HTML/MathML for the Typst archive. `llms-linked.txt` preserves the
 same writing while linking known embedded PNG figures to byte-identical public
-files; `llms-full.txt` remains self-contained. `/projects/` is populated from
+files; `llms-full.txt` remains self-contained. For one article, use
+`/ai/articles/{slug}.txt` with a slug from the writing index. This contains
+rendered HTML/MathML and linked known figures; its structured data URL includes
+the original Typst source. `/projects/` is populated from
 `content/projects.toml`, and its JSON
 endpoint and `CreativeWork`/`ItemList` JSON-LD use the same source. Machine
 endpoints and feeds advertise `Access-Control-Allow-Origin: *` in the static

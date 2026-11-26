@@ -33,7 +33,13 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
     let chat = render_site("chat", posts).map_err(render_status_error)?;
     write_route(output_dir, "chat", &chat.0)?;
 
+    let article_text_dir = output_dir.join("ai/articles");
+    fs::create_dir_all(&article_text_dir)?;
     for post in posts {
+        fs::write(
+            article_text_dir.join(format!("{}.txt", post.slug)),
+            super::llms_article_txt(post),
+        )?;
         let html = render_blog_article(posts, &post.slug).map_err(render_status_error)?;
         write_route(output_dir, &format!("blog/{}", post.slug), &html.0)?;
     }
@@ -148,6 +154,12 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
 
 /static/*
   Cache-Control: public, max-age=86400, must-revalidate
+
+/ai/articles/*
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+  X-Robots-Tag: noindex
 
 /api/*
   Cache-Control: public, max-age=300, must-revalidate
@@ -296,6 +308,7 @@ mod tests {
         assert!(output.join("llms.txt").is_file());
         assert!(output.join("llms-full.txt").is_file());
         assert!(output.join("llms-linked.txt").is_file());
+        assert!(output.join("ai/articles/circuits.txt").is_file());
         assert!(output.join("feed.xml").is_file());
         assert!(output.join("feed.json").is_file());
         assert!(output.join("api/posts.json").is_file());
