@@ -902,6 +902,7 @@ fn llms_txt(posts: &[BlogPost]) -> String {
             description
         ));
     }
+    text.push_str("\n## JSON Feed extension\n\nIn each JSON Feed item, `_portfolia.date` is the archive calendar date. `_portfolia.publication_timestamp_known` is true only when the source provides a publication timestamp with an explicit time zone. When false, `date_published` uses the archive date at midnight UTC as an ordering placeholder, not a verified publication time.\n");
     text.push_str("\n## Writing\n\n");
     for post in posts {
         let description = if post.description.is_empty() {
@@ -1314,6 +1315,7 @@ fn feed_summary(post: &BlogPost) -> String {
 fn feed_json(posts: &[BlogPost]) -> serde_json::Value {
     serde_json::json!({
         "version": "https://jsonfeed.org/version/1.1",
+        "_portfolia": {"about": site_url("/llms.txt")},
         "title": "Sharif Haason — Writing",
         "home_page_url": site_url("/blog"),
         "feed_url": site_url("/feed.json"),
@@ -2630,6 +2632,7 @@ mod tests {
 
         let llms = llms_txt(&posts);
         assert!(llms.starts_with("# Sharif Haason"));
+        assert!(llms.contains("_portfolia.publication_timestamp_known"));
         assert!(llms.contains("[Experiments](https://sharifhsn.dev/experiments/):"));
         assert!(llms.contains("[Juice · Tideway](https://sharifhsn.dev/juice/):"));
         assert!(llms.contains("[Writing index](https://sharifhsn.dev/blog/):"));
@@ -2682,6 +2685,10 @@ mod tests {
 
         let feed_json = feed_json(&posts);
         assert_eq!(feed_json["version"], "https://jsonfeed.org/version/1.1");
+        assert_eq!(
+            feed_json["_portfolia"]["about"],
+            "https://sharifhsn.dev/llms.txt"
+        );
         assert!(
             feed_json["description"]
                 .as_str()
