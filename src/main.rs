@@ -1100,6 +1100,7 @@ fn agent_manifest_json() -> serde_json::Value {
             {"rel": "posts", "url": site_url("/api/posts.json"), "description": "Stable article metadata index."},
             {"rel": "projects", "url": site_url("/api/projects.json"), "description": "Structured project summaries."},
             {"rel": "profile", "url": site_url("/api/profile.json"), "description": "Public profile and resume links."},
+            {"rel": "sites", "url": format!("{SITE_ORIGIN}/#sites"), "description": "Public websites and tools hosted on Cloudflare Pages."},
             {"rel": "sitemap", "url": site_url("/sitemap.xml"), "description": "Canonical URL inventory."},
             {"rel": "feed", "url": site_url("/feed.json"), "description": "JSON Feed 1.1 article feed."},
             {"rel": "manifest", "url": asset_url("/manifest.webmanifest"), "description": "Web application metadata and icon information."},
@@ -2807,6 +2808,15 @@ mod tests {
         assert_eq!(manifest["access"], "public-read-only");
         assert_eq!(manifest["mutations"], false);
         assert_eq!(manifest["canonicalHost"], SITE_ORIGIN);
+        assert!(
+            manifest["discovery"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|item| {
+                    item["rel"] == "sites" && item["url"] == "https://sharifhsn.dev/#sites"
+                })
+        );
         assert!(
             manifest["citationGuidance"]
                 .as_str()
