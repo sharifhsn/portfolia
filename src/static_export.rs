@@ -146,6 +146,7 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
 
 /feed.json
   Content-Type: application/feed+json; charset=utf-8
+  Vary: Accept-Encoding
 
 /manifest.webmanifest
   Cache-Control: public, max-age=86400, must-revalidate
