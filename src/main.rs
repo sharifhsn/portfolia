@@ -938,7 +938,11 @@ fn llms_full_txt(posts: &[BlogPost]) -> String {
         "# Sharif Haason — full writing corpus\n\nThis is the complete public writing archive. Articles are included as rendered HTML fragments so their MathML remains intact. The canonical page for each article and its structured JSON representation are included in the metadata block.\n\n",
     );
     for post in posts {
-        let published = post.published_at.as_deref().unwrap_or(&post.date);
+        let published = post
+            .published_at
+            .as_deref()
+            .filter(|date| has_explicit_timezone(date))
+            .unwrap_or("Not specified");
         let categories = if post.categories.is_empty() {
             "None".to_owned()
         } else {
@@ -2615,6 +2619,18 @@ mod tests {
         assert!(full.contains("## Circuits"));
         assert!(full.contains("https://sharifhsn.dev/api/posts/circuits.json"));
         assert!(full.contains("Ohm’s Law"));
+        for post in &posts {
+            let timestamp = post
+                .published_at
+                .as_deref()
+                .filter(|date| has_explicit_timezone(date))
+                .unwrap_or("Not specified");
+            assert!(full.contains(&format!(
+                "- Date: {}\n- Exact published timestamp: {}\n",
+                clean_inline_text(&post.date),
+                clean_inline_text(timestamp)
+            )));
+        }
 
         let feed = feed_xml(&posts);
         assert!(feed.contains("<feed xmlns=\"http://www.w3.org/2005/Atom\">"));
