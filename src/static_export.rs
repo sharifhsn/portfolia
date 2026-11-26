@@ -121,6 +121,7 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
         r#"/*
   X-Content-Type-Options: nosniff
   Content-Language: en-US
+  Vary: Accept-Encoding
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()
   Strict-Transport-Security: max-age=31536000
@@ -146,7 +147,6 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
 
 /feed.json
   Content-Type: application/feed+json; charset=utf-8
-  Vary: Accept-Encoding
 
 /manifest.webmanifest
   Cache-Control: public, max-age=86400, must-revalidate
