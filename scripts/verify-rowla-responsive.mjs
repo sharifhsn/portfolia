@@ -17,8 +17,9 @@ const files = ["/experiments/rowla/", ...names.flatMap(name => [
 ])];
 async function hashes() {
   const result = {};
+  const deadline = AbortSignal.timeout(20000);
   for (const file of files) {
-    const response = await fetch(origin + file);
+    const response = await fetch(origin + file, { signal: deadline });
     if (!response.ok) throw new Error(`${file}: HTTP ${response.status}`);
     result[file] = createHash("sha256").update(Buffer.from(await response.arrayBuffer())).digest("hex");
   }
