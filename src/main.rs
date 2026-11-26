@@ -902,6 +902,7 @@ fn llms_txt(posts: &[BlogPost]) -> String {
             description
         ));
     }
+    text.push_str(&format!("- [Sites directory]({SITE_ORIGIN}/#sites): Public websites and tools hosted on Cloudflare Pages.\n"));
     text.push_str("\n## JSON Feed extension\n\nIn each JSON Feed item, `_portfolia.date` is the archive calendar date. `_portfolia.publication_timestamp_known` is true only when the source provides a publication timestamp with an explicit time zone. When false, `date_published` uses the archive date at midnight UTC as an ordering placeholder, not a verified publication time.\n");
     text.push_str("\n## Writing\n\n");
     for post in posts {
@@ -1059,6 +1060,7 @@ fn api_profile_json() -> serde_json::Value {
         "person": person_json_ld(),
         "pages": [
             {"name": "Home", "url": site_url("/")},
+            {"name": "Sites directory", "url": format!("{SITE_ORIGIN}/#sites")},
             {"name": "Writing", "url": site_url("/blog")},
             {"name": "Projects", "url": site_url("/projects")},
             {"name": "Experiments", "url": site_url("/experiments")},
@@ -2656,6 +2658,7 @@ mod tests {
 
         let llms = llms_txt(&posts);
         assert!(llms.starts_with("# Sharif Haason"));
+        assert!(llms.contains("[Sites directory](https://sharifhsn.dev/#sites)"));
         assert!(llms.contains("_portfolia.publication_timestamp_known"));
         assert!(llms.contains("[Experiments](https://sharifhsn.dev/experiments/):"));
         assert!(llms.contains("[Juice · Tideway](https://sharifhsn.dev/juice/):"));
@@ -2785,6 +2788,7 @@ mod tests {
         for url in [
             "https://sharifhsn.dev/experiments/",
             "https://sharifhsn.dev/juice/",
+            "https://sharifhsn.dev/#sites",
         ] {
             assert!(
                 profile_json["pages"]
