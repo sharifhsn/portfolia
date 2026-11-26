@@ -134,6 +134,9 @@ pub(super) fn write_site(posts: &[BlogPost], output_dir: &Path) -> io::Result<()
   ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self'; media-src 'self' blob:; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests
 
+/juice/
+  Link: <https://sharifhsn.dev/juice/>; rel="canonical"
+
 /static/css/fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
