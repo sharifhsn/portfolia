@@ -11,7 +11,7 @@
       <a class="button-ghost" href="https://www.linkedin.com/in/sharif-haason/" rel="me">LinkedIn</a>
     </nav>
   </div>
-  {% if photo_available %}<figure class="portrait-frame"><img class="portrait" src="/static/img/profile.jpg" alt="Sharif Haason" width="800" height="800" decoding="async" fetchpriority="high"></figure>{% endif %}
+  {% if photo_available %}<figure class="portrait-frame"><picture><source type="image/webp" srcset="/static/img/profile-440.webp"><img class="portrait" src="/static/img/profile.jpg" alt="Sharif Haason" width="800" height="800" decoding="async" fetchpriority="high"></picture></figure>{% endif %}
 </section>
 
 <section class="home-experiments" aria-labelledby="home-experiments-title">
