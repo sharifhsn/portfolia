@@ -818,6 +818,7 @@ fn llms_txt(posts: &[BlogPost]) -> String {
     let mut text = String::from(
         "# Sharif Haason\n\n> Product engineer at Monark Markets writing about Rust, compiler systems, mathematical research, quantitative finance, and practical tools. This is the canonical public site; each article carries its date, topics, and source attribution.\n\n## Start here\n\n",
     );
+    text.push_str("For focused questions, use the structured writing index to select articles, then fetch their data URLs. The complete corpora are much larger.\n\n");
     for (label, path, description) in [
         ("Home", "/", page_description("home")),
         ("Writing index", "/blog", page_description("blog")),
@@ -2741,6 +2742,7 @@ mod tests {
 
         let llms = llms_txt(&posts);
         assert!(llms.starts_with("# Sharif Haason"));
+        assert!(llms.contains("use the structured writing index to select articles"));
         assert!(llms.contains("[Sites directory](https://sharifhsn.dev/#sites)"));
         assert!(llms.contains("_portfolia.publication_timestamp_known"));
         assert!(llms.contains("[Experiments](https://sharifhsn.dev/experiments/):"));
