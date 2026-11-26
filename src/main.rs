@@ -1292,13 +1292,16 @@ fn api_post_json(post: &BlogPost) -> serde_json::Value {
     value
 }
 
+const FEED_DATE_NOTICE: &str =
+    "Some entries use archive dates; exact publication times may be unknown.";
+
 fn feed_json(posts: &[BlogPost]) -> serde_json::Value {
     serde_json::json!({
         "version": "https://jsonfeed.org/version/1.1",
         "title": "Sharif Haason — Writing",
         "home_page_url": site_url("/blog"),
         "feed_url": site_url("/feed.json"),
-        "description": page_description("blog"),
+        "description": format!("{} {}", page_description("blog"), FEED_DATE_NOTICE),
         "authors": [{"name": SITE_NAME, "url": SITE_ORIGIN}],
         "items": posts.iter().map(|post| {
             let mut item = serde_json::json!({
@@ -1338,6 +1341,10 @@ fn feed_xml(posts: &[BlogPost]) -> String {
         xml_escape(&site_url("/blog")),
         xml_escape(&site_url("/feed.xml")),
         xml_escape(&site_url("/blog"))
+    ));
+    xml.push_str(&format!(
+        "  <subtitle>{}</subtitle>\n",
+        xml_escape(FEED_DATE_NOTICE)
     ));
     xml.push_str(&format!(
         "  <author><name>{}</name><uri>{}</uri></author>\n",
@@ -2634,6 +2641,7 @@ mod tests {
 
         let feed = feed_xml(&posts);
         assert!(feed.contains("<feed xmlns=\"http://www.w3.org/2005/Atom\">"));
+        assert!(feed.contains(FEED_DATE_NOTICE));
         assert_eq!(feed.matches("<entry>").count(), posts.len());
         assert!(feed.contains(&format!(
             "<updated>{}</updated>",
@@ -2643,6 +2651,12 @@ mod tests {
 
         let feed_json = feed_json(&posts);
         assert_eq!(feed_json["version"], "https://jsonfeed.org/version/1.1");
+        assert!(
+            feed_json["description"]
+                .as_str()
+                .unwrap()
+                .contains(FEED_DATE_NOTICE)
+        );
         assert_eq!(feed_json["items"].as_array().unwrap().len(), posts.len());
 
         let index_json = api_posts_json(&posts);

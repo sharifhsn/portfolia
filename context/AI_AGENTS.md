@@ -80,7 +80,9 @@ previous/next article links. The blog filter is progressive enhancement; every
 article link and summary is present in the initial HTML.
 
 The Atom and JSON feeds include the same canonical article URLs, dates, authors,
-topics, summaries, and public source links. `llms-full.txt` contains the same
+topics, summaries, and public source links. When an exact publication time is
+unavailable, their timestamp fields use the archive calendar date at midnight UTC
+as an ordering placeholder, not a verified publication time. `llms-full.txt` contains the same
 articles with title, URL, date, topics, source, and source-link metadata. It
 uses rendered HTML/MathML for the Typst archive. `/projects/` is populated from
 `content/projects.toml`, and its JSON
