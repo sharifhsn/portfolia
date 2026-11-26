@@ -1061,9 +1061,11 @@ fn api_profile_json() -> serde_json::Value {
             {"name": "Home", "url": site_url("/")},
             {"name": "Writing", "url": site_url("/blog")},
             {"name": "Projects", "url": site_url("/projects")},
+            {"name": "Experiments", "url": site_url("/experiments")},
             {"name": "Hornet FX desk", "url": site_url("/projects/hornet")},
             {"name": "Resume", "url": site_url("/resume")},
-            {"name": "Chat", "url": site_url("/chat")}
+            {"name": "Chat", "url": site_url("/chat")},
+            {"name": "Juice · Tideway", "url": site_url("/juice")}
         ],
         "resume": {
             "htmlUrl": site_url("/resume"),
@@ -2780,6 +2782,18 @@ mod tests {
         let profile_json = api_profile_json();
         assert_eq!(profile_json["person"]["name"], SITE_NAME);
         assert_eq!(profile_json["language"], "en-US");
+        for url in [
+            "https://sharifhsn.dev/experiments/",
+            "https://sharifhsn.dev/juice/",
+        ] {
+            assert!(
+                profile_json["pages"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|page| page["url"] == url)
+            );
+        }
         assert_eq!(profile_json["sourceRepository"], SOURCE_REPOSITORY);
         assert_eq!(
             profile_json["resume"]["pdfUrl"],
