@@ -36,8 +36,12 @@ jobs:
           npm run build:chat-runtime
           ./scripts/fetch-chat-model.sh
           ./scripts/build-hornet-wasm.sh
+      - name: Verify Juice source bundle
+        run: node scripts/verify-juice-bundle.mjs
       - name: Build static site
         run: cargo run --locked --release -- --export-static
+      - name: Verify exported Juice bundle
+        run: node scripts/verify-juice-bundle.mjs dist/juice
       - uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

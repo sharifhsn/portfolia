@@ -69,3 +69,7 @@ pinned CLI for deployment. The current resume source is
 `content/resume-current.md`. Article loading is Typst-only; retired `/v/*` and
 `/designs` routes return 404.
 The real Markdown resume remains supported.
+
+The `just static` command and Pages deployment workflow check the pinned Juice
+bundle before and after export. An intentional Juice update must update
+`scripts/juice-bundle.sha256.json` from the new verified bundle in the same change.
