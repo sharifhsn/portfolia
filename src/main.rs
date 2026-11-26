@@ -1088,10 +1088,10 @@ fn agent_manifest_json() -> serde_json::Value {
         "authentication": "none",
         "mutations": false,
         "representations": ["text/html", "text/plain", "text/markdown", "application/json", "application/atom+xml", "application/feed+json"],
-        "citationGuidance": "Prefer the canonical HTML URL for citations; use structured endpoints when exact metadata or full Markdown is needed.",
+        "citationGuidance": "Prefer canonical HTML URLs for citations; structured article endpoints provide metadata, rendered HTML, and Typst source.",
         "discovery": [
             {"rel": "llms", "url": site_url("/llms.txt"), "description": "Concise site map and article descriptions."},
-            {"rel": "llms-full", "url": site_url("/llms-full.txt"), "description": "Complete public writing corpus in Markdown."},
+            {"rel": "llms-full", "url": site_url("/llms-full.txt"), "description": "Complete public writing corpus with rendered HTML and MathML."},
             {"rel": "openapi", "url": site_url("/api/openapi.json"), "description": "OpenAPI 3.1 description of structured read endpoints."},
             {"rel": "posts", "url": site_url("/api/posts.json"), "description": "Stable article metadata index."},
             {"rel": "projects", "url": site_url("/api/projects.json"), "description": "Structured project summaries."},
@@ -2769,6 +2769,22 @@ mod tests {
         assert_eq!(manifest["access"], "public-read-only");
         assert_eq!(manifest["mutations"], false);
         assert_eq!(manifest["canonicalHost"], SITE_ORIGIN);
+        assert!(
+            manifest["citationGuidance"]
+                .as_str()
+                .unwrap()
+                .contains("Typst source")
+        );
+        assert!(
+            manifest["discovery"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|item| {
+                    item["rel"] == "llms-full"
+                        && item["description"].as_str().unwrap().contains("MathML")
+                })
+        );
         assert!(
             manifest["discovery"]
                 .as_array()
