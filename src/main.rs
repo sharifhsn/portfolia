@@ -784,6 +784,7 @@ fn sitemap_xml(posts: &[BlogPost]) -> String {
         "/projects/hornet",
         "/resume",
         "/chat",
+        "/juice",
     ] {
         xml.push_str("  <url><loc>");
         xml.push_str(&xml_escape(&site_url(path)));
@@ -833,6 +834,11 @@ fn llms_txt(posts: &[BlogPost]) -> String {
         ),
         ("Resume", "/resume", page_description("resume")),
         ("Chat", "/chat", page_description("chat")),
+        (
+            "Juice · Tideway",
+            "/juice",
+            "Explore a street scene in the browser and replay a recorded Blender session.",
+        ),
         (
             "RSS feed",
             "/feed.xml",
@@ -2584,15 +2590,17 @@ mod tests {
         let sitemap = sitemap_xml(&posts);
         assert_eq!(
             sitemap.matches("<url>").count(),
-            posts.len() + 7 + experiments::all().len()
+            posts.len() + 8 + experiments::all().len()
         );
         assert!(sitemap.contains("https://sharifhsn.dev/blog/circuits/"));
         assert!(sitemap.contains("https://sharifhsn.dev/experiments/rustlyn/"));
+        assert!(sitemap.contains("https://sharifhsn.dev/juice/"));
         assert!(!sitemap.contains("https://sharifhsn.dev/experiments/fractal-study/"));
 
         let llms = llms_txt(&posts);
         assert!(llms.starts_with("# Sharif Haason"));
         assert!(llms.contains("[Experiments](https://sharifhsn.dev/experiments/):"));
+        assert!(llms.contains("[Juice · Tideway](https://sharifhsn.dev/juice/):"));
         assert!(llms.contains("[Writing index](https://sharifhsn.dev/blog/):"));
         assert!(llms.contains("[Structured writing index](https://sharifhsn.dev/api/posts.json):"));
         assert!(llms.contains("[Structured projects](https://sharifhsn.dev/api/projects.json):"));
