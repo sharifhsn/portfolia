@@ -1295,6 +1295,22 @@ fn api_post_json(post: &BlogPost) -> serde_json::Value {
 const FEED_DATE_NOTICE: &str =
     "Some entries use archive dates; exact publication times may be unknown.";
 
+const FEED_ENTRY_DATE_NOTICE: &str = "Archive date; exact publication time is not recorded.";
+
+fn feed_summary(post: &BlogPost) -> String {
+    if post
+        .published_at
+        .as_deref()
+        .is_some_and(has_explicit_timezone)
+    {
+        post.description.clone()
+    } else if post.description.is_empty() {
+        FEED_ENTRY_DATE_NOTICE.to_owned()
+    } else {
+        format!("{} {}", post.description, FEED_ENTRY_DATE_NOTICE)
+    }
+}
+
 fn feed_json(posts: &[BlogPost]) -> serde_json::Value {
     serde_json::json!({
         "version": "https://jsonfeed.org/version/1.1",
@@ -1308,7 +1324,7 @@ fn feed_json(posts: &[BlogPost]) -> serde_json::Value {
                 "id": site_url(&format!("/blog/{}", post.slug)),
                 "url": site_url(&format!("/blog/{}", post.slug)),
                 "title": post.title,
-                "summary": post.description,
+                "summary": feed_summary(post),
                 "content_html": post.body_html,
                 "date_published": atom_timestamp(post.published_at.as_deref().unwrap_or(&post.date)),
                 "author": {"name": SITE_NAME, "url": SITE_ORIGIN},
@@ -1376,7 +1392,7 @@ fn feed_xml(posts: &[BlogPost]) -> String {
             xml_escape(&updated),
             xml_escape(SITE_NAME),
             xml_escape(SITE_ORIGIN),
-            xml_escape(&post.description)
+            xml_escape(&feed_summary(post))
         ));
         for tag in &post.tags {
             xml.push_str(&format!("<category term=\"{}\"/>", xml_escape(tag)));
@@ -2642,6 +2658,17 @@ mod tests {
         let feed = feed_xml(&posts);
         assert!(feed.contains("<feed xmlns=\"http://www.w3.org/2005/Atom\">"));
         assert!(feed.contains(FEED_DATE_NOTICE));
+        for post in &posts {
+            let summary = feed_summary(post);
+            assert!(summary.starts_with(&post.description));
+            assert_eq!(
+                summary.contains(FEED_ENTRY_DATE_NOTICE),
+                !post
+                    .published_at
+                    .as_deref()
+                    .is_some_and(has_explicit_timezone)
+            );
+        }
         assert_eq!(feed.matches("<entry>").count(), posts.len());
         assert!(feed.contains(&format!(
             "<updated>{}</updated>",
